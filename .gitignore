@@ -20,5 +20,4 @@ yarn-error.log
 # Environment files and secrets
 .env
 .env.*
-!.env.samplev-tutor-bkp.sql
-
+!.env.sample

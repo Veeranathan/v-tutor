@@ -1,0 +1,194 @@
+.gj_cs_main_div {
+    background: #000;
+    color: #fff;
+    width: 100%;
+}
+.gj_cs_div img {
+    width: 100%;
+}
+section.gj_cs_sec area {
+    cursor: pointer;
+}
+section.gj_cs_teach_learning_sec .container-fluid {
+    padding: 0;
+}
+.gj_cs_teach_learning_col_1 {
+    padding-right: 0px;
+}
+.gj_cs_teach_learning_col_2 {
+    padding-left: 0px;
+}
+.cs_teach_img_div img {
+    width: 100%;
+}
+.cs_learning_img_div img {
+    width: 100%;
+}
+.cs_learning_hd_div {
+    padding: 15px;
+    width: 320px;
+}
+h2.cs_learning_hd {
+    font-size: 32px;
+    font-family: 'Faro';
+    font-weight: 600;
+    line-height: 30px;
+}
+.cs_learning_hd_split {
+    color: #D7263D;
+}
+p.cs_learning_content {
+    margin-top: 20px;
+    font-size: 14px;
+}
+.cs_teach_hd_div {
+    text-align: center;
+    padding: 20px;
+    height: 100%;
+}
+h3.cs_teach_hd {
+    font-size: 28px;
+    font-family: 'Faro';
+    font-weight: 600;
+    line-height: 30px;
+}
+.cs_teach_start_button_div {
+    margin: 30px 0px 10px;
+}
+.cs_teach_start_button {
+    background: #D7263D;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+.cs_teach_start_button:hover {
+    color: #D7263D;
+    background: #fff;
+}
+section.gj_cs_glance_sec {
+    padding: 50px 0px 30px;
+}
+h2.cs_glance_hd {
+    font-size: 32px;
+    font-family: 'Faro';
+    font-weight: 600;
+    line-height: 30px;
+}
+section.gj_cs_glance_img_sec {
+    padding: 30px 0px 50px;
+}
+.cs_glance_img_div img {
+    width: 100%;
+}
+section.gj_cs_about_us_sec {
+    padding: 10px 0px 40px;
+}
+.cs_about_us_img_div img {
+    width: 100%;
+}
+h2.cs_about_us_hd {
+    font-size: 32px;
+    font-family: 'Faro';
+    font-weight: 600;
+    line-height: 30px;
+}
+p.cs_about_us_content {
+    text-align: justify;
+}
+section.gj_cs_teach_vtutor_sec {
+    padding-bottom: 30px;
+}
+.cs_tvtutor_img_div img {
+    width: 100%;
+}
+h2.cs_tvtutor_hd {
+    font-size: 32px;
+    font-family: 'Faro';
+    font-weight: 600;
+    line-height: 30px;
+}
+p.cs_tvtutor_content {
+    text-align: justify;
+}
+.cs_tvtutor_smh_button_div {
+    text-align: right;
+    margin: 25px 0px;
+}
+a.cs_tvtutor_smh_button {
+    background: #D7263D;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 1px;
+}
+a.cs_tvtutor_smh_button:hover {
+    color: #D7263D;
+    background: #fff;
+}
+
+@media (max-width: 767px) {
+    .gj_cs_teach_learning_col_1 {
+        display: flex;
+        flex-direction: column;
+    }
+    .gj_cs_teach_learning_row_11 { 
+        order: 2; 
+    }
+    .gj_cs_teach_learning_row_12 { 
+        order: 1; 
+    }
+    
+    .cs_learning_hd_div {
+        padding: 0px;
+        width: 100%;
+        text-align: center;
+        margin: 45px auto;
+    }
+    .cs_glance_img_div img {
+        width: 100%;
+        margin-bottom: 25px;
+    }
+    .cs_glance_img_div img {
+        margin-bottom: 25px;
+    }
+    section.gj_cs_glance_img_sec {
+        padding: 30px 0px 0px;
+    }
+    section.gj_cs_about_us_sec .row {
+        display: flex;
+        flex-direction: column;
+    }
+    .gj_col1_au { 
+        order: 2; 
+    }
+    .gj_col2_au { 
+        order: 1; 
+    }    
+    h2.cs_about_us_hd {
+        text-align: center;
+    }
+    .cs_about_us_content_div {
+        margin-bottom: 30px;
+    }
+    section.gj_cs_teach_vtutor_sec .row {
+        display: flex;
+        flex-direction: column;
+    }
+    .gj_col1_tv { 
+        order: 2; 
+    }
+    .gj_col2_tv { 
+        order: 1; 
+    }
+    h2.cs_tvtutor_hd {
+        text-align: center;
+    }
+    .cs_tvtutor_smh_button_div {
+        text-align: center;
+    }
+}
+
+@media (max-width: 575px) {
+    h2.cs_glance_hd {
+        margin-bottom: 25px !important;
+    }
+}

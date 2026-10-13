@@ -1,0 +1,130 @@
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-DisplayLucky.eot');
+    src: local('Faro Display Lucky'), local('Faro-DisplayLucky'),
+        url('Faro-DisplayLucky.eot?#iefix') format('embedded-opentype'),
+        url('Faro-DisplayLucky.woff2') format('woff2'),
+        url('Faro-DisplayLucky.woff') format('woff'),
+        url('Faro-DisplayLucky.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-SemiBoldSad.eot');
+    src: local('Faro SemiBold Sad'), local('Faro-SemiBoldSad'),
+        url('Faro-SemiBoldSad.eot?#iefix') format('embedded-opentype'),
+        url('Faro-SemiBoldSad.woff2') format('woff2'),
+        url('Faro-SemiBoldSad.woff') format('woff'),
+        url('Faro-SemiBoldSad.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-BoldLucky.eot');
+    src: local('Faro Bold Lucky'), local('Faro-BoldLucky'),
+        url('Faro-BoldLucky.eot?#iefix') format('embedded-opentype'),
+        url('Faro-BoldLucky.woff2') format('woff2'),
+        url('Faro-BoldLucky.woff') format('woff'),
+        url('Faro-BoldLucky.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-DisplaySad.eot');
+    src: local('Faro Display Sad'), local('Faro-DisplaySad'),
+        url('Faro-DisplaySad.eot?#iefix') format('embedded-opentype'),
+        url('Faro-DisplaySad.woff2') format('woff2'),
+        url('Faro-DisplaySad.woff') format('woff'),
+        url('Faro-DisplaySad.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-RegularLucky.eot');
+    src: local('Faro Regular Lucky'), local('Faro-RegularLucky'),
+        url('Faro-RegularLucky.eot?#iefix') format('embedded-opentype'),
+        url('Faro-RegularLucky.woff2') format('woff2'),
+        url('Faro-RegularLucky.woff') format('woff'),
+        url('Faro-RegularLucky.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-RegularSad.eot');
+    src: local('Faro Regular Sad'), local('Faro-RegularSad'),
+        url('Faro-RegularSad.eot?#iefix') format('embedded-opentype'),
+        url('Faro-RegularSad.woff2') format('woff2'),
+        url('Faro-RegularSad.woff') format('woff'),
+        url('Faro-RegularSad.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-SemiBoldLucky.eot');
+    src: local('Faro SemiBold Lucky'), local('Faro-SemiBoldLucky'),
+        url('Faro-SemiBoldLucky.eot?#iefix') format('embedded-opentype'),
+        url('Faro-SemiBoldLucky.woff2') format('woff2'),
+        url('Faro-SemiBoldLucky.woff') format('woff'),
+        url('Faro-SemiBoldLucky.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-LightLucky.eot');
+    src: local('Faro Light Lucky'), local('Faro-LightLucky'),
+        url('Faro-LightLucky.eot?#iefix') format('embedded-opentype'),
+        url('Faro-LightLucky.woff2') format('woff2'),
+        url('Faro-LightLucky.woff') format('woff'),
+        url('Faro-LightLucky.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-BoldSad.eot');
+    src: local('Faro Bold Sad'), local('Faro-BoldSad'),
+        url('Faro-BoldSad.eot?#iefix') format('embedded-opentype'),
+        url('Faro-BoldSad.woff2') format('woff2'),
+        url('Faro-BoldSad.woff') format('woff'),
+        url('Faro-BoldSad.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Faro';
+    src: url('Faro-LightSad.eot');
+    src: local('Faro Light Sad'), local('Faro-LightSad'),
+        url('Faro-LightSad.eot?#iefix') format('embedded-opentype'),
+        url('Faro-LightSad.woff2') format('woff2'),
+        url('Faro-LightSad.woff') format('woff'),
+        url('Faro-LightSad.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+

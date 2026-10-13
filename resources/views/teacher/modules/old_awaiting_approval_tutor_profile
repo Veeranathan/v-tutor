@@ -1,0 +1,818 @@
+@extends('layouts.app')
+@section('title')
+<title>V-Tutor  | Tutor | Personal info</title>
+@endsection
+@section('left_part')
+@include('include.header_menu_part')
+<style type="text/css">
+    .user-right-panel {
+        width: 100% !important;
+    }
+</style>
+@endsection
+
+
+<body class="after-user">
+@section('content')
+<!-- bannersec -->
+{{-- <div> --}}
+<!--- profile --->
+ <div class="top_mar"></div>
+    <!--- profile --->
+    <section class="user-account">
+        <div class="container">
+            <div class="row">
+                {{-- <div class="zin"> --}}
+                    @if(@Auth::user()->status=="A")
+                   @include('include.teacher_left_common'){{-- left common part --}}
+                   @endif
+
+                    <div class="user-right-panel tutor-right">
+
+                        <div class="step_tab">
+                        <ul>
+                            {{-- <li class="active" >
+                                <a href="{{route('teacher.profile')}}">
+                                   <span><img src="{{ public_asset('assets/images/peri.png')}}" class="actt"><img src="{{ public_asset('assets/images/perih.png')}}" class="accth"></span>
+                                    Personal Info
+                                </a>
+                            </li> --}}
+                            {{-- <li @if(@Auth::user()->status == 'AA') class="disable-left" @endif>
+                                @if(@Auth::user()->status == 'A') <a href="{{route('tutorship.plan')}}"> @else <a class="disable_class" href="javascript:void(0);"> @endif
+                                  <span><img src="{{ public_asset('assets/images/gar.png')}}" class="actt"><img src="{{ public_asset('assets/images/garh.png')}}" class="accth"></span>
+                                    Tutorship Plan
+                                 </a>
+                            </li>
+                            <li @if(@Auth::user()->status == 'AA') class="disable-left" @endif>
+                                @if(@Auth::user()->status == 'A') <a href="{{route('tutor.acadamic')}}"> @else <a class="disable_class" href="javascript:void(0);"> @endif
+                                <span><img src="{{ public_asset('assets/images/aca.png')}}" class="actt"><img src="{{ public_asset('assets/images/acah.png')}}" class="accth"></span>
+                                   Academics
+                                </a>
+                            </li>
+                            <li @if(@Auth::user()->status == 'AA') class="disable-left" @endif>
+                                @if(@Auth::user()->status == 'A')<a class="disable_class" href="{{route('tutor.exp')}}">@else <a href="javascript:void(0);"> @endif
+                                    <span><img src="{{ public_asset('assets/images/ex.png')}}" class="actt"><img src="{{ public_asset('assets/images/exh.png')}}" class="accth"></span>
+                                    Experience </a>
+                            </li>
+                            <li @if(@Auth::user()->status == 'AA') class="disable-left" @endif>
+                                @if(@Auth::user()->status == 'A') <a class="disable_class" href="{{route('tutor.recognization')}}">@else <a href="javascript:void(0);"> @endif
+                                <span><img src="{{ public_asset('assets/images/rec.png')}}" class="actt"><img src="{{ public_asset('assets/images/rech.png')}}" class="accth"></span>
+                                  Recognitions
+                                </a>
+                            </li> --}}
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+
+                        <div class="turo-edit">
+
+                        <div class="user-right-top">
+
+                            <h2 class="profile-heading"><span class="per-info"><img src="{{ public_asset('assets/images/per-info.png')}}"></span> Personal Info</h2>
+                            <p>You can find information or edit your profile in this section</p>
+                            <br>
+                            {{--   @include('include.errors') --}}
+
+                            <form method="post" action="{{route('tutor.awaiting.approval.profile.update')}}" enctype="multipart/form-data" id="frm">
+                                @csrf
+
+                                <div class="user-account-info">
+
+                                    <div class="row new_rows no-gutters">
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>First Name*</label>
+                                                <input type="text" placeholder="First Name "  name="f_name" value="{{@$teacher->f_name}}" class="required inputfiels">
+                                                <div class="error_f_name"></div>
+                                            </div>
+                                                {{-- <p class="note error_f_name"></p> --}}
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label> Last Name*</label>
+                                                <input type="text" placeholder="Last Name " name="l_name" value="{{@$teacher->l_name}}" class="required inputfiels">
+                                                <div class="error_l_name"></div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>Email Address*</label>
+                                                <input type="email" placeholder="myemailaddress@xyz.com" value="{{@$teacher->email}}" disabled>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>Mobile Number*</label>
+                                                <input type="tel" placeholder="0123456789" value="{{@$teacher->phone}}" name="ph"  id="ph" class="inputfiels required">
+                                                <div class="error_ph"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label for="teacher_emp_status">Employment Status*</label>
+                                                <select name="teacher_emp_status" id="teacher_emp_status" class="required inputfiels">
+                                                    <option value="">Select Status</option>
+                                                    <option value="A" @if(@$teacher->teacher_emp_status=="A") selected  @endif >Yes, I'm a full-time teacher</option>
+                                                    <option value="B" @if(@$teacher->teacher_emp_status=="B") selected  @endif>No, but I have teaching experience</option>
+                                                    <option value="C" @if(@$teacher->teacher_emp_status=="C") selected  @endif>Yes, but I'm not a teacher</option>
+                                                    <option value="D" @if(@$teacher->teacher_emp_status=="D") selected  @endif>No, but I have passion for teaching</option>
+                                                </select>
+                                                <div class="error_teacher_emp_status"></div>
+                                            </div>
+                                        </div>
+                                        <!---<div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>Teaching experience</label>
+                                                <select >
+                                                    <option value="">Yes, I'm a full-time teacher</option>
+                                                    <option value="option1">No, but I have teaching experience</option>
+                                                    <option value="option2">Yes, but I'm not a teacher</option>
+                                                    <option value="option2">No, but I have passion for teaching</option>
+                                                </select>
+                                            </div>
+                                        </div>--->
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label for="hours">How many hours can you commit?*</label>
+                                                <select name="hours" id="hours" class="required inputfiels">
+                                                    <option value="">Select hours</option>
+                                                    <option value="1-4" @if(@$teacher->hours=="1-4") selected  @endif  >< 5 hrs a week</option>
+                                                    <option value="5-10" @if(@$teacher->hours=="5-10") selected  @endif >5 – 10 hrs a week</option>
+                                                    <option value="10-20" @if(@$teacher->hours=="10-20") selected  @endif >10 – 20 hrs a week</option>
+                                                    <option value="20-40" @if(@$teacher->hours=="20-40") selected  @endif >20 – 40 hrs a week</option>
+                                                    <option value="40+" @if(@$teacher->hours=="40+") selected  @endif> > 40 hrs a week</option>
+                                                </select>
+                                                <div class="error_hours"></div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label for="why_tutor">Why do you want to be a Tutor?*</label>
+                                                <select name="why_tutor" id="why_tutor" class="required inputfiels">
+                                                    <option value="">Select</option>
+                                                    <option value="A"@if(@$teacher->why_tutor=="A") selected  @endif >Leverage my teaching experience</option>
+                                                    <option value="B" @if(@$teacher->why_tutor=="B") selected  @endif >Looking for after-hours gig</option>
+                                                    <option value="C" @if(@$teacher->why_tutor=="C") selected  @endif >To make more money by teaching</option>
+                                                    <option value="D" @if(@$teacher->why_tutor=="D") selected  @endif >Teaching is my passion, money secondary</option>
+                                                    <option value="E"@if(@$teacher->why_tutor=="E") selected  @endif > Safe way to make money from home</option>
+                                                </select>
+                                                <div class="error_hours"></div>
+                                            </div>
+                                        </div>
+
+                                         {{-- language --}}
+                                          <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area" >
+                                                <label>Language*</label>
+                                               {{--  <input type="text" placeholder="Language "  name="language" value="{{@$teacher->language}}" required=""> </div> --}}
+
+                                                <select class="chosen-select form-control language " multiple name="language[]" @if($total_lan>1) disabled @endif >
+
+                                                    @foreach($lan as $val)
+                                                     <option value="{{@$val->id}}" @foreach(@$tutor_to_lan as $tt) @if( ($tt->tutor_id==@$teacher->id)  && ($tt->language_id==$val->id))selected  @endif @endforeach>{{@$val->language}}</option>
+                                                    @endforeach
+                                                        </select>
+                                                        <label id="language[]-error" class="error" for="language[]"></label>
+                                        </div>
+                                    </div>
+                                        {{-- end --}}
+
+                                        <div class="col-12 p-0">
+                                            <div class="row new_rows no-gutters">
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="checkBox new-cus tur-radio"> <span>Do you have experience working with children?</span>
+                                                        <ul>
+                                                            <li class="one_li_check">
+                                                                <input type="radio" id="radio1" name="work_with_child" value="Y" @if(@$teacher->work_with_child=="Y") checked  @endif class="inputfiels" >
+                                                                <label for="radio1">Yes</label>
+                                                            </li>
+                                                            <li>
+                                                                <input type="radio" id="radio2" name="work_with_child" value="N" @if(@$teacher->work_with_child=="N") checked  @endif class="inputfiels" @if(!@$teacher->work_with_child=="Y" && !@$teacher->work_with_child=="N") checked @endif>
+                                                                <label for="radio2">No</label>
+                                                            </li>
+                                                        </ul>
+                                                        <p class="note">Note: A WWC pass is an essential criterion to onboard</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="checkBox new-cus tur-radio"> <span>{{-- Do you have any criminal cases or charges against you? --}} Do you have a history or pending criminal court cases or charges laid against you?</span>
+                                                        <ul>
+                                                            <li class="one_li_check">
+                                                                <input type="radio" id="radio3" name="criminal_case" value="Y"  @if(@$teacher->criminal_case=="Y") checked  @endif onclick="yes()" class="inputfiels">
+                                                                <label for="radio3">Yes</label>
+                                                            </li>
+                                                            <li>
+                                                                <input type="radio" id="radio4" name="criminal_case" value="N"  @if(@$teacher->criminal_case=="N") checked  @endif onclick="no()" class="inputfiels">
+                                                                <label for="radio4" >No</label>
+                                                            </li>
+                                                        </ul>
+
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="col-md-4 col-sm-6 {{-- tutor-c --}}" @if(@$teacher->criminal_case=="N") style="display: none" @endif id="criminal_detail">
+                                                    <div class="form_box_area"  >
+                                                        <label>Share more details</label>
+                                                        <input type="text" id="criminal_det" placeholder="Enter here" value="{{@$teacher->criminal_details}}"  name="criminal_details" i class="inputfiels">
+
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 col-sm-12">
+                                            <div class="form_box_area">
+                                                <label>What makes you an awesome V-Tutor?*</label>
+                                                <textarea placeholder="Describe your key areas, strengths, interests in about 200 words." name="about_me" class="inputfiels">{{@$teacher->about_me}}</textarea>
+                                                <div class="error_about_me"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="uplodimg text_sm_c">
+                                                <div class="uplodimgfil">
+                                                    <b>Profile Picture*</b>
+                                                    <input type="file" name="img" id="file-1" class="inputfile imgValue inputfile-1 @if(!@Auth::user()->profile_pic) @if(!@Auth::user()->avatar)   @endif @endif" data-multiple-caption="{count} files selected" onChange="fun();" >
+                                                    <label for="file-1">Upload Profile Pic<img src="{{ public_asset('assets/images/up.png')}}" alt=""></label>
+
+                                                </div>
+                                                @if(@Auth::user()->profile_pic)
+                                                    <div class="uplodimgf100ilimg review_img" style="display: block;">
+                                                    <em><img src="{{env('STORAGE_URL') . '/teacher_profile_pic/'.@Auth::user()->profile_pic}}" alt="" id="img2"></em>
+                                                    </div>
+                                                @else
+                                                    @if(@Auth::user()->avatar)
+                                                    <div class="uplodimgfilimg review_img" style="display: block;">
+                                                        <em><img src="{{@Auth::user()->avatar}}" alt="" id="img2"></em>
+                                                    </div>
+                                                    @else
+                                                    <div class="uplodimgfilimg review_img" style="display: none">
+                                                        <em><img src="" alt="" id="img2"></em>
+                                                    </div>
+                                                    @endif
+                                                @endif
+                                                <label data-toggle="modal" class="onhover" data-target="#instructionModal"><p class="ensure_text">Please ensure to upload a profile pic that meets the  <a href="javascript:void(0);" style="color:#b80f0a;">standards and requirements </a>of V-Tutor.</p></label>
+                                                {{-- <div class="uplodimgfilimg review_img" style="display: none">
+                                                    <em><img src="" alt="" id="img2"></em>
+                                                </div> --}}
+                                                {{-- <label data-toggle="modal" class="onhover" data-target="#instructionModal"><p class="i_txt_p onhover">Please ensure to upload a profile pic that meets the  <a href="javascript:void(0);"><span class="" style="color:#b80f0a;">standards and requirements</span></a>of V-Tutor.</p></label>   --}}
+
+                                            </div>
+                                            <p class="note error_image"></p>
+                                            {{-- <p class="note">Please ensure to upload a profile pic...</p> --}}
+
+                                        </div>
+                                        <div class="col-md-12 col-sm-12">
+                                            <div class="form_box_area">
+                                                <label>Profile Video</label>
+                                                <input type="text" placeholder="Enter or paste YouTube URL here" id="youtube_link" value="{{@$teacher->profile_video}}" class="urli inputfiels" name="youtube_link">
+                                            </div>
+                                            <span id="youtube_err" style="color: red"></span>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+
+                                <div class="user-account-info">
+
+                                    <div class="row new_rows no-gutters">
+                                        <div class="col-12">
+                                        <h3>Residential Address</h3>
+                                        </div>
+
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>Country*</label>
+                                                <select name="country" class="inputfiels">
+                                                    <option value="1">Australia</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>State / Province / Region*</label>
+                                                <select name="state" class="inputfiels">
+                                                    @foreach($state as $key=> $val)
+                                                    <option value="{{@$val->id}}" @if(Auth::user()->state==$val->id) selected  @endif  >{{$val->state_name}}</option>
+                                                    @endforeach
+                                                   {{--  <option value="2" @if(@$teacher->state=="2") selected  @endif >Queensland</option>
+                                                    <option value="3" @if(@$teacher->state=="3") selected  @endif >South Australia</option>
+                                                    <option value="4" @if(@$teacher->state=="4") selected  @endif >Tasmania</option>
+                                                    <option value="5" @if(@$teacher->state=="5") selected  @endif >Victoria</option>
+                                                    <option value="6" @if(@$teacher->state=="6") selected  @endif >Western Australia</option>
+                                                    <option value="7" @if(@$teacher->state=="7") selected  @endif >Australian Capital Territory</option>
+                                                    <option value="8" @if(@$teacher->state=="8") selected  @endif >Jervis Bay Territory</option>
+                                                    <option value="9" @if(@$teacher->state=="9") selected  @endif >Northern Territory</option> --}}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>City* </label>
+                                                <input type="text" placeholder="Sydney" name="city" value="{{@$teacher->city}}" class="inputfiels">
+                                                <div class="error_city"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>Unit & Street Address *</label>
+                                                <input type="text" placeholder="123, Sample St" name="address" value="{{@$teacher->address}}" class="inputfiels">
+                                                <div class="error_address"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label>Zip / Postal Code *</label>
+                                                <input type="number" minlength="4"  placeholder="1234" name="zip" value="{{@$teacher->zip}}" class="inputfiels">
+                                                <div class="error_zip"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-xs-12">
+                                            <div class="user-account-info">
+                                                <h3>References</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-xs-12">
+                                            <div class="user-account-info">
+                                                <h3>Add Reference 1</h3>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="form_box_area">
+                                                <label>Name</label>
+                                                <input type="text" id="ref_1_name" name="ref_1_name" class="form-control " placeholder="Name" value="{{ @$tutor_to_ref->ref_1_name }}" maxlength="255">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="form_box_area">
+                                                <label>Email</label>
+                                                <input type="text" id="ref_1_email" name="ref_1_email" class="form-control " placeholder="Email" value="{{ @$tutor_to_ref->ref_1_email }}" maxlength="255">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="form_box_area">
+                                                <label>Phone</label>
+                                                <input type="number" id="ref_1_phone" name="ref_1_phone" class="form-control " placeholder="Phone" value="{{ @$tutor_to_ref->ref_1_phone }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label for="ref_1_relation">Relationship*</label>
+                                                <select name="ref_1_relation" class="inputfiels" id="ref_1_relation">
+                                                    <option value="">Select Relationship</option>
+                                                    <option value="1" @if(@$tutor_to_ref->ref_1_relation == 1) selected="" @endif>Partner</option>
+                                                    <option value="2" @if(@$tutor_to_ref->ref_1_relation == 2) selected="" @endif>Family</option>
+                                                    <option value="3" @if(@$tutor_to_ref->ref_1_relation == 3) selected="" @endif>Friend</option>
+                                                    <option value="4" @if(@$tutor_to_ref->ref_1_relation == 4) selected="" @endif>Colleague</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-xs-12">
+                                            <div class="user-account-info">
+                                                <h3>Add Reference 2</h3>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="form_box_area">
+                                                <label for="ref_2_name">Name</label>
+                                                <input type="text" id="ref_2_name" name="ref_2_name" class="form-control " placeholder="Name" value="{{ @$tutor_to_ref->ref_2_name }}" maxlength="255">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="form_box_area">
+                                                <label>Email</label>
+                                                <input type="text" id="ref_2_email" name="ref_2_email" class="form-control " placeholder="Email" value="{{ @$tutor_to_ref->ref_2_email }}" maxlength="255">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="form_box_area">
+                                                <label>Phone</label>
+                                                <input type="number" id="ref_2_phone" name="ref_2_phone" class="form-control " placeholder="Phone" value="{{ @$tutor_to_ref->ref_2_phone }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-6">
+                                            <div class="form_box_area">
+                                                <label for="ref_2_relation">Relationship*</label>
+                                                <select name="ref_2_relation" class="inputfiels" id="ref_2_relation">
+                                                    <option value="">Select Relationship</option>
+                                                    <option value="1" @if(@$tutor_to_ref->ref_2_relation == 1) selected="" @endif>Partner</option>
+                                                    <option value="2" @if(@$tutor_to_ref->ref_2_relation == 2) selected="" @endif>Family</option>
+                                                    <option value="3" @if(@$tutor_to_ref->ref_2_relation == 3) selected="" @endif>Friend</option>
+                                                    <option value="4" @if(@$tutor_to_ref->ref_2_relation == 4) selected="" @endif>Colleague</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-xs-12">
+                                            <div class="user-account-info">
+                                                <h3>Bank Information</h3>
+                                            </div>
+                                        </div>
+                            <div class="clearfix"></div>
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form_box_area">
+                                    <label>Bank Name*</label>
+                                    <input type="text" id="bank_name" name="bank_name" class="form-control required" placeholder="Bank Name" @if(@$teacher->bank_name) disabled @endif value="{{ @$teacher->bank_name }}">
+                                </div>
+                            </div>
+
+                             <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form_box_area">
+                                    <label >BSB code*</label>
+                                    <input type="text" id="bsb_code" name="bsb_code" class="form-control required" placeholder="BSB code" @if(@$teacher->bsb_code) disabled @endif value="{{ @$teacher->bsb_code }}">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form_box_area">
+                                    <label >Account No*</label>
+                                    <input type="text" id="account_no" name="account_no" class="form-control required" placeholder="Account No" @if(@$teacher->account_no) disabled @endif value="{{ @$teacher->account_no }}">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                                <div class="form_box_area">
+                                    <label>Account Name*</label>
+                                    <input type="text" id="account_name" name="account_name" class="form-control required" placeholder="Account Name" @if(@$teacher->account_name) disabled @endif value="{{ @$teacher->account_name }}">
+                                </div>
+                            </div>
+                            <p class="note note_cc">Note: Please ensure your bank details are accurate.</p>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+
+
+                                     <div class="check-box check-box-cu">
+                                        <input type="checkbox" id="checkbox1" name="checkbox1" value="all" @if(@Auth::user()->f_name && @Auth::user()->l_name && @Auth::user()->email && @Auth::user()->phone && @Auth::user()->teacher_emp_status && @Auth::user()->hours && @Auth::user()->why_tutor && @Auth::user()->about_me && @Auth::user()->city && @Auth::user()->address && @Auth::user()->zip) checked="" @endif>
+                                        <label for="checkbox1" class="checklabeel">I authorise V-Tutor to undertake background,
+                                        reference and other related checks with respective agencies.</label>
+
+                                         <input type="checkbox" id="checkbox2" name="checkbox2" value="all" @if(@Auth::user()->f_name && @Auth::user()->l_name && @Auth::user()->email && @Auth::user()->phone && @Auth::user()->teacher_emp_status && @Auth::user()->hours && @Auth::user()->why_tutor && @Auth::user()->about_me && @Auth::user()->city && @Auth::user()->address && @Auth::user()->zip) checked="" @endif>
+                                        <label for="checkbox2" class="checklabeel">I have read and agree to V-Tutor <a href="#" target="_blank"> Privacy Policy </a> and <a href="#" target="_blank"> Terms &amp; Conditions </a></label>
+                                    </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        {{-- <div class="row">
+                            <div class="col-12">
+                                <div class="form_box_area">
+                                    <div class="check-box">
+                                        <input type="checkbox" id="checkbox2" name="checkbox2" value="all" @if(@Auth::user()->f_name && @Auth::user()->l_name && @Auth::user()->email && @Auth::user()->phone && @Auth::user()->teacher_emp_status && @Auth::user()->hours && @Auth::user()->why_tutor && @Auth::user()->about_me && @Auth::user()->city && @Auth::user()->address && @Auth::user()->zip) checked="" @endif>
+                                        <label for="checkbox2" class="checklabeel">I have read and agree to V-Tutor <a href="#" target="_blank"> Privacy Policy </a> and <a href="#" target="_blank"> Terms &amp; Conditions </a></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> --}}
+                        <div class="row">
+                            <div class="clearfix"></div>
+
+                                        <div class="col-12">
+                                        <hr class="das-hr">
+
+                                        <div class="footdashSec">
+                                            <input @if(@Auth::user()->profile_pic || @Auth::user()->avatar)
+                                            @if(@Auth::user()->f_name && @Auth::user()->l_name && @Auth::user()->email && @Auth::user()->phone && @Auth::user()->teacher_emp_status && @Auth::user()->hours && @Auth::user()->why_tutor && @Auth::user()->about_me && @Auth::user()->city && @Auth::user()->address && @Auth::user()->zip)
+                                            3 type="button" class="sub_btn2 disable-left readonlyfields" id="applyvtutor"
+                                            @else
+                                            1 type="submit" class="sub_btn2 submit-login disable-input"
+                                            @endif
+                                            @else
+                                            2 type="submit" class="sub_btn2 submit-login disable-input"
+                                            @endif name="" value="Apply as V-Tutor " >
+                                            <div class="sub2-lap">
+                                                <img src="{{ public_asset('assets/images/cona.png')}}">
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                    </div>
+                                    </div>
+
+
+
+
+                            </form>
+
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal res-modal newqusmo instructionModal" id="instructionModal">
+     <div class="modal-dialog modal-dialog-centered instructionModal">
+      <div class="modal-content instructionModal">
+
+        <!-- Modal Header -->
+        <div class="modal-header instructionModal">
+          <h4 class="modal-title">Instructions</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body instructionModal">
+          <form action="">
+            <div class="divs">
+                <div class="appome_input form_box_area cls1 ">
+                    <label>
+                        {{-- - When clicked, add a pop-up with following instructions:
+                        - Ensure your face is visible clearly and occupies 80% of photo
+                        - Make sure to smile, look cheerful but do not over do
+                        - Make sure to wear formal attire and look professional
+                        - Ensure the picture has a white or a lighter background so face in the foreground is clearly visible
+                        - Upload latest or recently taken picture to ensure it matches in video session --}}
+                    </label>
+
+                    <div class=" new-cus  b-block">
+                        <ul class="submn">
+
+                            <li class="">
+                                - Ensure your face is visible clearly and occupies 80% of photo
+                            </li>
+                            <li class="">
+                                - Make sure to smile, look cheerful but do not over do
+                            </li>
+                            <li class="">
+                                - Make sure to wear formal attire and look professional
+                            </li>
+                            <li class="">
+                                - Ensure the picture has a white or a lighter background so face in the foreground is clearly visible
+                            </li>
+                            <li class="">
+                                - Upload latest or recently taken picture to ensure it matches in video session
+                            </li>
+                        </ul>
+                    </div>
+
+                    {{-- <div class="next-btn1">
+                        <button type="button" class="btn btn-new btn-danger" data-dismiss="modal" id="next">Ok</button>
+                    </div> --}}
+                </div>
+
+
+
+            </div>
+
+          </form>
+        </div>
+
+
+      </div>
+    </div>
+</div>
+{{-- </div> --}}
+
+@endsection
+@section('footer')
+@include('include.footer')
+@endsection
+@section('script')
+@include('include.script')
+{{-- select2 --}}
+<script src="{{ public_asset('assets/js/chosen.jquery.js') }}" type="text/javascript"></script>
+<script src="{{ public_asset('assets/js/init.js') }}" type="text/javascript"></script>
+
+{{-- select2 end --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
+         <script>
+
+            $(document).ready(function(){
+
+    jQuery.validator.addMethod("mobileonly", function(value, element) {
+    return this.optional(element) ||  /^[+]?\d+$/.test(value.toLowerCase());
+    }, "Enter valid number");
+
+
+                $('#frm').validate({
+                   ignore: [],
+                    rules:{
+                        f_name:{
+                            required:true,
+                        },
+                        l_name:{
+                            required:true,
+                        },
+                        hours:{
+                            required:true,
+                        },
+                        ph:{
+                            required:true,
+                            minlength:10,
+                            maxlength:10,
+                            mobileonly:true,
+                            remote: {
+                                url:  '{{route('check.mobile.two')}}',
+                                type: "get",
+                                data: {
+                                ph: function() {
+                                    return $( "#ph" ).val();
+                                }
+                            }
+                            }
+                        },
+                        ref_1_email:{
+                            email:true
+                        },
+                        ref_2_email:{
+                            email:true
+                        },
+                        ref_1_phone:{
+                            minlength:10,
+                            maxlength:10,
+                            mobileonly:true
+                        },
+                        ref_2_phone:{
+                            minlength:10,
+                            maxlength:10,
+                            mobileonly:true
+                        },
+                        teacher_emp_status:{
+                            required:true,
+                        },
+                        why_tutor:{
+                            required:true,
+                        },
+                        country:{
+                            required:true,
+                        },
+                        state:{
+                            required:true,
+                        },
+                         city:{
+                            required:true,
+                        },
+
+                         zip:{
+                            required:true,
+                        },
+                         about_me:{
+                            required:true,
+                            minlength:10,
+                        },
+                         bank_name:{
+                            required:true,
+                            minlength:3,
+                        },
+                        account_no:{
+                            required:true,
+                           // minlength:10,
+                        },
+                         account_name:{
+                            required:true,
+                            minlength:3,
+                        },
+                         bsb_code:{
+                            required:true,
+                            minlength:6,
+                            maxlength:6,
+                        },
+                         'language[]':{
+                            required:true,
+                        },
+                        address:{
+                            required:true,
+                            minlength:4,
+                        },
+                         profile_video:{
+                            required:true,
+                            minlength:4,
+                        },
+                        // img:{
+                        //     required:true
+                        // },
+                    },
+                       messages:{
+                        ph:{
+                            required:'Please enter a valid 10 digit mobile number',
+                            minlength:'Mobile number can have minimum 10 digits',
+                            maxlength:'Mobile number can have maximum 10 digits',
+                            mobileonly:'Enter a valid 10 digit mobile number',
+                            remote:"This mobile number already exists.!",
+                        },
+                        ref_1_phone:{
+                            minlength:'Mobile number can have minimum 10 digits',
+                            maxlength:'Mobile number can have maximum 10 digits',
+                            mobileonly:'Enter a valid 10 digit mobile number'
+                        },
+                        ref_2_phone:{
+                            minlength:'Mobile number can have minimum 10 digits',
+                            maxlength:'Mobile number can have maximum 10 digits',
+                            mobileonly:'Enter a valid 10 digit mobile number'
+                        },
+                        ref_1_email:{
+                            email:'Please provide valid email-id'
+                        },
+                    },
+                    submitHandler: function(form){
+                         var youtube_link = $('#youtube_link').val();
+                         //alert(youtube_link);
+                        if (youtube_link!="") {
+                              var _url = $('#youtube_link').val();
+                              if (_url.includes("www.youtube.com/watch?") || _url.includes("https://youtu.be/") ) {
+                                 form.submit();
+                              }else{
+                                // alert('Please enter valid youtube link');
+                                $("#youtube_err").html("Please enter valid youtube link");
+                                return false;
+                              }
+                           }
+                            @if(auth::user()->avatar=="" &&  auth::user()->profile_pic=="" )
+                           else{
+                            var img = $.trim($(".imgValue").val());
+                            if(img == ""){
+                                var error = '<span generated="true" class="error" style="color:#f85d2c;border:none!important;background:none!important;">'+'This field is required!'+'</span>';
+                                $('.error_image').html(error);
+                                return false;
+                            }else{
+                                form.submit();
+                            }
+
+                           }
+                            @else
+                           form.submit();
+                             @endif
+                     },
+
+
+
+                });
+                var isCls = $("#applyvtutor").hasClass("readonlyfields");
+                if(isCls){
+                    // $(".inputfiels").attr("readonly",true);
+                    $(".inputfiels").attr("disabled",true);
+                }
+                $('#checkbox1').change(function(){
+                    var obj = $('#checkbox2');
+                    if($(this).prop('checked')==true && obj.prop('checked')==true){
+                        $('.disable-input').prop("disabled",false);
+                        $('.submit-login').removeClass('disable-input');
+
+                    }else{
+                        $('.submit-login').addClass('disable-input');
+                        $('.disable-input').prop("disabled",true);
+
+                    }
+                });
+                $('#checkbox2').change(function(){
+                    var obj = $('#checkbox1');
+                    if ($(this).prop('checked')==true && obj.prop('checked')==true){
+                        $('.disable-input').prop("disabled",false);
+                        $('.submit-login').removeClass('disable-input');
+
+                    }else{
+                        $('.submit-login').addClass('disable-input');
+                        $('.disable-input').prop("disabled",true);
+
+                    }
+                });
+            });
+
+        </script>
+<script>
+    function fun(){
+        var i=document.getElementById('file-1').files[0];
+        console.log(i);
+        var b=URL.createObjectURL(i);
+        $(".review_img").show();
+        $("#img2").attr("src",b);
+    }
+
+    function yes(){
+     $("#criminal_det").val('{{@$teacher->criminal_details}}');
+     $("#criminal_detail").show();
+    }
+
+    function no(){
+
+      $("#criminal_det").val('');
+      $("#criminal_detail").hide();
+    }
+
+    $(document).on("change keyup",".inputfiels",function(){
+        $(this).removeClass("error");
+    });
+
+
+    </script>
+
+    <script>
+             @if(session()->has('success') || session()->has('error') || $errors->any())
+                $("#popupModal").show();
+                @endif
+    </script>
+@endsection

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Core Pages -->
+  <url><loc>https://v-tutor.com.au/</loc></url>
+  <url><loc>https://v-tutor.com.au/about-us</loc></url>
+  <url><loc>https://v-tutor.com.au/contact-us</loc></url>
+  <url><loc>https://v-tutor.com.au/faq</loc></url>
+  <url><loc>https://v-tutor.com.au/login</loc></url>
+  <url><loc>https://v-tutor.com.au/sign-up</loc></url>
+  <url><loc>https://v-tutor.com.au/tutor/sign-up</loc></url>
+  <url><loc>https://v-tutor.com.au/terms-conditions</loc></url>
+  <url><loc>https://v-tutor.com.au/privacy-policy</loc></url>
+  <url><loc>https://v-tutor.com.au/terms-service</loc></url>
+
+  <!-- Programs -->
+  <url><loc>https://v-tutor.com.au/programs/learning</loc></url>
+  <url><loc>https://v-tutor.com.au/programs/oc</loc></url>
+  <url><loc>https://v-tutor.com.au/programs/naplan</loc></url>
+
+  <!-- Subjects -->
+  <url><loc>https://v-tutor.com.au/subject/maths</loc></url>
+  <url><loc>https://v-tutor.com.au/subject/english</loc></url>
+  <url><loc>https://v-tutor.com.au/subject/science</loc></url>
+
+  <!-- Years -->
+  <url><loc>https://v-tutor.com.au/year/year-1</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-2</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-3</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-4</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-5</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-6</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-7</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-8</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-9</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-10</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-11</loc></url>
+  <url><loc>https://v-tutor.com.au/year/year-12</loc></url>
+
+  <!-- States -->
+  <url><loc>https://v-tutor.com.au/state/new-south-wales</loc></url>
+  <url><loc>https://v-tutor.com.au/state/victoria</loc></url>
+  <url><loc>https://v-tutor.com.au/state/queensland</loc></url>
+  <url><loc>https://v-tutor.com.au/state/south-australia</loc></url>
+  <url><loc>https://v-tutor.com.au/state/western-australia</loc></url>
+  <url><loc>https://v-tutor.com.au/state/australian-capital-territory</loc></url>
+  <url><loc>https://v-tutor.com.au/state/northern-territory</loc></url>
+
+  <!-- Other Pages -->
+  <url><loc>https://v-tutor.com.au/tutor-search-result</loc></url>
+  <url><loc>https://v-tutor.com.au/blog</loc></url>
+
+</urlset>

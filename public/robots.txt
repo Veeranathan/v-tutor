@@ -1,0 +1,19 @@
+User-agent: *
+# Student pages
+Disallow: /my-profile
+Disallow: /my-class
+Disallow: /student-mytutors
+Disallow: /my-review
+Disallow: /student-my-payments
+Disallow: /my-profile/reset-password
+
+# Tutor pages
+Disallow: /tutor/
+
+# Admin pages
+Disallow: /admin/
+
+# Search & filtered pages
+Disallow: /*?
+
+Allow: /

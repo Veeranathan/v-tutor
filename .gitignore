@@ -13,8 +13,9 @@ yarn-error.log
 /.idea
 /.vscode
 
-/bootstrap
-/bootstrap/cache/*.php
+/bootstrap/*
+!/bootstrap/app.php
+!/bootstrap/cache/
 !/bootstrap/cache/.gitignore
 
 # Environment files and secrets

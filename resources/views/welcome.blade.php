@@ -1475,7 +1475,7 @@
                                 </div>
                                 <h4><span>2.</span> Personalised Programs</h4>
                                 <ul class="methodology-step-list">
-                                    <li>Learning pathways shaped around individual needs</li>
+                                    <li>Learning pathways shaped around individual needs.</li>
                                 </ul>
                             </div>
                         </div>

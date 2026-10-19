@@ -188,10 +188,9 @@
                    {{-- <h6>Please note:</h6>  --}}
                    <p style="font-style: italic !important;font-size:13px;font-weight: bold;"><b>Please note:</b> </p>
                    <p style="font-style: italic !important;font-size:13px;">1. You can join the session at your scheduled time. The tutor or meeting link may not be active if you join too early.</p>
-                   <p style="font-style: italic !important;font-size:13px;">2. You’ll need an active <a href="https://zoom.us/" style="color:#B80F0A;">Zoom account</a> to join. If you don’t have one, please create an account and stay logged in before your session.</p>
-                   <p style="font-style: italic !important;font-size:13px;">3. If you fail to join within 15 minutes of the scheduled start time, it will be marked as a ‘no show’, and session charges may be forfeited.</p>
-                   <p style="font-style: italic !important;font-size:13px;">4. Session durations are fixed and cannot be extended under any circumstances. If a session is interrupted due to technical issues from the tutor’s end or the platform, it will be treated as ‘cancelled’, and charges will be refunded.</p>
-                   <p style="font-style: italic !important;font-size:13px;">5. Please ensure a stable internet connection, test your audio/video, and join from a quiet, well-lit space for the best learning experience.</p>
+                   <p style="font-style: italic !important;font-size:13px;">2. If you fail to join within 15 minutes of the scheduled start time, it will be marked as a ‘no show’, and session charges may be forfeited.</p>
+                   <p style="font-style: italic !important;font-size:13px;">3. Session durations are fixed and cannot be extended under any circumstances. If a session is interrupted due to technical issues from the tutor’s end or the platform, it will be treated as ‘cancelled’, and charges will be refunded.</p>
+                   <p style="font-style: italic !important;font-size:13px;">4. Please ensure a stable internet connection, test your audio/video, and join from a quiet, well-lit space for the best learning experience.</p>
 
                </div>
            </div>

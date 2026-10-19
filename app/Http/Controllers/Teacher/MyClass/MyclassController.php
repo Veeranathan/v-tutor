@@ -257,6 +257,7 @@ class MyclassController extends Controller
                 ->where('student_id', $scb->student_id)
                 ->where('student_grade_id', $scb->student_grade_id)
                 ->where('subject_id', $scb->subject_id)
+                ->where('booking_no', $booking_no)
                 ->orderByDesc('from_time_user')
                 ->orderByDesc('booking_date')
                 ->paginate(1);

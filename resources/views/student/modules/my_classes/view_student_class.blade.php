@@ -661,7 +661,43 @@
                                         </div>
                                     </div>
                                 </div>
+                        <!-- Student feedback details -->
+                                @if($bookingDataInformation->session_summary && $bookingDataInformation->session_recommendations && $bookingDataInformation->permission_grade)
+                                <div class="session-info"
+                                    style="margin-top: 10px; padding: 20px; width:100%; background-color: #f9f9f9; border-radius: 8px;">
 
+                                    <h4>Session Feedback - Details</h4>
+
+                                    <p><strong>Performance Grade:</strong>
+                                       @if (isset($bookingDataInformation->permission_grade) && $bookingDataInformation->permission_grade == 1)
+                                                    1 - Beginning
+                                                @elseif (isset($bookingDataInformation->permission_grade) && $bookingDataInformation->permission_grade == 2)
+                                                    2 - Developing
+                                                @elseif (isset($bookingDataInformation->permission_grade) && $bookingDataInformation->permission_grade == 3)
+                                                    3 - Proficient
+                                                @elseif (isset($bookingDataInformation->permission_grade) && $bookingDataInformation->permission_grade == 4)
+                                                    4 - Strong
+                                                @elseif (isset($bookingDataInformation->permission_grade) && $bookingDataInformation->permission_grade == 5)
+                                                    5 - Mastery
+                                                @else
+                                                    N/A
+                                                @endif
+                                    </p>
+
+                                    <p><strong>Session Feedback:</strong></p>
+                                    <div>
+                                    <p>{!! nl2br(e($bookingDataInformation->session_summary ?? 'N/A')) !!}</p>
+                                    </div>
+
+                                    <p><strong>Session Recommendations:</strong></p>
+                                    <div><p>
+                                        {!! nl2br(e($bookingDataInformation->session_recommendations ?? 'N/A')) !!}</p>
+                                    </div>
+
+
+                                </div>
+                            @endif
+                           <!-- Student feedback details End -->
                                 <div class="booking-stat table_book">
                                     <div class="table-responsive">
                                         @if (@$bookingDataInformation->booking_status == 'C')

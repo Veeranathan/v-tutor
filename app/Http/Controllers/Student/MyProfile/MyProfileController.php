@@ -174,7 +174,25 @@ class MyProfileController extends Controller
         ];
 
         // Update school if provided
-        if ($request->school_id != 0) {
+        if ($request->school_id == 0 && $request->filled('other_school_name')) {
+
+            $school = new School();
+
+            $maxAcaraId = School::max('acara_id');
+
+            $school->acara_id = ($maxAcaraId ?? 0) + 1;
+            $school->school_name = $request->other_school_name;
+            $school->is_other_school = 1;
+            $school->state_id = $request->show_school_state;
+            $school->suburb_id = $request->show_school_suburb;
+            $school->postcode = $request->show_school_postcode;
+
+            $school->save();
+
+            $upd['school'] = $school->id;
+
+        } elseif ($request->school_id != 0) {
+
             $upd['school'] = $request->school_id;
         }
 

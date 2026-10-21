@@ -470,8 +470,7 @@
                                             <img src="{{ public_asset('assets/images/all_avatars/' . @$bookingDataInformation->getTutor->profile_pic) }}"
                                                 alt="profile_img">
                                             @else
-                                            <img src="{{ env('STORAGE_URL') . '/teacher_profile_pic/' . @$bookingDataInformation->getTutor->profile_pic }}"
-                                                alt="">
+                                            <img src="{{ asset('storage/teacher_profile_pic/' . @$bookingDataInformation->getTutor->profile_pic) }}" alt="">
                                             @endif
                                             @else
                                             @if (@$bookingDataInformation->getTutor->avatar)

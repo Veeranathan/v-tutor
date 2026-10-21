@@ -84,8 +84,7 @@
                                         <img src="{{ public_asset('assets/images/all_avatars/' . @$vtutor->profile_pic) }}"
                                             alt="profile_img">
                                         @else
-                                        <img src="{{ env('STORAGE_URL') . '/teacher_profile_pic/' . @$vtutor->profile_pic }}"
-                                            alt="">
+                                            <img src="{{ asset('storage/teacher_profile_pic/' . @$vtutor->profile_pic) }}" alt="">
                                         @endif
                                         @else
                                         @if (@$vtutor->avatar)
@@ -606,8 +605,7 @@
                                                     <img src="{{ public_asset('assets/images/all_avatars/' . $profilePic) }}"
                                                         alt="profile_img">
                                                     @elseif ($profilePic)
-                                                    <img src="{{ env('STORAGE_URL') . '/teacher_profile_pic/' . $profilePic }}"
-                                                        alt="">
+                                                   <img src="{{ asset('storage/teacher_profile_pic/' . $profilePic) }}" alt="">
                                                     @else
                                                     <img src="{{ public_asset('assets/images/searchimg1.jpg') }}"
                                                         alt="">

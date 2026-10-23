@@ -763,14 +763,20 @@
                                                                             <li>
                                                                                 {{--  data-target="#log_modal{{ @$tutor->id }}"  --}}
                                                                                 <img src="{{ public_asset('assets/images/list_ico3.png') }}"
-                                                                                    alt=""><a
-                                                                                    @if (!@Auth::check()) data-toggle="modal" data-target="#log_modal"  class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="javascript:void(0);" @else href="{{ url('tutor-public-profile') }}/{{ @$tutor->slug }}" target="_blank" @endif>Visit
-                                                                                    my profile</a>
+                                                                                    alt=""><a class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="{{ url('tutor-public-profile') }}/{{ @$tutor->slug }}" target="_blank">
+                                                                                    Visit my profile</a>
                                                                             </li>
                                                                             <li>
+                                                                              @if (Auth::check())
                                                                                 <img src="{{ public_asset('assets/images/list_ico4.png') }}"
                                                                                     alt="">
-                                                                                <a @if (!@Auth::check()) data-toggle="modal" data-target="#log_modal"  class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="javascript:void(0);" @else href="{{ route('student.my.review', @$tutor->slug) }}" @endif >Post a review </a>
+                                                                                    <a href="{{ route('student.my.review', @$tutor->slug) }}"
+                                                                                    class="save_input_data_on_click text-nowrap ms-1"
+                                                                                    data-type="PP"
+                                                                                    data-id="{{ @$tutor->id }}">
+                                                                                        Post a review
+                                                                                    </a>
+                                                                                @endif
                                                                             </li>
 
 

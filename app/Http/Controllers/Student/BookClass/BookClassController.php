@@ -156,8 +156,8 @@ class BookClassController extends Controller
     public function studentBookClass(Request $request, $slug = null, $id = null)
     {
         try {
-            $studentTz = Auth::user()->timezone_id ?? 'UTC';
             $user = Auth::user();
+            $studentTz = $user->timezone_id ?? 'UTC';
             $data['user'] = $user;
 
             $data['admin_disable_bookings_values'] = $adminDisable = AdminDisableBookings::first();
@@ -178,26 +178,32 @@ class BookClassController extends Controller
             }
 
             $data['nextMaxDate'] = Carbon::now('UTC')->addDays(30)->toDateString();
-            $gradeId = $user->grade;
+            $gradeId = $user->grade ?? null;
 
+            $data['favs'] = collect();
             // Favourites
+             if($user){
             $data['favs'] = UserToFavourite::with(['getStudentInfo', 'getTutorInfo.getTutorShipPlan'])
                 ->where('user_id', $user->id)
                 ->whereHas('getTutorInfo.getTutorShipPlan', fn($q) => $q->where('grade_id', $gradeId))
                 ->select('id', 'user_id', 'favourite_user_id')
                 ->get();
-
+             }
             $data['grade'] = Grade::where(['id' => $gradeId, 'status' => 'A'])->first();
             $data['all_days'] = [1, 2, 3, 4, 5, 6, 7];
 
             if ($request->filled('search_tutor_id') || $request->filled('search_tutor_id_studentclass')) {
                 $tutorId = $request->search_tutor_id ?? $request->search_tutor_id_studentclass;
 
-                $data['vtutor'] = User::with(['getTutorShipPlan.getSubject'])
-                    ->where('id', $tutorId)
-                    ->where('status', 'A')
-                    ->whereHas('getTutorShipPlan', fn($q) => $q->where('grade_id', $gradeId))
-                    ->first();
+              $data['vtutor'] = User::with(['getTutorShipPlan.getSubject'])
+                ->where('id', $tutorId)
+                ->where('status', 'A')
+                ->when($gradeId, function ($q) use ($gradeId) {
+                    $q->whereHas('getTutorShipPlan', function ($subQuery) use ($gradeId) {
+                        $subQuery->where('grade_id', $gradeId);
+                    });
+                })
+                ->first();
 
                 $data['subjects'] = TutorshipPlan::with(['getSubject'])
                     ->where(['teacher_id' => $data['vtutor']->id, 'grade_id' => @Auth::user()->grade, 'status' => 'A'])

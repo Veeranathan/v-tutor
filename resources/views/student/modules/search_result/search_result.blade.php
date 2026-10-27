@@ -638,7 +638,7 @@
                                                                         <h4 class="d-inline-flex align-items-center">
                                                                             {{--  data-target="#log_modal{{ @$tutor->id }}"  --}}
                                                                             <a
-                                                                                @if (!@Auth::check()) class="save_input_data_on_click" data-type="PP" data-id="{{ @$tutor->id }}" data-toggle="modal" data-target="#log_modal"  href="javascript:void(0);" @else href="{{ url('tutor-public-profile') }}/{{ @$tutor->slug }}" target="_blank" @endif>{{ @$tutor->f_name . ' ' . @$tutor->l_name }}</a>
+                                                                                 class="save_input_data_on_click" data-type="PP" href="{{ url('tutor-public-profile') }}/{{ @$tutor->slug }}" target="_blank">{{ @$tutor->f_name . ' ' . @$tutor->l_name }}</a>
                                                                             @if(@$tutor->free_trial == 1)
                                                                                 <img src="{{ public_asset('assets/images/free_trial_icon.png') }}" width="75" height="75" class="ml-1 d-inline-block" alt="">
                                                                             @endif
@@ -755,7 +755,7 @@
                                                                             <li>
                                                                                 <img src="{{ public_asset('assets/images/list_ico1.png') }}"
                                                                                     alt="">
-                                                                                <a @if (!@Auth::check()) data-toggle="modal" data-target="#log_modal"  class="save_input_data_on_clic text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="javascript:void(0);" @else href="{{ url('studentbook-class?search_tutor_slug_studentclass=' . optional($tutor)->slug . '&search_tutor_id_studentclass=' . optional($tutor)->id) }}" @endif>Book a session</a>
+                                                                                <a  class="save_input_data_on_clic text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}" href="{{ url('studentbook-class?search_tutor_slug_studentclass=' . optional($tutor)->slug . '&search_tutor_id_studentclass=' . optional($tutor)->id) }}" >Book a session</a>
                                                                             </li>
 
 
@@ -764,15 +764,16 @@
                                                                                 {{--  data-target="#log_modal{{ @$tutor->id }}"  --}}
                                                                                 <img src="{{ public_asset('assets/images/list_ico3.png') }}"
                                                                                     alt=""><a
-                                                                                    @if (!@Auth::check()) data-toggle="modal" data-target="#log_modal"  class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="javascript:void(0);" @else href="{{ url('tutor-public-profile') }}/{{ @$tutor->slug }}" target="_blank" @endif>Visit
+                                                                                     class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}" href="{{ url('tutor-public-profile') }}/{{ @$tutor->slug }}" target="_blank">Visit
                                                                                     my profile</a>
                                                                             </li>
+                                                                             @if (Auth::check())
                                                                             <li>
                                                                                 <img src="{{ public_asset('assets/images/list_ico4.png') }}"
                                                                                     alt="">
-                                                                                <a @if (!@Auth::check()) data-toggle="modal" data-target="#log_modal"  class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="javascript:void(0);" @else href="{{ route('student.my.review', @$tutor->slug) }}" @endif >Post a review </a>
+                                                                                <a  class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="javascript:void(0);"  href="{{ route('student.my.review', @$tutor->slug) }}">Post a review </a>
                                                                             </li>
-
+                                                                            @endif
 
                                                                         </ul>
                                                                     </div>

@@ -256,6 +256,7 @@ Route::post('/save-fcm-token', [PushNotificationController::class, 'saveToken'])
 Route::get('/notifications/unread-count', [PushNotificationController::class, 'unreadCount'])->name('notifications_unread_count')->middleware('auth');
 Route::get('/notifications/unread-list', [PushNotificationController::class, 'unreadList'])->name('notifications_unread_list')->middleware('auth');
 Route::post('/notifications/mark-read', [PushNotificationController::class, 'markRead'])->name('notifications_mark_read')->middleware('auth');
+Route::get('studentbook-class', [BookClassController::class, 'studentBookClass'])->name('student.book.class');
 
 //ALL STUDENT AUTHENTICATED ROUTE
 Route::group(['middleware' => ['auth', 'user']], function () {
@@ -273,7 +274,6 @@ Route::group(['middleware' => ['auth', 'user']], function () {
     Route::post('my-profile/update-password', [MyProfileController::class, 'update_password'])->name('student.update.password');
 
     /************************BOOK CLASS********************/
-    Route::get('studentbook-class', [BookClassController::class, 'studentBookClass'])->name('student.book.class');
     Route::any('get-all-v-tutors', [GetAllVTutorsController::class, 'getAllTutors'])->name('get.all.v.tutors');
     Route::any('booking-class/{slug?}/{id?}', [BookClassController::class, 'bookAClass'])->name('student.booking');
     Route::get('student-bookingconfirmation/{bookingId}', [BookClassController::class, 'studentBookingConfirmation'])->name('student.booking.confirmation');

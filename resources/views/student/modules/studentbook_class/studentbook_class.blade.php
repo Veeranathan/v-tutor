@@ -37,6 +37,13 @@
     .autocomplete-suggestion:hover {
         background: #eee;
     }
+   .user-account .guest-panel {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    float: none;
+}
+   
 </style>
 @endsection
 @section('content')
@@ -49,16 +56,24 @@
         <div class="row">
             <div class="zin">
                 @include('include.student_left_common')
-                <div class="user-right-panel ">
+                <div class="user-right-panel {{ !Auth::check() ? 'guest-panel' : '' }}">
                     <div class="user-right-top-new tranhis">
                         <h2 class="profile-heading fw-400">Book a Session</h2>
                         <!--h4 class="mt-2 mb-0 fw-400 w-100">Stutent Time : {{ @$studentz }}</h4>
 
                         <h4 class="mt-2 mb-0 fw-400 w-100">Tutor Time : {{ @$tutorz }}</h4-->
                         @php
-                        $myGrade = \App\Models\Grade::where(['id' => Auth::user()->grade, 'status' => 'A'])
-                        ->select('id', 'slug', 'status')
-                        ->first();
+                            $user = Auth::user();
+                            $myGrade = null;
+
+                            if ($user) {
+                                $myGrade = \App\Models\Grade::where([
+                                    'id' => $user->grade,
+                                    'status' => 'A'
+                                ])
+                                ->select('id', 'slug', 'status')
+                                ->first();
+                            }
 
                         @endphp
                         <div class="float-right" style="margin-right: 10px;">

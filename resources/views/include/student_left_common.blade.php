@@ -9,8 +9,8 @@
     use Illuminate\Support\Facades\Auth;
     use App\Models\LearningProgramAssessment;
 
-    $user = Auth::user()->fresh();
-
+    $user = Auth::user();
+    if($user){
      $hasCompletedAssessment = LearningProgramAssessment::where('student_id', $user->id)
         ->where('status', 'completed')
         ->exists();
@@ -28,7 +28,9 @@
     $totalClass = \App\Models\StudentClassBooking::where('student_id', $user->id)
         ->whereIn('booking_status', ['B', 'CM', 'C'])
         ->count();
+        }
 @endphp
+@if(Auth::check())
 
 <div class="user-left sticky_left">
     <div class="dasbordLeftsec">
@@ -194,3 +196,4 @@
         </div>
     </div>
 </div>
+@endif

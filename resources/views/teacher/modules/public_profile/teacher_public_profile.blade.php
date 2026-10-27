@@ -47,13 +47,13 @@
                                     @if (@Auth::user()->profile_pic)
                                         @php
                                             $auth_user = Auth::user();
-                                            $imagePath = $auth_user->profile_pic 
-                                                ? storage_path('app/public/teacher_profile_pic/' . $auth_user->profile_pic)
-                                                : null;
-
-                                            $imageUrl = ($imagePath && file_exists($imagePath))
-                                                ? asset('storage/teacher_profile_pic/' . $auth_user->profile_pic)
-                                                : public_asset('assets/images/blank1.png');
+                                              $imagePath = $userDetails->profile_pic
+                                                        ? public_path('storage/teacher_profile_pic/' . $userDetails->profile_pic)
+                                                        : null;
+              
+                                                    $imageUrl = ($imagePath && file_exists($imagePath))
+                                                        ? asset('storage/teacher_profile_pic/' . $userDetails->profile_pic)
+                                                        : public_asset('assets/images/blank1.png');
                                         @endphp
                                         <img src="{{@$imageUrl}}"
                                             alt="profile_img" style="width: 100%;height: 100%">

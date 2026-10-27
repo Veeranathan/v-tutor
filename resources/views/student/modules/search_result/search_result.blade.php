@@ -813,7 +813,7 @@
                                                 <nav aria-label="...">
                                                     <ul class="pagination">
 
-                                                        {{ $tutors->links('vendor.pagination.custom_pagination') }}
+                                                        {{ $tutors->links() }}
                                                     </ul>
                                                 </nav>
                                             </div>

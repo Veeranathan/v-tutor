@@ -44,26 +44,17 @@
                             {{--  --}}
                             <div class="profile-top text-center">
                                 <em>
-                                    @if (@Auth::user()->profile_pic)
-                                        @php
-                                            $auth_user = Auth::user();
-                                              $imagePath = $userDetails->profile_pic
-                                                        ? public_path('storage/teacher_profile_pic/' . $userDetails->profile_pic)
-                                                        : null;
-              
-                                                    $imageUrl = ($imagePath && file_exists($imagePath))
-                                                        ? asset('storage/teacher_profile_pic/' . $userDetails->profile_pic)
-                                                        : public_asset('assets/images/blank1.png');
-                                        @endphp
-                                        <img src="{{@$imageUrl}}"
-                                            alt="profile_img" style="width: 100%;height: 100%">
-                                    @elseif(!@Auth::user()->profile_pic && @Auth::user()->avatar)
-                                        <img src="{{ @Auth::user()->avatar }}" alt="profile_img" style="width: 100%"
-                                            class="selected_avatar_upd">
+                                    @if ($userDetails->profile_pic)
+                                      <img
+                                        src="{{ asset('storage/teacher_profile_pic/' . $userDetails->profile_pic) }}"
+                                        alt="profile_img"
+                                        style="width: 100%; height: 100%;"
+                                    >
                                     @else
                                         <img src="{{ public_asset('assets/images/blank1.png') }}" alt="profile_img"
                                             style="width: 100%" class="selected_avatar_upd">
                                     @endif
+
                                 </em>
 
                                 <h2>{{@$userDetails->f_name." ".@$userDetails->l_name }}</h2>

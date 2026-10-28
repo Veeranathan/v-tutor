@@ -638,7 +638,7 @@
                                                                         <h4 class="d-inline-flex align-items-center">
                                                                             {{--  data-target="#log_modal{{ @$tutor->id }}"  --}}
                                                                             <a
-                                                                                 class="save_input_data_on_click" data-type="PP" href="{{ url('tutor-public-profile') }}/{{ @$tutor->slug }}" target="_blank">{{ @$tutor->f_name . ' ' . @$tutor->l_name }}</a>
+                                                                                 class="save_input_data_on_click" data-type="PP" data-id="{{ @$tutor->id }}" href="{{ url('tutor-public-profile') }}/{{ @$tutor->slug }}" target="_blank">{{ @$tutor->f_name . ' ' . @$tutor->l_name }}</a>
                                                                             @if(@$tutor->free_trial == 1)
                                                                                 <img src="{{ public_asset('assets/images/free_trial_icon.png') }}" width="75" height="75" class="ml-1 d-inline-block" alt="">
                                                                             @endif

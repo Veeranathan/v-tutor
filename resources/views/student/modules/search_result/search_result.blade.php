@@ -751,11 +751,13 @@
                                                                         </div>
 
                                                                         <ul class="d-flex flex-column flex-sm-row flex-wrap gap-2">
-
+                                                                              @if(Auth::check())
                                                                             <li>
                                                                                 <img src="{{ public_asset('assets/images/list_ico1.png') }}"
                                                                                     alt="">
                                                                                 <a  class="save_input_data_on_clic text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}" href="{{ url('studentbook-class?search_tutor_slug_studentclass=' . optional($tutor)->slug . '&search_tutor_id_studentclass=' . optional($tutor)->id) }}" >Book a session</a>
+
+                                                                                    @endif
                                                                             </li>
 
 
@@ -771,7 +773,7 @@
                                                                             <li>
                                                                                 <img src="{{ public_asset('assets/images/list_ico4.png') }}"
                                                                                     alt="">
-                                                                                <a  class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="javascript:void(0);"  href="{{ route('student.my.review', @$tutor->slug) }}">Post a review </a>
+                                                                                <a  class="save_input_data_on_click text-nowrap ms-1" data-type="PP" data-id="{{ @$tutor->id }}"  href="{{ route('student.my.review', @$tutor->slug) }}">Post a review </a>
                                                                             </li>
                                                                             @endif
 

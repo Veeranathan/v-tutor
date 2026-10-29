@@ -21,11 +21,16 @@ $title = 'FAQs';
 		<div class="makes_special_inr">
 			<div class="row">
 				<div class="col-md-12 col-xl-10 offset-xl-1">
-					<div class="makes_faq p-0">
-						<div class="page_hed">
-							<h3>Frequently Asked Questions?</h3>
-							<p>Get answers to your most common queries here...</p>
-						</div>
+					<div class="makes_faq p-0">						
+					<div class="page_hed faq-intro">
+    					<h1>Everything You Need to Know About V-Tutor</h1>
+   						<p>
+        				Find answers about our learning programs, diagnostic assessment,
+        				tutors, bookings and how we help you explore the right learning
+        				support for your child.
+    					</p>
+					</div>
+
 						<div class="text-center">
 							<ul class="nav nav-tabs faq-tabs">
 								<li><a data-toggle="tab" href="#tut_faq" class="active">Tutors</a></li>
@@ -126,4 +131,33 @@ $title = 'FAQs';
 @endsection
 @section('script')
 @include('include.script')
+<style>
+	
+.faq-intro {
+    margin-bottom: 30px;
+}
+
+.faq-intro h1 {
+    font-size: 24px;
+    line-height: 1.3;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.faq-intro p {
+    font-size: 24px;
+    line-height: 1.7;
+}
+
+@media (max-width: 767px) {
+    .faq-intro h1 {
+        font-size: 28px;
+    }
+
+    .faq-intro p {
+        font-size: 16px;
+    }
+}
+
+</style>
 @endsection

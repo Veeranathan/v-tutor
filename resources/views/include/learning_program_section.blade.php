@@ -1,4 +1,24 @@
 <style>
+    .assessment-box h1 {
+        font-size: 28px;
+        line-height: 1.3;
+        margin-bottom: 10px;
+    }
+
+    .assessment-box > p {
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 767px) {
+        .assessment-box h1 {
+            font-size: 23px;
+        }
+
+        .assessment-box > p {
+            font-size: 14px;
+        }
+    }
     @media (max-width: 576px) {
     .assessment-actions {
         display: flex;
@@ -25,10 +45,11 @@
                 <div class="assessment-box text-center">
 
                     @if(empty($isCategoryPage))
-                        <h3 class="mb-2">
-                            <span class="section-heading">Start Your Learning Journey</span> with the Right Program
-                        </h3>
-                        <p class="mb-4">Who is this learning for?</p>
+                        <h1 class="mb-2">
+                            <span class="section-heading">Find the Right Learning Path for Your Child</span>
+                        </h1>
+                        <p class="mb-4">Tell us about your child’s learning needs, strengths and goals. We’ll help you 
+                            explore suitable learning programs and take the next step towards more targeted support</p>
 
                         <div class="assessment-actions">
                             <button type="button" class="assessment-btn" data-type="me">For Me</button>

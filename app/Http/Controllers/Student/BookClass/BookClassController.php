@@ -466,6 +466,11 @@ class BookClassController extends Controller
             $student     = auth()->user();
             $teacher     = User::findOrFail($tutor_id);
 
+             $tutorAvailability = MyAvailability::where('teacher_id', $teacher->id)
+            ->where('status', 'A')
+            ->where('day', $dayNumber)
+            ->get(['id','from_time', 'to_time']);
+
             $teachertimezone = $teacher->timezone_id ?? 'UTC';
             $studenttimezone = $student->timezone_id ?? 'UTC';
 
@@ -658,6 +663,7 @@ class BookClassController extends Controller
                 $studentBookedRanges,
                 $tutorBookedRanges,
                 $nonAvailableSlots,
+                $tutorAvailability,
                 &$skippedSlots
             ) {
                 // 1️⃣ Parse DB UTC datetime
@@ -672,6 +678,37 @@ class BookClassController extends Controller
                 // 2️⃣ Convert to tutor timezone
                 $slotStartTutor = $slotStartUtc->copy()->setTimezone($teachertimezone);
                 $slotEndTutor   = $slotEndUtc->copy()->setTimezone($teachertimezone);
+
+               $insideTutorRange = $tutorAvailability->contains(
+                        function ($availability) use ($slot, $slotStartTutor, $slotEndTutor) {
+
+                            if ($availability->id != $slot->available_id) {
+                                 Log::info('Availability ID mismatch', [
+                                    'my_availability_id' => $availability->id,
+                                    'calendar_available_id' => $slot->available_id,
+                                ]);
+                                return false;
+                            }
+
+                            $availableFrom = $slotStartTutor->copy()
+                                ->setTimeFromTimeString($availability->from_time);
+
+                            $availableTo = $slotStartTutor->copy()
+                                ->setTimeFromTimeString($availability->to_time);
+
+                            if ($availableTo->lessThanOrEqualTo($availableFrom)) {
+                                $availableTo->addDay();
+                            }
+
+                            return $slotStartTutor->greaterThanOrEqualTo($availableFrom)
+                                && $slotEndTutor->lessThanOrEqualTo($availableTo);
+                        }
+                    );
+
+                    if (!$insideTutorRange) {
+                        $skippedSlots[] = "Skipped: available_id mismatch or outside availability range";
+                        return null;
+                    }
 
                 // Skip if before today's cutoff
                 if ($isTodayInTutorTZ && $slotStartTutor->lt($cutoffTime)) {

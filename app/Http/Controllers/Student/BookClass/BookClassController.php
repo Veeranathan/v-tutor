@@ -683,10 +683,6 @@ class BookClassController extends Controller
                         function ($availability) use ($slot, $slotStartTutor, $slotEndTutor) {
 
                             if ($availability->id != $slot->available_id) {
-                                 Log::info('Availability ID mismatch', [
-                                    'my_availability_id' => $availability->id,
-                                    'calendar_available_id' => $slot->available_id,
-                                ]);
                                 return false;
                             }
 

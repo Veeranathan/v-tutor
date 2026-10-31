@@ -682,9 +682,6 @@ class BookClassController extends Controller
                $insideTutorRange = $tutorAvailability->contains(
                         function ($availability) use ($slot, $slotStartTutor, $slotEndTutor) {
 
-                            if ($availability->id != $slot->available_id) {
-                                return false;
-                            }
 
                             $availableFrom = $slotStartTutor->copy()
                                 ->setTimeFromTimeString($availability->from_time);

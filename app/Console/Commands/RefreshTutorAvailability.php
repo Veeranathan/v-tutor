@@ -16,7 +16,7 @@ class RefreshTutorAvailability extends Command
     public function handle()
     {
         $today = Carbon::now('UTC')->startOfDay();
-        $ninetyDaysLater = $today->copy()->addDays(90);
+        $ninetyDaysLater = $today->copy()->addDays(200);
 
         $tutors = User::where('user_type', 'T')->get();
 
@@ -43,7 +43,7 @@ class RefreshTutorAvailability extends Command
 
                 $newEntries = [];
 
-                for ($i = 0; $i < 90; $i++) {
+                for ($i = 0; $i < 200; $i++) {
 
                     $targetDate = $today->copy()->addDays($i);
 

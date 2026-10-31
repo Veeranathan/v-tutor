@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @if (app()->environment('stage'))
     @php
         $noIndex = request()->is(
             'my-profile*',
@@ -12,14 +13,18 @@
             'my-review*',
             'student-my-payments*',
             'tutor/*',
-            'admin/*'
-        ) || request()->query();
+            'admin/*',
+            'program/*'
+        );
     @endphp
 
     @if ($noIndex)
         <meta name="robots" content="noindex, nofollow">
     @else
         <meta name="robots" content="index, follow">
+    @endif
+    @else
+        <meta name="robots" content="noindex, nofollow">
     @endif
 
     <link rel="canonical" href="{{ url()->current() }}">

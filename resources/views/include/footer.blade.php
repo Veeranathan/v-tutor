@@ -38,6 +38,8 @@
                 <p class="gmail-link footer-link">
                     <a href="mailto:support@v-tutor.com.au">support@v-tutor.com.au</a>
                 </p>
+                 <p class="mt-3">478 George St<br>Sydney 2000<br>New South Wales                  
+                </p>
             </div>
 
             <div class="col-lg-3 col-md-6 mt-4 mt-md-0">

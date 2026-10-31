@@ -392,7 +392,7 @@ public function saveSlots(Request $request)
 
     // Delete related calendar entries for next 90 days
     $today = Carbon::now()->startOfDay();
-    $endDate = $today->copy()->addDays(90);
+    $endDate = $today->copy()->addDays(200);
 
     // Convert local + date to UTC for calendar table
     $calendarSlots = Tutor_calander_availability::where('available_id', $availability->id)

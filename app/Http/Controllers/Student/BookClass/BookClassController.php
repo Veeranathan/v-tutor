@@ -471,6 +471,8 @@ class BookClassController extends Controller
             ->where('day', $dayNumber)
             ->get(['id','from_time', 'to_time']);
 
+            $availabilityIds = $tutorAvailability->pluck('id')->toArray();
+
             $teachertimezone = $teacher->timezone_id ?? 'UTC';
             $studenttimezone = $student->timezone_id ?? 'UTC';
 
@@ -519,7 +521,7 @@ class BookClassController extends Controller
             // Query using whereBetween
             $availableSlots = Tutor_calander_availability::where('tutor_id', $teacher->id)
                 ->where('booking_status', 'NB')
-                ->where('day', $dayNumber)
+                ->whereIn('available_id', $availabilityIds)
                 ->whereBetween('date', [$startUtc->toDateString(), $endUtc->toDateString()]);
 
             Log::info("Teacher:", [$teacher->id]);
@@ -682,7 +684,9 @@ class BookClassController extends Controller
                $insideTutorRange = $tutorAvailability->contains(
                         function ($availability) use ($slot, $slotStartTutor, $slotEndTutor) {
 
-
+                            if ($availability->id != $slot->available_id) {
+                                    return false;
+                                }
                             $availableFrom = $slotStartTutor->copy()
                                 ->setTimeFromTimeString($availability->from_time);
 

@@ -34,15 +34,15 @@ $title = 'About Us';
 				</h1>
 				<div class="mb-3">
 					<p class="abt-p">
-						Sometimes, the most important step isn't doing more.<br>
-						It's understanding what your child needs and finding<br>
+						Sometimes, the most important step isn't doing more.<br class="mobile">
+						It's understanding what your child needs and finding<br class="mobile">
 						the support that makes sense for them.
 					</p>
 				</div>
 
 				<p class="abt-p mb-4">
-					V-Tutor helps families identify learning needs and access<br>
-					structured, personalised learning support through our<br>
+					V-Tutor helps families identify learning needs and access<br class="mobile">
+					structured, personalised learning support through our<br class="mobile">
 					learning programs and subject-focused tutors.
 				</p>
 
@@ -547,24 +547,17 @@ $title = 'About Us';
 	.abt-hero-content {
 		max-width: 650px;
 	}
-
 	@media (max-width: 991px) {
 		.desk-top{
          display: none;
 		}
+		.mobile{
+			display: none;
+		}
 		.abt-hero {
-			min-height: auto;
-			padding: 60px 0 300px;
-			background-size: 100% 300px;
-			background-position: right bottom;
+			background-size: cover;
 		}
 
-		.abt-hero::before {
-			background: linear-gradient(180deg,
-					var(--abt-cream-hero) 0%,
-					var(--abt-cream-hero) 55%,
-					rgba(255, 248, 235, 0.2) 100%);
-		}
 	}
 
 	/* 2. WHY WE EXIST */
@@ -999,6 +992,9 @@ $title = 'About Us';
     .abt-commit .row{
         gap: 20px;
     }
+	.abt-outcomes-photo img{
+		object-fit: fill;
+	}
 }
     /* 7. CTA */
 	.abt-cta {

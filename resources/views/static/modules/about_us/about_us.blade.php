@@ -67,7 +67,7 @@ $title = 'About Us';
 						role="img"
 						aria-label="A student resting her chin on her hand, looking puzzled">
 
-						<img src="{{ public_asset('assets/images/about/why_we_exist.png') }}"
+						<img src="{{ public_asset('assets/images/about/image2.png') }}"
 							alt="A student thinking about her learning challenges">
 					</div>
 				</div>
@@ -88,8 +88,8 @@ $title = 'About Us';
 					</p>
 
 					<p class="abt-p">
-						These challenges can look alike, but their underlying causes —
-						and the support that may help — can be very different.
+						These challenges can look alike, but their underlying causes -
+						and the support that may help - can be very different.
 					</p>
 
 					<div class="abt-highlight">
@@ -253,16 +253,16 @@ $title = 'About Us';
 			<div class="col-lg-5">
 				<div class="abt-outcomes-photo-wrap">
 					<div class="abt-photo abt-outcomes-photo" role="img" aria-label="A smiling student wearing headphones, writing in a notebook">
-						<img src="{{ public_asset('assets/images/about/writing.png') }}">
+						<img src="{{ public_asset('assets/images/about/image3.png') }}">
 					</div>
 				</div>
 			</div>
 			<div class="col-lg-7">
 				<span class="abt-eyebrow">What we want for every student</span>
-				<h2 id="abt-outcomes-title" class="abt-h2 abt-serif mb-3">Helping students move forward — in learning and in confidence.</h2>
-				<p>Academic progress matters. But so does the confidence to tackle a difficult question, the ability to apply what you've learnt and the independence to keep going when learning gets challenging. We want students to develop more than subject knowledge. We want them to build the understanding, skills and confidence to take their next steps — at school and beyond.</p>
+				<h2 id="abt-outcomes-title" class="abt-h2 abt-serif mb-3">Helping students move forward - in learning and in confidence.</h2>
+				<p>Academic progress matters. But so does the confidence to tackle a difficult question, the ability to apply what you've learnt and the independence to keep going when learning gets challenging. We want students to develop more than subject knowledge. We want them to build the understanding, skills and confidence to take their next steps - at school and beyond.</p>
 
-				<div class="row mb-3 abt-grid">
+				<div class="row mb-3 mt-3 abt-grid">
 					<div class="col-md-6">
 						<article class="abt-mini-card">
 							<div class="abt-icon red"><i class="fas fa-brain"></i></div>
@@ -301,7 +301,7 @@ $title = 'About Us';
 					</div>
 				</div>
 
-				<p class="abt-p mb-0 fw-bold">Every student has their own starting point. What matters is helping each one find a meaningful way forward.</p>
+				<p class="mb-0 fw-bold">Every student has their own starting point. What matters is helping each one find a meaningful way forward.</p>
 			</div>
 		</div>
 	</div>
@@ -314,7 +314,7 @@ $title = 'About Us';
 			<span class="abt-eyebrow">Our commitment to families</span>
 			<h2 id="abt-commit-title" class="abt-h2 abt-serif mb-3">Learning support you can feel confident about.</h2>
 			<p class="abt-p ">Choosing learning support for your child is a decision that matters. Parents want to know that their child's needs are being considered, that the support is relevant to their schooling and that they can make informed choices along the way.
-				At V-Tutor, we aim to make finding learning support a more considered and reassuring experience — one that puts the student's needs at the centre of the decision.</p>
+				At V-Tutor, we aim to make finding learning support a more considered and reassuring experience - one that puts the student's needs at the centre of the decision.</p>
 		</div>
 
 		<div class="row mb-4">
@@ -518,7 +518,7 @@ $title = 'About Us';
 	.abt-hero {
 		position: relative;
 		padding: 2%;
-		background-image: url("{{ public_asset('assets/images/about/hero.png') }}");
+		background-image: url("{{ public_asset('assets/images/about/image1.png') }}");
 		background-repeat: no-repeat;
 		background-size: 60% 100%;
 		background-position: right 1%;

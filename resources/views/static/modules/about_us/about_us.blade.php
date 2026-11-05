@@ -438,11 +438,11 @@ $title = 'About Us';
 		--abt-hand: 'Caveat', cursive;
 	}
 
-	h2.abt-serif,
-	.abt-serif {
-		font-family: 'Playfair Display', Georgia, serif !important;
+	html,
+	body {
+		max-width: 100%;
+		overflow-x: hidden;
 	}
-
 	.about-page {
 		background-color: #fff;
 	}
@@ -518,7 +518,7 @@ $title = 'About Us';
 	.abt-hero {
 		position: relative;
 		padding: 2%;
-		background-image: url('../assets/images/about/hero.png');
+		background-image: url("{{ public_asset('assets/images/about/hero.png') }}");
 		background-repeat: no-repeat;
 		background-size: 60% 100%;
 		background-position: right 1%;
@@ -1039,7 +1039,6 @@ $title = 'About Us';
 	}
 
 	.abt-cta-title {
-		font-family: 'Playfair Display', Georgia, serif !important;
 		font-size: 1.5rem;
 		font-weight: 700;
 		margin-bottom: 8px;

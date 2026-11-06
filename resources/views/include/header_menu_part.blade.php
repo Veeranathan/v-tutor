@@ -918,7 +918,7 @@
                         alt="V-Tutor online tutoring Australia"
                         class="main-logo"
                     >
-
+                
                 </a>
 
             </div>
@@ -1011,6 +1011,27 @@
                                 Blogs
                             </a>
 
+                            <a
+                                class="dropdown-item"
+                                href="{{ url('terms-service') }}"
+                            >
+                                Terms Of Service
+                            </a>
+
+                            <a
+                                class="dropdown-item"
+                                href="{{ url('privacy-policy') }}"
+                            >
+                                Privacy Policy
+                            </a>
+
+                            <a
+                                class="dropdown-item"
+                                href="{{ url('contact-us') }}"
+                            >
+                                Contact Us
+                            </a>
+
                         </div>
 
                     </li>
@@ -1040,43 +1061,24 @@
                                 class="dropdown-item"
                                 href="{{ route('about.us') }}"
                             >
-                                About Us
+                                About Us - Who We Are
                             </a>
 
                             <a
                                 class="dropdown-item"
                                 href="{{ route('search.result.j') }}"
                             >
-                                Find Tutor
+                                Meet Our Tutors
                             </a>
 
                             <a
                                 class="dropdown-item"
-                                href="{{ url('faq') }}"
+                                href="{{ url('faq') }}?tab=parents"
                             >
-                                FAQs
+                                Parent FAQs
                             </a>
 
-                            <a
-                                class="dropdown-item"
-                                href="{{ url('terms-service') }}"
-                            >
-                                Terms Of Service
-                            </a>
-
-                            <a
-                                class="dropdown-item"
-                                href="{{ url('privacy-policy') }}"
-                            >
-                                Privacy Policy
-                            </a>
-
-                            <a
-                                class="dropdown-item"
-                                href="{{ url('contact-us') }}"
-                            >
-                                Message Us
-                            </a>
+                            
 
                         </div>
 
@@ -1112,9 +1114,9 @@
 
                             <a
                                 class="dropdown-item"
-                                href="{{ url('faq') }}"
+                                href="{{ url('faq') }}?tab=tutors"
                             >
-                                FAQs
+                                Tutor FAQs
                             </a>
 
                             <a
@@ -1143,8 +1145,8 @@
             <span class="primary-button book-resp">Get Programs</span>
         </a>
     @else
-        <a href="{{ route('program.assessment') }}" target="_blank" rel="noopener noreferrer" class="header-program-link book-free-assessment-link">
-            <span class="primary-button book-resp mr-3">Book Free Assessment</span>
+        <a href="{{ route('products', ['type' => 'learning']) }}" target="_blank" rel="noopener noreferrer" class="header-program-link book-free-assessment-link">
+            <span class="primary-button book-resp mr-3">Explore Learning Programs</span>
         </a>
     @endauth
 
@@ -1393,6 +1395,27 @@
                                     Blogs
                                 </a>
 
+                                <a
+                                    href="{{ url('terms-service') }}"
+                                    class="mobile-submenu-link"
+                                >
+                                    Terms Of Service
+                                </a>
+
+                                <a
+                                    href="{{ url('privacy-policy') }}"
+                                    class="mobile-submenu-link"
+                                >
+                                    Privacy Policy
+                                </a>
+
+                                <a
+                                    href="{{ url('contact-us') }}"
+                                    class="mobile-submenu-link"
+                                >
+                                    Contact Us
+                                </a>
+
                             </div>
 
                         </li>
@@ -1428,43 +1451,24 @@
                                     href="{{ route('about.us') }}"
                                     class="mobile-submenu-link"
                                 >
-                                    About Us
+                                    About Us - Who We Are
                                 </a>
 
                                 <a
                                     href="{{ route('search.result.j') }}"
                                     class="mobile-submenu-link"
                                 >
-                                    Find Tutor
+                                    Meet Our Tutors
                                 </a>
 
                                 <a
-                                    href="{{ url('faq') }}"
+                                    href="{{ url('faq') }}?tab=parents"
                                     class="mobile-submenu-link"
                                 >
-                                    FAQs
+                                    Parent FAQs
                                 </a>
 
-                                <a
-                                    href="{{ url('terms-service') }}"
-                                    class="mobile-submenu-link"
-                                >
-                                    Terms Of Service
-                                </a>
-
-                                <a
-                                    href="{{ url('privacy-policy') }}"
-                                    class="mobile-submenu-link"
-                                >
-                                    Privacy Policy
-                                </a>
-
-                                <a
-                                    href="{{ url('contact-us') }}"
-                                    class="mobile-submenu-link"
-                                >
-                                    Message Us
-                                </a>
+                                
 
                             </div>
 
@@ -1505,10 +1509,10 @@
                                 </a>
 
                                 <a
-                                    href="{{ url('faq') }}"
+                                    href="{{ url('faq') }}?tab=tutors"
                                     class="mobile-submenu-link"
                                 >
-                                    FAQs
+                                    Tutor FAQs
                                 </a>
 
                                 <a

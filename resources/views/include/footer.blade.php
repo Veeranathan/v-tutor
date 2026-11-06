@@ -7,13 +7,9 @@
                             src="{{ public_asset('assets/tutor_landing/v-tutor-footer-logo.svg') }}" alt="V-Tutor online tutoring Australia logo"
                             class="footer-logo" /></a></h5>
                 <p class="mb-2">Learning Without Limits</p>
-                <p style="font-size: 15px; line-height: 18px;  text-align: justify;">
-                V-Tutor helps families identify their children's learning
-                needs and access structured, personalised learning 
-                programs and specialist tutor support 
-                to build understanding, confidence
-                and meaningful progress.</p>
-            </div>
+             <p style=" width: 80%; line-height: 20px; text-align: justify; text-align-last: left; margin: 0; font-size:13px !important;">
+             V-Tutor helps families identify their children's learning needs and access structured, personalised learning programs and specialist tutor support to build understanding, confidence and meaningful progress.
+       </p></div>
 
             <div class="col-6 col-lg-2 col-md-6 ">
                 <h6 class="">Explore V-Tutor</h6>

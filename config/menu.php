@@ -44,11 +44,11 @@ return [
         'new-south-wales' => 'New South Wales',
         'victoria' => 'Victoria',
         'queensland' => 'Queensland',
-        'south-australia' => 'South Australia',
-        'western-australia' => 'Western Australia',
+        // 'south-australia' => 'South Australia',
+        // 'western-australia' => 'Western Australia',
         // 'tasmania' => 'Tasmania',
-        'australian-capital-territory' => 'Australian Capital Territory',
-        'northern-territory' => 'Northern Territory',
+        // 'australian-capital-territory' => 'Australian Capital Territory',
+        // 'northern-territory' => 'Northern Territory',
     ],
 
     'city' => [

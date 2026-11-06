@@ -33,13 +33,13 @@ $title = 'FAQs';
 
 						<div class="text-center">
 							<ul class="nav nav-tabs faq-tabs">
-								<li><a data-toggle="tab" href="#tut_faq" class="active">Tutors</a></li>
-								<li class=""><a data-toggle="tab" href="#par_faq">Parents</a></li>
+								<li class=""><a data-toggle="tab" href="#par_faq" class="{{ request('tab', 'parents') == 'parents' ? 'active' : '' }}">Parents</a></li>
+								<li><a data-toggle="tab" href="#tut_faq" class="{{ request('tab') == 'tutors' ? 'active' : '' }}">Tutors</a></li>
 
 							</ul>
 						</div>
 						<div class="tab-content">
-							<div id="tut_faq" class="tab-pane fade in show active">
+							<div id="tut_faq" class="tab-pane fade {{ request('tab') == 'tutors' ? 'in active show' : '' }}">
 								<div class="makes_faq_bx newfaq">
 									<div class="accordion" id="accordionExample2">
 										@if(@$TutorFaqModel)
@@ -79,7 +79,7 @@ $title = 'FAQs';
 								</div>
 							</div>
 
-							<div id="par_faq" class="tab-pane fade  in ">
+							<div id="par_faq" class="tab-pane fade {{ request('tab', 'parents') == 'parents' ? 'in active show' : '' }}">
 								<div class="makes_faq_bx newfaq">
 									<div class="accordion" id="accordionExample">
 										@if(@$StudentFaqModel)
@@ -148,7 +148,9 @@ $title = 'FAQs';
     font-size: 24px;
     line-height: 1.7;
 }
-
+.makes_faq_bx.newfaq .card-header a {
+	height: auto;
+}
 @media (max-width: 767px) {
     .faq-intro h1 {
         font-size: 28px;

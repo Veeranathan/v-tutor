@@ -6,36 +6,37 @@
                 <h5 class=" mb-2"> <a class="" href="{{ url('/') }}"><img
                             src="{{ public_asset('assets/tutor_landing/v-tutor-footer-logo.svg') }}" alt="V-Tutor online tutoring Australia logo"
                             class="footer-logo" /></a></h5>
-                <p class="">Learning Without Limits</p>
-            </div>
+                <p class="mb-2">Learning Without Limits</p>
+             <p style=" width: 80%; line-height: 20px; text-align: justify; text-align-last: left; margin: 0; font-size:13px !important;">
+             V-Tutor helps families identify their children's learning needs and access structured, personalised learning programs and specialist tutor support to build understanding, confidence and meaningful progress.
+       </p></div>
 
             <div class="col-6 col-lg-2 col-md-6 ">
-                <h6 class="">Quick Links</h6>
+                <h6 class="">Explore V-Tutor</h6>
                 <ul class="list-unstyled ">
                     <li><a href="{{ url('/') }}" class="footer-link">Home</a></li>
                     <li><a href="{{ route('products', ['type' => 'learning']) }}" class="footer-link">Our Programs</a></li>
                     <li><a href="{{ route('about.us') }}" class="footer-link">About Us</a></li>
-                    <li><a href="{{ url('tutor-search-result') }}" class="footer-link">Find Tutors</a></li>
+                    <li><a href="{{ url('tutor-search-result') }}" class="footer-link">Meet Our Tutors</a></li>
                     <li><a href="{{ route('tutor_landing') }}" class="footer-link">Be a V-Tutor</a></li>
-                    <li><a href="{{ route('home.blog') }}" class="footer-link">Blogs</a></li>
                 </ul>
             </div>
 
             <div class="col-6 col-lg-2 col-md-6">
                 <h6 class="">Resources</h6>
                 <ul class="list-unstyled ">
-                    <li><a href="{{ url('faq') }}" class="footer-link">FAQ</a></li>
+                    <li><a href="{{ route('home.blog') }}" class="footer-link">Blogs</a></li>
+                    <li><a href="{{ url('faq') }}" class="footer-link">FAQs</a></li>
                     <li><a href="{{ url('privacy-policy') }}" class="footer-link">Terms of Service</a></li>
                     <li><a href="{{ url('privacy-policy') }}" class="footer-link">Privacy Policy</a></li>
-                    <li><a href="{{ url('terms-conditions') }}" class="footer-link">Terms & Conditions</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-2 col-md-6 mt-4 mt-md-0">
                 <h6 class="">Contact Us</h6>
-                <p class=" msg-us"><a href="{{ route('contact.us') }}" class="footer-link ">Message Us</a>
+                <p class=" msg-us"><a href="{{ route('contact.us') }}" class="footer-link ">Contact Us</a>
                 </p>
-                <p class="gmail-link footer-link">
+                <p class="gmail-link footer-link"style="white-space: nowrap;">
                     <a href="mailto:support@v-tutor.com.au">support@v-tutor.com.au</a>
                 </p>
                  <p class="mt-3">478 George St<br>Sydney 2000<br>New South Wales                  

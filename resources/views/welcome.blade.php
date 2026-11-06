@@ -1315,11 +1315,12 @@
                         </p>
                         
                         <div class="d-flex flex-wrap gap-3 mb-5">
-                            <a href="{{ route('program.assessment') }}" target="_blank" rel="noopener noreferrer" class="btn-red-primary">
-                                <i class="far fa-calendar-alt"></i> Book Free Diagnostic Assessment
+                            <a href="{{ route('products', ['type' => 'learning']) }}" target="_blank" rel="noopener noreferrer" class="btn-red-primary">
+                                  Explore Learning Programs
                             </a>
-                            <a href="{{ route('products', ['type' => 'learning']) }}" target="_blank" rel="noopener noreferrer" class="btn-outline-custom">
-                                Explore Learning Programs
+                            <a href="{{ route('program.assessment') }}" target="_blank" rel="noopener noreferrer" class="btn-outline-custom">
+                            <i class="far fa-calendar-alt mx-1"></i>   
+                            Start Free Diagnostic Assessment
                             </a>
                         </div>
 

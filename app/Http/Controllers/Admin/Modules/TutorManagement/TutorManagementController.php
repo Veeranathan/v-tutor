@@ -19,7 +19,6 @@ use App\Models\University;
 use App\Models\TutorExperience;
 use App\Models\TutorAcademic;
 use App\Models\State;
-
 use App\Models\LangToTutor;
 use App\Models\Language;
 use App\Models\TutorToRef;
@@ -30,6 +29,9 @@ use App\Models\Nationality;
 use Mail;
 use App\Mail\AdminApproveMail;
 use Validator;
+use App\Models\AcademicProgram;
+use App\Models\TutorSkillsCapability;
+use Illuminate\Support\Facades\DB;
 
 class TutorManagementController extends Controller
 {
@@ -871,7 +873,406 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
             return redirect()->back();
         }
     }
-    public function manageTutorShipPlans($id,Request $request){
+
+    public function indexTutor(Request $request)
+    {
+        try {
+            $data['states']     = State::orderBy('state_name', 'asc')->pluck('state_name', 'id')->all();
+            $data['yearLevels'] = Grade::where('status', 'A')->orderByRaw("CAST(SUBSTRING(grade_name, 6) AS UNSIGNED) ASC")->pluck('grade_name', 'id')->all();
+            $data['subjects']   = Branch::where('status', 'A')->orderBy('branch_name', 'asc')->pluck('branch_name', 'id')->all();
+            $data['learningPrograms'] = AcademicProgram::where('status', 1)
+                ->selectRaw('MIN(id) as id, TRIM(name) as name')
+                ->groupByRaw('TRIM(name)')
+                ->orderBy('name', 'asc')
+                ->pluck('name', 'id')
+                ->all();
+            $data['programTypes'] = AcademicProgram::where('status', 1)
+                ->whereNotNull('program_type')
+                ->where('program_type', '!=', '')
+                ->distinct()
+                ->orderBy('program_type', 'asc')
+                ->pluck('program_type', 'program_type')
+                ->all();
+            return view('admin.modules.tutor_management.manage_tutor_details')->with($data);
+        } catch (\Exception $e) {
+            session()->flash("error", $e->getMessage());
+            return redirect()->back();
+        }
+    }
+    public function downloadTutorDetails(Request $request)
+{
+            $users = User::where('user_type', 'T')
+                ->whereIn('status', ['A', 'I', 'R']);
+
+            if ($request->filled('name')) {
+                $s = $request->name;
+
+                $users->where(function ($q) use ($s) {
+                    $q->where('f_name', 'like', "%$s%")
+                        ->orWhere('l_name', 'like', "%$s%")
+                        ->orWhere('email', 'like', "%$s%")
+                        ->orWhere('phone', 'like', "%$s%")
+                        ->orWhere(
+                            DB::raw("CONCAT(`f_name`, ' ', `l_name`)"),
+                            'like',
+                            "%$s%"
+                        );
+                });
+            }
+
+            if ($request->filled('state')) {
+                $users->where('state', $request->state);
+            }
+
+            if ($request->filled('year_level')) {
+                $users->whereIn('id', TutorshipPlan::where('status', 'A')
+                    ->where('grade_id', $request->year_level)
+                    ->pluck('teacher_id'));
+            }
+
+            if ($request->filled('subject')) {
+                $users->whereIn('id', TutorshipPlan::where('status', 'A')
+                    ->where('branch_id', $request->subject)
+                    ->pluck('teacher_id'));
+            }
+
+           if ($request->filled('learning_program')) {
+
+        $programName = trim($request->learning_program);
+
+        $matchingPrograms = AcademicProgram::where('status', 1)
+            ->whereRaw('TRIM(name) = ?', [$programName])
+            ->get(['grade_id', 'branch_id']);
+
+            if ($matchingPrograms->isNotEmpty()) {
+
+                $users->whereIn('id', function ($query) use ($matchingPrograms) {
+
+                    $query->select('tp.teacher_id')
+                        ->from('tutorship_plan as tp')
+                        ->where('tp.status', 'A')
+                        ->where(function ($q) use ($matchingPrograms) {
+
+                            foreach ($matchingPrograms as $program) {
+
+                                $q->orWhere(function ($sub) use ($program) {
+
+                                    $sub->where('tp.grade_id', $program->grade_id)
+                                        ->where('tp.branch_id', $program->branch_id);
+
+                                });
+                            }
+                        });
+                });
+
+            } else {
+
+                $users->whereRaw('1 = 0');
+            }
+        }
+
+            if ($request->filled('program_type')) {
+
+                $matchingPrograms = AcademicProgram::where('status', 1)
+                    ->where('program_type', $request->program_type)
+                    ->get(['grade_id', 'branch_id']);
+
+                $users->whereIn('id', function ($query) use ($matchingPrograms) {
+
+                    $query->select('teacher_id')
+                        ->from('tutorship_plan')
+                        ->where('status', 'A')
+                        ->where(function ($q) use ($matchingPrograms) {
+
+                            foreach ($matchingPrograms as $program) {
+                                $q->orWhere(function ($sub) use ($program) {
+                                    $sub->where('grade_id', $program->grade_id)
+                                        ->where('branch_id', $program->branch_id);
+                                });
+                            }
+
+                        });
+                });
+            }
+
+            $pageUsers = $users->with(['getState', 'tutorSkillsCapability'])
+                ->orderBy('f_name', 'asc')
+                ->orderBy('id', 'asc')
+                ->get();
+
+            $gradeNames = Grade::pluck('grade_name', 'id');
+            $branchNames = Branch::pluck('branch_name', 'id');
+
+            $plans = TutorshipPlan::where('status', 'A')
+                ->whereIn('teacher_id', $pageUsers->pluck('id'))
+                ->get(['teacher_id', 'grade_id', 'branch_id'])
+                ->groupBy('teacher_id');
+
+            $programsByKey = AcademicProgram::where('status', 1)
+                ->get(['name', 'program_type', 'grade_id', 'branch_id'])
+                ->groupBy(function ($p) {
+                    return $p->grade_id . '-' . $p->branch_id;
+                });
+
+            
+        $t = '';
+
+        $t .= '<table border="1" style="border-collapse:collapse;">
+            <tr>
+                <th style="border:1px solid black;background-color:lime">First Name</th>
+                <th style="border:1px solid black;background-color:lime">Last Name</th>
+                <th style="border:1px solid black;background-color:lime">State</th>
+                <th style="border:1px solid black;background-color:lime">Year Levels</th>
+                <th style="border:1px solid black;background-color:lime">Subjects</th>
+                <th style="border:1px solid black;background-color:lime">Program Type</th>
+                <th style="border:1px solid black;background-color:lime">Learning Programs</th>
+                <th style="border:1px solid black;background-color:lime">Skill Tag</th>
+                <th style="border:1px solid black;background-color:lime">Capability Statement</th>
+            </tr>';
+
+        foreach ($pageUsers as $u) {
+
+            $tp = $plans->get($u->id, collect());
+
+            $years = $tp->pluck('grade_id')->unique()
+                ->map(function ($id) use ($gradeNames) {
+                    return $gradeNames[$id] ?? '';
+                })
+                ->filter()
+                ->values()
+                ->implode(', ');
+
+            $subjects = $tp->pluck('branch_id')->unique()
+                ->map(function ($id) use ($branchNames) {
+                    return $branchNames[$id] ?? '';
+                })
+                ->filter()
+                ->values()
+                ->implode(', ');
+
+            $programs = $tp->map(function ($p) use ($programsByKey) {
+                $key = $p->grade_id . '-' . $p->branch_id;
+
+                return $programsByKey->has($key)
+                    ? $programsByKey[$key]->pluck('name')->all()
+                    : [];
+            })->flatten()->filter()->unique()->values()->implode(', ');
+
+            $programTypes = $tp->map(function ($p) use ($programsByKey) {
+                $key = $p->grade_id . '-' . $p->branch_id;
+
+                return $programsByKey->has($key)
+                    ? $programsByKey[$key]->pluck('program_type')->all()
+                    : [];
+            })->flatten()->filter()->unique()->values()->implode(', ');
+
+            $state = optional($u->getState)->state_name ?? '';
+            $skills = optional($u->tutorSkillsCapability)->skills ?? '';
+            $capabilities = optional($u->tutorSkillsCapability)->capabilities ?? '';
+
+            $t .= '<tr>
+                <td style="border:1px solid black;">' . e($u->f_name) . '</td>
+                <td style="border:1px solid black;">' . e($u->l_name) . '</td>
+                <td style="border:1px solid black;">' . e($state) . '</td>
+                <td style="border:1px solid black;">' . e($years) . '</td>
+                <td style="border:1px solid black;">' . e($subjects) . '</td>
+                <td style="border:1px solid black;">' . e($programTypes) . '</td>
+                <td style="border:1px solid black;">' . e($programs) . '</td>
+                <td style="border:1px solid black;">' . e($skills) . '</td>
+                <td style="border:1px solid black;">' . e($capabilities) . '</td>
+            </tr>';
+        }
+
+        $t .= '</table>';
+
+
+            return response($t)
+                ->header(
+                    'Content-Type',
+                    'application/vnd.ms-excel; charset=UTF-8'
+                )
+                ->header(
+                    'Content-Disposition',
+                    'attachment; filename=TutorDetails.xls'
+                )
+                ->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+    public function tutorDetails(Request $request)
+    {
+        $users = User::where('user_type', 'T')->whereIn('status', ['A', 'I', 'R']);
+        $total = (clone $users)->count();
+
+        if ($request->filled('name')) {
+            $s = $request->name;
+            $users->where(function ($q) use ($s) {
+                $q->where('f_name', 'like', "%$s%")
+                ->orWhere('l_name', 'like', "%$s%")
+                ->orWhere('email', 'like', "%$s%")
+                ->orWhere('phone', 'like', "%$s%")
+                ->orWhere(DB::raw("CONCAT(`f_name`, ' ', `l_name`)"), 'like', "%$s%");
+            });
+        }
+
+        if ($request->filled('state')) {
+            $users->where('state', $request->state);
+        }
+
+        if ($request->filled('year_level')) {
+            $users->whereIn('id', TutorshipPlan::where('status', 'A')
+                ->where('grade_id', $request->year_level)
+                ->pluck('teacher_id'));
+        }
+
+        if ($request->filled('subject')) {
+            $users->whereIn('id', TutorshipPlan::where('status', 'A')
+                ->where('branch_id', $request->subject)
+                ->pluck('teacher_id'));
+        }
+        if ($request->filled('program_type')) {
+
+            $users->whereIn('id', function ($query) use ($request) {
+
+                $query->select('tp.teacher_id')
+                    ->from('tutorship_plan as tp')
+                    ->join('academic_programs as ap', function ($join) {
+                        $join->on('ap.grade_id', '=', 'tp.grade_id')
+                            ->on('ap.branch_id', '=', 'tp.branch_id');
+                    })
+                    ->where('tp.status', 'A')
+                    ->where('ap.status', 1)
+                    ->where('ap.program_type', $request->program_type);
+            });
+        }
+    if ($request->filled('learning_program')) {
+
+    $prog = AcademicProgram::where('name', $request->learning_program)
+        ->where('status', 1)
+        ->first();
+
+    if ($prog) {
+
+        $users->whereIn('id', TutorshipPlan::where('status', 'A')
+            ->where('grade_id', $prog->grade_id)
+            ->where('branch_id', $prog->branch_id)
+            ->pluck('teacher_id'));
+
+    } else {
+        $users->whereRaw('1 = 0');
+    }
+}
+        $filtered = (clone $users)->count();
+
+        $pageUsers = $users->with('getState')
+            ->orderBy('f_name', 'asc')
+            ->orderBy('id', 'asc')
+            ->skip((int) $request->start)
+            ->take((int) ($request->length ?: 10))
+            ->get();
+
+        $gradeNames  = Grade::pluck('grade_name', 'id');
+        $branchNames = Branch::pluck('branch_name', 'id');
+
+        $plans = TutorshipPlan::where('status', 'A')
+            ->whereIn('teacher_id', $pageUsers->pluck('id'))
+            ->get(['teacher_id', 'grade_id', 'branch_id'])
+            ->groupBy('teacher_id');
+
+        $programsByKey = AcademicProgram::where('status', 1)
+            ->get(['name', 'program_type', 'grade_id', 'branch_id'])
+            ->groupBy(function ($p) {
+                return $p->grade_id . '-' . $p->branch_id;
+            });
+
+        $rows = $pageUsers->map(function ($u) use ($plans, $gradeNames, $branchNames, $programsByKey) {
+
+            $tp = $plans->get($u->id, collect());
+
+            $years = $tp->pluck('grade_id')->unique()
+                ->map(function ($id) use ($gradeNames) {
+                    return $gradeNames[$id] ?? '';
+                })
+                ->filter()
+                ->values()
+                ->implode(', ');
+
+            $subjects = $tp->pluck('branch_id')->unique()
+                ->map(function ($id) use ($branchNames) {
+                    return $branchNames[$id] ?? '';
+                })
+                ->filter()
+                ->values()
+                ->implode(', ');
+
+            $programs = $tp->map(function ($p) use ($programsByKey) {
+
+                $k = $p->grade_id . '-' . $p->branch_id;
+
+                return $programsByKey->has($k)
+                    ? $programsByKey[$k]->pluck('name')->all()
+                    : [];
+
+            })->flatten()->filter()->unique()->values()->implode(', ');
+
+            $programTypes = $tp->map(function ($p) use ($programsByKey) {
+
+                $k = $p->grade_id . '-' . $p->branch_id;
+
+                return $programsByKey->has($k)
+                    ? $programsByKey[$k]->pluck('program_type')->all()
+                    : [];
+
+            })->flatten()->filter()->unique()->values()->implode(', ');
+
+            return [
+                'id'                   => $u->id,
+                'f_name'               => $u->f_name ?? '',
+                'l_name'               => $u->l_name ?? '',
+                'tutor_id'               => $u->id ?? '',
+                'email'                => $u->email ?? '',
+                'state'                => optional($u->getState)->state_name ?? '',
+                'year_levels'          => $years,
+                'subjects'             => $subjects,
+                'program_type'         => $programTypes,
+                'learning_programs'    => $programs,
+                'skills' => optional($u->tutorSkillsCapability)->skills ?? '',
+                'capabilities' => optional($u->tutorSkillsCapability)->capabilities ?? '',
+            ];
+        });
+
+        return response()->json([
+            'draw'                 => (int) $request->draw,
+            'recordsTotal'         => $total,
+            'recordsFiltered'      => $filtered,
+            'data'                 => $rows,
+            'aaData'               => $rows,
+            'iTotalRecords'        => $total,
+            'iTotalDisplayRecords' => $filtered,
+        ]);
+    }
+
+  public function saveAndShow(Request $request)
+{
+    $request->validate([
+        'tutor_id' => 'required|exists:users,id',
+        'skills' => 'required|string|max:80',
+        'capabilities' => 'required|string|max:2000',
+    ]);
+        $user = User::where('id', $request->tutor_id)->firstOrFail();
+
+        $data = $user->tutorSkillsCapability()->updateOrCreate(
+            ['tutor_id' => $user->id],
+            [
+                'skills' => $request->skills,
+                'capabilities' => $request->capabilities,
+            ]
+        );
+
+    return response()->json([
+        'success' => true,
+        'data' => $data
+    ]);
+}
+public function manageTutorShipPlans($id,Request $request){
         try{
             $data['user'] = User::with(['getState'])->where('id',$id)->first();
             $data['next_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','>',$id)->min('id');
@@ -885,6 +1286,7 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
             return redirect()->back();
         }
     }
+
     public function manageTutorAcademic($id,Request $request){
         try{
             $data['user'] = User::with(['getState'])->where('id',$id)->first();

@@ -364,17 +364,9 @@ table.dataTable thead th.sorting_desc:after {
 
 /* Scroll Body */
 .dataTables_scrollBody {
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
     border-bottom: 1px solid #dfe3e8 !important;
 }
 
-.dataTables_scrollBody::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-}
 
 /* DataTable Bottom Border */
 table.dataTable.no-footer {
@@ -387,16 +379,24 @@ table.dataTable tbody td {
     box-sizing: border-box !important;
 }
 
-    .dataTables_scrollBody {
+ .dataTables_scrollBody {
     overflow-x: auto !important;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+    scrollbar-width: auto !important;
+    -ms-overflow-style: auto !important;
 }
 
 .dataTables_scrollBody::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
+    display: block !important;
+    width: 8px;
+    height: 8px;
+}
+.dataTables_scrollBody::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 10px;
+}
+
+.dataTables_scrollBody::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 /* Remove extra line below table header */
 .dataTables_scrollHead {

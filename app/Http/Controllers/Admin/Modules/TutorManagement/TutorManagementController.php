@@ -901,8 +901,10 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
     }
     public function downloadTutorDetails(Request $request)
 {
-            $users = User::where('user_type', 'T')
-                ->whereIn('status', ['A', 'I', 'R']);
+        $users = User::where('user_type', 'T')
+        ->where('status', 'A')
+        ->where('subscription', 'S')
+        ->where('draft', 'N');
 
             if ($request->filled('name')) {
                 $s = $request->name;
@@ -1099,8 +1101,12 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
     }
     public function tutorDetails(Request $request)
     {
-        $users = User::where('user_type', 'T')->whereIn('status', ['A', 'I', 'R']);
-        $total = (clone $users)->count();
+        $users = User::where('user_type', 'T')
+        ->where('status', 'A')
+        ->where('subscription', 'S')
+        ->where('draft', 'N');
+
+    $total = (clone $users)->count();
 
         if ($request->filled('name')) {
             $s = $request->name;

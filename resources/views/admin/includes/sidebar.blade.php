@@ -69,7 +69,7 @@
                             class="waves-effect @if (Route::is('admin_wwcc_management_list') || Route::is('admin_wwcc_management_view')) active @endif"><i
                                 class="fa fa-check-square-o"></i><span>WWCC Management</span></a></li>
 
-                    <li><a href="{{ route('manage.tutors') }}"
+                    <li class="has-sub"><a href="{{ route('manage.tutors') }}"
                             class="waves-effect @if (Route::is('manage.tutors') ||
                                     Route::is('view.tutor') ||
                                     Route::is('edit.tutor.personal.info.step.1') ||
@@ -84,6 +84,17 @@
                                     Route::is('edit.tutor.availablity')) active @endif"><i
                                 class="fas fa-user-tie"></i><span>Tutor
                                 Management</span></a></li>
+                                <ul class="submenu"
+                                    style="display: block; padding-left: 25px; list-style: none; margin: 0;">
+                                    <li>
+                                        <a href="{{ route('manage.tutors.details') }}"
+                                            style="display: block; padding: 10px 15px;">
+                                            <i class="fas fa-id-card"></i>
+                                            <span>Tutor Details</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                     
                     <li><a href="{{ route('manage.students') }}"
                             class="waves-effect @if (Route::is('manage.students') || Route::is('view.student') || Route::is('edit.student.personal.info.step.1')) active @endif"><i
@@ -253,21 +264,32 @@
                             class="waves-effect @if (Route::is('admin_tutor_application_form_list') || Route::is('admin_tutor_application_form_view')) active @endif"><i
                                 class="fa fa-check-square-o"></i><span>Applications Management</span></a></li>
                     
-                    <li><a href="{{ route('manage.tutors') }}"
-                            class="waves-effect @if (Route::is('manage.tutors') ||
-                                    Route::is('view.tutor') ||
-                                    Route::is('edit.tutor.personal.info.step.1') ||
-                                    Route::is('edit.tutor.experience') ||
-                                    Route::is('edit.tutor.rec') ||
-                                    Route::is('edit.tutor.academics') ||
-                                    Route::is('edit.tutor.rec') ||
-                                    Route::is('edit.tutor.tutorship.plans') ||
-                                    Route::is('edit.tutor.add.plan') ||
-                                    Route::is('edit.tutor.add.plan') ||
-                                    Route::is('edit.tutor.experience') ||
-                                    Route::is('edit.tutor.availablity')) active @endif"><i
+                <li class="has-sub"> <a href="{{ route('manage.tutors') }}"
+                        class="waves-effect @if (Route::is('manage.tutors') ||
+                                Route::is('view.tutor') ||
+                                Route::is('edit.tutor.personal.info.step.1') ||
+                                Route::is('edit.tutor.experience') ||
+                                Route::is('edit.tutor.rec') ||
+                                Route::is('edit.tutor.academics') ||
+                                Route::is('edit.tutor.rec') ||
+                                Route::is('edit.tutor.tutorship.plans') ||
+                                Route::is('edit.tutor.add.plan') ||
+                                Route::is('edit.tutor.add.plan') ||
+                                Route::is('edit.tutor.experience') ||
+                                Route::is('edit.tutor.availablity')) active @endif"><i
                                 class="fas fa-user-tie"></i><span>Tutor
                                 Management</span></a></li>
+                                <ul class="submenu"
+                                    style="display: block; padding-left: 25px; list-style: none; margin: 0;">
+                                    <li>
+                                        <a href="{{ route('manage.tutors.details') }}"
+                                            style="display: block; padding: 10px 15px;">
+                                            <i class="fas fa-id-card"></i>
+                                            <span>Tutor Details</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
 
                     <li><a href="{{ route('admin_wwcc_management_list') }}"
                             class="waves-effect @if (Route::is('admin_wwcc_management_list') || Route::is('admin_wwcc_management_view')) active @endif"><i

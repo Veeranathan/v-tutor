@@ -299,7 +299,10 @@ Route::get('/admin/topics-export', [SubjectTopicsController::class, 'exportTopic
 
 
             Route::get('/tutor-management', [TutorManagementController::class,'index'])->name('manage.tutors');
-
+            Route::get('/tutor-details', [TutorManagementController::class,'indexTutor'])->name('manage.tutors.details');
+            Route::get('/admin/tutor-details/download',[TutorManagementController::class, 'downloadTutorDetails'])->name('tutor.details.download');
+            Route::any('/admin-tutor-details', [TutorManagementController::class,'tutorDetails'])->name('list.tutors.details');
+            Route::post('/admin-tutor-details/save',[TutorManagementController::class, 'saveAndShow'])->name('admin.tutor.details.save');
             Route::any('/tutor-management-list-tab', [TutorManagementController::class,'getTutorManagementList'])->name('tutor.management.list.tab');
             #datatable tutor management
             Route::any('/admin-tutor-management', [TutorManagementController::class,'tutorManagement'])->name('list.tutors');

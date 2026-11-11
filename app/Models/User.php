@@ -132,7 +132,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\TutorApplicationFormsModel', 'tutor_id', 'id');
     }
 
-
+    public function tutorSkillsCapability()
+    {
+        return $this->hasOne('App\Models\TutorSkillsCapability', 'tutor_id', 'id');
+    }
     /**
      * The attributes that are mass assignable.
      *

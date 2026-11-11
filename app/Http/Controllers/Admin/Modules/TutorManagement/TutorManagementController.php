@@ -1128,21 +1128,30 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
                 ->where('branch_id', $request->subject)
                 ->pluck('teacher_id'));
         }
-        if ($request->filled('program_type')) {
+       if ($request->filled('program_type')) {
 
-            $users->whereIn('id', function ($query) use ($request) {
+    $programs = AcademicProgram::where('status', 1)
+        ->where('program_type', $request->program_type)
+        ->get(['grade_id', 'branch_id']);
 
-                $query->select('tp.teacher_id')
-                    ->from('tutorship_plan as tp')
-                    ->join('academic_programs as ap', function ($join) {
-                        $join->on('ap.grade_id', '=', 'tp.grade_id')
-                            ->on('ap.branch_id', '=', 'tp.branch_id');
-                    })
-                    ->where('tp.status', 'A')
-                    ->where('ap.status', 1)
-                    ->where('ap.program_type', $request->program_type);
+    $users->whereIn('id', function ($query) use ($programs) {
+
+        $query->select('teacher_id')
+            ->from('tutorship_plan')
+            ->where('status', 'A')
+            ->where(function ($q) use ($programs) {
+
+                foreach ($programs as $program) {
+
+                    $q->orWhere(function ($subQuery) use ($program) {
+                        $subQuery->where('grade_id', $program->grade_id)
+                            ->where('branch_id', $program->branch_id);
+                    });
+
+                }
             });
-        }
+    });
+}
     if ($request->filled('learning_program')) {
 
     $prog = AcademicProgram::where('name', $request->learning_program)
@@ -1244,7 +1253,6 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
             'recordsTotal'         => $total,
             'recordsFiltered'      => $filtered,
             'data'                 => $rows,
-            'aaData'               => $rows,
             'iTotalRecords'        => $total,
             'iTotalDisplayRecords' => $filtered,
         ]);

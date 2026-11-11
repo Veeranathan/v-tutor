@@ -11,7 +11,7 @@ Tutor Details
 
 <style>
  
-#example thead th {
+#tutor-details thead th {
     position: relative !important;
     padding: 14px 30px 14px 12px !important;
     white-space: nowrap !important;
@@ -40,7 +40,7 @@ table.dataTable thead th.sorting_desc:after {
     opacity: 1 !important;
 }
 
-#example thead th:hover {
+#tutor-details thead th:hover {
     background: #f1f1f1 !important;
     color: #b80f0a;
 }
@@ -175,9 +175,9 @@ table.dataTable thead th.sorting_desc:after {
     display: block;
 }
 
-#example tbody td:nth-child(4),
-#example tbody td:nth-child(6),
-#example tbody td:nth-child(7) {
+#tutor-details tbody td:nth-child(4),
+#tutor-details tbody td:nth-child(6),
+#tutor-details tbody td:nth-child(7) {
     white-space: normal !important;
     min-width: 150px;
     max-width: 220px;
@@ -185,7 +185,7 @@ table.dataTable thead th.sorting_desc:after {
     overflow-wrap: anywhere;
 }
 
-#example tbody td:not(:nth-child(4)):not(:nth-child(6)):not(:nth-child(7)) {
+#tutor-details tbody td:not(:nth-child(4)):not(:nth-child(6)):not(:nth-child(7)) {
     white-space: nowrap;
 }
 
@@ -299,53 +299,43 @@ table.dataTable thead th.sorting_desc:after {
     font-weight: 600;
 }
 
-/* ================================
-   DATATABLE STYLING
-================================ */
 
-/* Main Table */
-#example {
+#tutor-details {
     width: 100% !important;
     border-collapse: collapse !important;
     border-spacing: 0 !important;
     border: 1px solid #e5e7eb !important;
 }
 
-/* Header and Body Common */
-#example thead th,
-#example tbody td {
+#tutor-details thead th,
+#tutor-details tbody td {
     vertical-align: middle !important;
     box-sizing: border-box !important;
 }
 
-/* Header */
-#example thead th {
+#tutor-details thead th {
     background: #f9fafb !important;
     border: 1px solid #dfe3e8 !important;
     border-bottom: 2px solid #d1d5db !important;
 }
 
-/* Body Cells */
-#example tbody td {
+#tutor-details tbody td {
     border: 1px solid #e5e7eb !important;
     padding: 12px !important;
 }
 
-/* Alternate Row Background */
-#example tbody tr:nth-child(even) {
+#tutor-details tbody tr:nth-child(even) {
     background-color: #fafafa !important;
 }
 
-#example tbody tr:nth-child(odd) {
+#tutor-details tbody tr:nth-child(odd) {
     background-color: #ffffff !important;
 }
 
-/* Row Hover */
-#example tbody tr:hover {
+#tutor-details tbody tr:hover {
     background-color: #fff5f5 !important;
 }
 
-/* DataTable Wrapper */
 .dataTables_wrapper {
     width: 100%;
 }
@@ -568,7 +558,7 @@ table.dataTable tbody td {
 
         <div>
             <table class="table table-bordered table-striped"
-                id="example"
+                id="tutor-details"
                 style="width:100%">
 
                 <thead>
@@ -839,7 +829,7 @@ table.dataTable tbody td {
         };
 
 
-        var table = dataTableCall(dataTableObj, "example");
+        var table = dataTableCall(dataTableObj, "tutor-details");
 
 
         var sb = $('.dataTables_scrollBody');
@@ -897,7 +887,7 @@ table.dataTable tbody td {
 
 
 
-        $('#example tbody').on('click', '.edit_details', function() {
+        $('#tutor-details tbody').on('click', '.edit_details', function() {
 
             var row = table.row($(this).closest('tr')).data();
 

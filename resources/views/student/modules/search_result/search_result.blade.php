@@ -1201,7 +1201,6 @@ $(function () {
     var minRate = Number(@json($min));
     var maxRate = Number(@json($max));
 
-    // State map
     var stateMap = {
         'New South Wales': 'NSW',
         'Victoria': 'VIC',
@@ -1213,7 +1212,6 @@ $(function () {
         'Australian Capital Territory': 'ACT'
     };
 
-    // Price slider
     $("#slider-range").slider({
 
         range: true,
@@ -1244,7 +1242,6 @@ $(function () {
 
     });
 
-    // Escape HTML
     function escapeHtml(value) {
 
         return $('<div>')
@@ -1253,7 +1250,6 @@ $(function () {
 
     }
 
-    // Strip HTML
     function stripHtml(value) {
 
         return $('<div>')
@@ -1274,8 +1270,6 @@ $(function () {
                          alt="No tutors found">
 
                     <h2>No tutors match your current filters.</h2>
-
-                    <p>Adjust your selections to explore more available tutors.</p>
                 </div>
             `;
         }
@@ -1298,7 +1292,6 @@ $(function () {
 
             var avg = parseFloat(tutor.avg_review || 0).toFixed(1);
 
-            // States
             var states = '';
 
             if (tutor.unique_wwcc_states) {
@@ -1381,7 +1374,6 @@ $(function () {
 
             }
 
-            // Year levels
             var yearRange = tutor.year_levels
                 ? `
                     <li>
@@ -1514,10 +1506,8 @@ $(function () {
 
     }
 
-    // Load tutor results
     function loadTutorResults(url = null) {
 
-        // Cancel previous request
         if (ajaxRequest) {
             ajaxRequest.abort();
         }
@@ -1547,7 +1537,6 @@ $(function () {
 
                 var html = buildTutorCards(tutors);
 
-                // Pagination
                 if (tutors.length > 0 && response.pagination) {
 
                     html += `
@@ -1560,7 +1549,6 @@ $(function () {
 
                 $("#tutorResults").html(html);
 
-                // Total count
                 var total = Number(response.total || 0);
 
                 $(".vt-result-head h2").text(
@@ -1593,7 +1581,6 @@ $(function () {
 
     }
 
-    // Filter changes - debounce
     $(document).on(
         "change",
         ".change_apply, #sort_type_id, .click_apply",
@@ -1610,7 +1597,6 @@ $(function () {
         }
     );
 
-    // Search input - debounce
     $('input[name="q"]').on("input", function () {
 
         clearTimeout(searchTimer);
@@ -1623,7 +1609,6 @@ $(function () {
 
     });
 
-    // AJAX pagination
     $(document).on(
         "click",
         "#tutorResults .pagination a",
@@ -1643,7 +1628,6 @@ $(function () {
         }
     );
 
-    // Advanced filter toggle
     $(document).on(
         "click",
         "#vtToggleAdvanced",
@@ -1656,7 +1640,6 @@ $(function () {
         }
     );
 
-    // Clear filters
     $(document).on(
         "click",
         "#vtClearFilters",
@@ -1673,7 +1656,6 @@ $(function () {
 
             $form[0].reset();
 
-            // Reset price slider
             if ($("#slider-range").hasClass("ui-slider")) {
 
                 var min = $("#slider-range").slider("option", "min");
@@ -1693,12 +1675,10 @@ $(function () {
 
             }
 
-            // Reset advanced filters
             $("#vtAdvanced").stop(true, true).slideUp(200);
 
             $("#vtToggleAdvanced").removeClass("active");
 
-            // Default sorting
             $("#sort_type_id").val("D");
 
             loadTutorResults();

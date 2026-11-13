@@ -42,7 +42,16 @@
 @section('content')
 @php
 $w_days = ['1' => 'Mon', '2' => 'Tue', '3' => 'Wed', '4' => 'Thu', '5' => 'Fri', '6' => 'Sat', '7' => 'Sun'];
-
+$stateAbbr = [
+    'New South Wales' => 'NSW',
+    'Victoria' => 'VIC',
+    'Queensland' => 'QLD',
+    'South Australia' => 'SA',
+    'Western Australia' => 'WA',
+    'Tasmania' => 'TAS',
+    'Northern Territory' => 'NT',
+    'Australian Capital Territory' => 'ACT',
+];
 $min = $request_min_hourly_rate ?? 0;
 $max = $request_max_hourly_rate ?? ($max_hourly_rate_fetch ?? 200);
 $sortValue = old('sort_type_value',$sort_type_value ?? request('sort_type_value', 'D'));
@@ -264,8 +273,10 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
                                             data-id="{{ $tutor->id }}">{{ $tutor->f_name . ' ' . $tutor->l_name }}</a>
                                     </h3>
                                     <span class="vt-states">
-                                        @foreach ($tutor->unique_wwcc_states as $state)
-                                        <span class="vt-state">{{ $stateAbbr[$state->state_name] ?? '' }}</span>
+                                       @foreach ($tutor->unique_wwcc_states as $state)
+                                            @if (!empty($stateAbbr[$state->state_name]))
+                                                <span class="vt-state">{{ $stateAbbr[$state->state_name] }}</span>
+                                            @endif
                                         @endforeach
                                     </span>
                                 </div>
@@ -337,7 +348,7 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
                 <p>Discover our thorough screening, interview and verification process to ensure we work with
                     qualified, experienced and child-safe educators.</p>
             </div>
-            <a href="{{ url('how-we-select-tutors') }}" class="vt-btn-outline vt-btn-lg">
+            <a href="{{ url('faq') }}?tab=tutors" class="vt-btn-outline vt-btn-lg">
                 Learn About Our Selection Process <i class="fas fa-arrow-right"></i>
             </a>
         </div>

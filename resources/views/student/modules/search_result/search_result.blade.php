@@ -389,7 +389,7 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
     .vt-hero {
         position: relative;
         background-color: var(--abt-cream-hero);
-        background-image: url("{{ public_asset('assets/images/about/image1.png') }}");
+        background-image: url("{{ public_asset('assets/images/find_tutor/find_tutor.png') }}");
         background-repeat: no-repeat;
         background-size: 60% 100%;
         background-position: right center;
@@ -1290,29 +1290,38 @@ $(function () {
 
             var avg = parseFloat(tutor.avg_review || 0).toFixed(1);
 
-            var states = '';
+                var states = '';
 
-            if (tutor.unique_wwcc_states) {
+                var tutorStates = [];
 
-                tutor.unique_wwcc_states.forEach(function (state) {
+                if (
+                    Array.isArray(tutor.unique_wwcc_states) &&
+                    tutor.unique_wwcc_states.length
+                ) {
+                    tutorStates = tutor.unique_wwcc_states;
+                }
+                else if (tutor.get_state) {
+                    tutorStates = [tutor.get_state];
+                }
 
-                    var abbreviation =
-                        stateMap[state.state_name] || '';
+                tutorStates.forEach(function (state) {
+
+                    var stateName = typeof state === 'string'
+                        ? state
+                        : (state.state_name || '');
+
+                    var abbreviation = 
+                        stateMap[stateName] || '';
 
                     if (abbreviation) {
-
                         states += `
                             <span class="vt-state">
                                 ${escapeHtml(abbreviation)}
                             </span>
                         `;
-
                     }
 
                 });
-
-            }
-
             // Subjects
             var subjects = [];
 
@@ -1529,6 +1538,7 @@ $(function () {
             },
 
             success: function (response) {
+                console.log(response.tutors.data);
 
                 var tutors =
                     response.tutors?.data || [];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student\SearchResult;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\AcademicProgram;
 use App\Models\User;
 use App\Models\Subject;
 use App\Models\Grade;
@@ -136,7 +137,9 @@ class SearchResultController extends Controller
         'getTutorShipPlan.getGrade:id,slug,grade_name,capture_code,status',
         'getTutorShipPlan:id,teacher_id,grade_id,subject_id,branch_id,hourly_rate,status',
         'getTutorWWCC',
-        'getCalendarAvailability'
+        'getCalendarAvailability',
+        'tutorSkillsCapability'
+
     ])
     ->where(['user_type' => 'T', 'draft' => 'N'])
     ->whereIn('status', ['AA', 'A'])
@@ -271,6 +274,46 @@ class SearchResultController extends Controller
                     }
                 }
             }
+            if ($request->filled('program_type')) {
+            $programs = AcademicProgram::where('status', 1)
+                ->where('program_type', $request->program_type)
+                ->get(['grade_id', 'branch_id']);
+            if ($programs->isNotEmpty()) {
+                $baseQuery->whereIn('id', function ($query) use ($programs) {
+                    $query->select('teacher_id')
+                        ->from('tutorship_plan')
+                        ->where('status', 'A')
+                        ->where(function ($q) use ($programs) {
+                            foreach ($programs as $program) {
+                                $q->orWhere(function ($subQuery) use ($program) {
+                                    $subQuery->where('grade_id', $program->grade_id)
+                                        ->where('branch_id', $program->branch_id);
+                                });
+
+                            }
+                        });
+                });
+
+            } else {
+                $baseQuery->whereRaw('1 = 0');
+            }
+        }
+            if ($request->filled('learning_program')) {
+            $prog = AcademicProgram::where('id', $request->learning_program)
+                ->where('status', 1)
+                ->first();
+            if ($prog) {
+                $baseQuery->whereHas('getTutorShipPlan', function ($q) use ($prog) {
+                    $q->where('status', 'A')
+                    ->where('grade_id', $prog->grade_id)
+                    ->where('branch_id', $prog->branch_id);
+
+                });
+            } else {
+                $baseQuery->whereRaw('1 = 0');
+            }
+        }
+        
 
             if (!empty($availability)) {
                 $baseQuery->whereHas('getMyAvailability', function ($q) use ($availability) {
@@ -294,7 +337,7 @@ class SearchResultController extends Controller
 
             $baseQuery->select('id', 'f_name', 'l_name', 'slug', 'user_type', 'student_type', 'status', 'avatar', 'profile_pic', 'about_me', 'profile_video', 'video_short_url', 'total_experience', 'total_no_of_reviews', 'avg_review', 'min_hourly_rate', 'created_at', 'state', 'timezone_id', 'city', 'free_trial');
 
-            switch ($request->input('sort_type_value', 'R')) {
+            switch ($request->input('sort_type_value', 'D')) {
                 case 'D':
                     $baseQuery->orderby('created_at', 'desc');
                     break;
@@ -304,23 +347,127 @@ class SearchResultController extends Controller
                 case 'E':
                     $baseQuery->orderby('total_experience', 'desc');
                     break;
-                case 'H':
-                    $baseQuery->orderby('min_hourly_rate', 'desc');
+                case 'N':
+                    $baseQuery->orderBy('f_name', 'asc');
                     break;
-                case 'L':
-                    $baseQuery->orderby('min_hourly_rate', 'asc');
-                    break;
+                case 'S':
+                $baseQuery->orderBy(
+                    Branch::select('branch_name')
+                        ->whereIn('branches.id', function ($q) {
+                            $q->select('branch_id')
+                                ->from('tutorship_plan')
+                                ->whereColumn('tutorship_plan.teacher_id', 'users.id')
+                                ->where('tutorship_plan.status', 'A');
+                        })
+                        ->orderBy('branch_name', 'asc')
+                        ->limit(1),
+                    'asc'
+                );
+                break;
                 default:
-                    $baseQuery->orderby('avg_review', 'desc');
+                    $baseQuery->orderby('created_at', 'desc');
                     break;
             }
         } else {
-            $baseQuery->orderby('avg_review', 'desc');
+            $baseQuery->orderby('created_at', 'desc');
         }
+        $search = trim($request->input('q', ''));
 
+        if ($search !== '') {
+            $baseQuery->where(function ($q) use ($search) {
+                $q->where('f_name', 'LIKE', "%{$search}%")
+                ->orWhere('l_name', 'LIKE', "%{$search}%")
+                ->orWhereRaw(
+                    "CONCAT(f_name, ' ', l_name) LIKE ?",
+                    ["%{$search}%"]
+                )    
+                ->orWhereHas('getTutorShipPlan.getSubject', function ($subject) use ($search) {
+                    $subject->where('subject', 'LIKE', "%{$search}%");
+                })
+                   ->orWhereHas('getTutorShipPlan', function ($query) use ($search) {
+
+    $query->where('status', 'A')
+        ->where(function ($q) use ($search) {
+
+            $q->whereHas('getSubject', function ($subject) use ($search) {
+                $subject->where('subject', 'LIKE', "%{$search}%");
+            })
+
+            ->orWhereHas('getAcademicProgram', function ($program) use ($search) {
+                $program->where('status', 1)
+                    ->where('name', 'LIKE', "%{$search}%");
+            });
+
+        });
+    });
+            });
+        }
         # Final paginate
-        $data['tutors'] = $baseQuery->paginate(10)->appends(request()->query());
+        $data['tutors'] = $baseQuery->paginate(6)->appends(request()->query());
+        $tutorIds = $data['tutors']->getCollection()->pluck('id');
+        $plans = TutorshipPlan::where('status', 'A')
+            ->whereIn('teacher_id', $tutorIds)
+            ->get(['teacher_id', 'grade_id', 'branch_id'])
+            ->groupBy('teacher_id');
 
+        $gradeNames = Grade::pluck('grade_name', 'id');
+        $branchNames = Branch::pluck('branch_name', 'id');
+        $programsByKey = AcademicProgram::where('status', 1)
+            ->get(['name', 'program_type', 'grade_id', 'branch_id'])
+            ->groupBy(function ($program) {
+                return $program->grade_id . '-' . $program->branch_id;
+            });
+
+        $data['tutors']->getCollection()->transform(function ($tutor) use (
+            $plans,
+            $gradeNames,
+            $branchNames,
+            $programsByKey
+        ) {
+
+            $tutorPlans = $plans->get($tutor->id, collect());
+            $years = $tutorPlans->pluck('grade_id')
+                ->unique()
+                ->map(function ($id) use ($gradeNames) {
+                    return $gradeNames[$id] ?? '';
+                })
+                ->filter()
+                ->values()
+                ->implode(', ');
+
+            $subjects = $tutorPlans->pluck('branch_id')
+                ->unique()
+                ->map(function ($id) use ($branchNames) {
+                    return $branchNames[$id] ?? '';
+                })
+                ->filter()
+                ->values()
+                ->implode(', ');
+
+        $learningPrograms = $tutorPlans->map(function ($plan) use ($programsByKey) {
+            $key = $plan->grade_id . '-' . $plan->branch_id;
+            return $programsByKey->has($key)
+                ? $programsByKey[$key]->pluck('name')->all()
+                : [];
+
+        })->flatten()->filter()->unique()->take(2)->values()->all();
+            $programTypes = $tutorPlans->map(function ($plan) use ($programsByKey) {
+                $key = $plan->grade_id . '-' . $plan->branch_id;
+                return $programsByKey->has($key)
+                    ? $programsByKey[$key]->pluck('program_type')->all()
+                    : [];
+
+            })->flatten()->filter()->unique()->values()->implode(', ');
+
+            $tutor->capabilities = optional($tutor->tutorSkillsCapability)->capabilities ?? '';
+            $tutor->skills = optional($tutor->tutorSkillsCapability)->skills ?? '';
+            $tutor->year_levels = $years;
+            $tutor->subjects = $subjects;
+            $tutor->program_type = $programTypes;
+            $tutor->learning_programs = $learningPrograms;
+
+            return $tutor;
+        });
         # Store applied filters
         $data['key'] = $request->all();
         $data['grade_obj'] = Grade::where('slug', $request->grade)->select('id', 'slug', 'grade_name', 'status', 'capture_code')->first();
@@ -330,7 +477,7 @@ class SearchResultController extends Controller
         $data['state_value'] = State::where('slug', $request->state)->select('id', 'slug', 'state_name')->first();
         $data['state_slug'] = $request->state;
         $data['review_value'] = $request->review ?? null;
-        $data['sort_type_value'] = $request->input('sort_type_value', 'R');
+        $data['sort_type_value'] = $request->input('sort_type_value', 'D');
         $data['experience_value'] = $request->experience;
         $expSplit = explode(" ", $request->experience);
         $data['min_experience_value'] = trim($expSplit[0] ?? '');
@@ -338,7 +485,29 @@ class SearchResultController extends Controller
         $data['hourly_rate_value'] = $request->hourly_rate;
         $data['request_min_hourly_rate'] = $request->min_hourly_rate;
         $data['request_max_hourly_rate'] = $request->max_hourly_rate;
-
+        $data['programTypes'] = AcademicProgram::where('status', 1)
+                ->whereNotNull('program_type')
+                ->where('program_type', '!=', '')
+                ->distinct()
+                ->orderBy('program_type', 'asc')
+                ->pluck('program_type', 'program_type')
+                ->all();
+        $data['learningPrograms'] = AcademicProgram::where('status', 1)
+                        ->selectRaw('MIN(id) as id, TRIM(name) as name')
+                        ->groupByRaw('TRIM(name)')
+                        ->orderBy('name', 'asc')
+                        ->pluck('name', 'id')
+                        ->all();
+       if ($request->ajax()) {
+            return response()->json([
+            'tutors' => $data['tutors'],
+            'total' => $data['tutors']->total(),
+            'pagination' => $data['tutors']
+                ->appends($request->query())
+                ->links()
+                ->render(),
+            ]);
+        }
         return view('student.modules.search_result.search_result')->with($data);
     }
 

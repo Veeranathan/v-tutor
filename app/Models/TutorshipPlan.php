@@ -28,4 +28,9 @@ class TutorshipPlan extends Model
     public function getBranch(){
         return $this->hasOne('App\Models\Branch', 'id', 'branch_id');
     }
+
+    public function getAcademicProgram() {
+    return $this->hasOne('App\Models\AcademicProgram', 'grade_id', 'grade_id')
+        ->whereColumn('academic_programs.branch_id', 'tutorship_plan.branch_id');
+     }
 }

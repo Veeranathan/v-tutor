@@ -233,7 +233,7 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
                 <label for="sort_type_id" class="sort_by">Sort by:</label>
                 <div class="vt-select vt-select-plain">
                     <select name="sort_type_value" id="sort_type_id" form="searchVtutorForm">
-                        <option value="D" {{ ($sortValue ?? '') == 'D' ? 'selected' : '' }}>Recommended</option>
+                        <option value="D" {{ ($sortValue ?? '') == 'D' ? 'selected' : '' }}>Recommended </option>
                             <option value="R" {{ ($sortValue ?? '') == 'R' ? 'selected' : '' }}>Ratings: High to Low</option>
                             <option value="E" {{ ($sortValue ?? '') == 'E' ? 'selected' : '' }}>Experience: Most to Least</option>
                             <option value="N" {{ ($sortValue ?? '') == 'N' ? 'selected' : '' }}>Name: A to Z</option>
@@ -661,19 +661,6 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
         transform: translateY(-50%);
         pointer-events: none;
         color: var(--vt-navy);
-    }
-
-    .vt-select-plain select {
-        background: transparent;
-        border: 0;
-        box-shadow: none;
-        padding: 4px 26px 4px 6px;
-        min-width: 0;
-        font-size: 16px;
-    }
-
-    .vt-select-plain::after {
-        right: 6px;
     }
 
     .vt-clear {

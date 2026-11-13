@@ -337,7 +337,7 @@ class SearchResultController extends Controller
 
             $baseQuery->select('id', 'f_name', 'l_name', 'slug', 'user_type', 'student_type', 'status', 'avatar', 'profile_pic', 'about_me', 'profile_video', 'video_short_url', 'total_experience', 'total_no_of_reviews', 'avg_review', 'min_hourly_rate', 'created_at', 'state', 'timezone_id', 'city', 'free_trial');
 
-            switch ($request->input('sort_type_value', 'R')) {
+            switch ($request->input('sort_type_value', 'D')) {
                 case 'D':
                     $baseQuery->orderby('created_at', 'desc');
                     break;
@@ -347,18 +347,29 @@ class SearchResultController extends Controller
                 case 'E':
                     $baseQuery->orderby('total_experience', 'desc');
                     break;
-                case 'H':
-                    $baseQuery->orderby('min_hourly_rate', 'desc');
+                case 'N':
+                    $baseQuery->orderBy('f_name', 'asc');
                     break;
-                case 'L':
-                    $baseQuery->orderby('min_hourly_rate', 'asc');
-                    break;
+                case 'S':
+                $baseQuery->orderBy(
+                    Branch::select('branch_name')
+                        ->whereIn('branches.id', function ($q) {
+                            $q->select('branch_id')
+                                ->from('tutorship_plan')
+                                ->whereColumn('tutorship_plan.teacher_id', 'users.id')
+                                ->where('tutorship_plan.status', 'A');
+                        })
+                        ->orderBy('branch_name', 'asc')
+                        ->limit(1),
+                    'asc'
+                );
+                break;
                 default:
-                    $baseQuery->orderby('avg_review', 'desc');
+                    $baseQuery->orderby('created_at', 'desc');
                     break;
             }
         } else {
-            $baseQuery->orderby('avg_review', 'desc');
+            $baseQuery->orderby('created_at', 'desc');
         }
         $search = trim($request->input('q', ''));
 
@@ -466,7 +477,7 @@ class SearchResultController extends Controller
         $data['state_value'] = State::where('slug', $request->state)->select('id', 'slug', 'state_name')->first();
         $data['state_slug'] = $request->state;
         $data['review_value'] = $request->review ?? null;
-        $data['sort_type_value'] = $request->input('sort_type_value', 'R');
+        $data['sort_type_value'] = $request->input('sort_type_value', 'D');
         $data['experience_value'] = $request->experience;
         $expSplit = explode(" ", $request->experience);
         $data['min_experience_value'] = trim($expSplit[0] ?? '');

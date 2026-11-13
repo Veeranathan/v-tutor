@@ -45,7 +45,7 @@ $w_days = ['1' => 'Mon', '2' => 'Tue', '3' => 'Wed', '4' => 'Thu', '5' => 'Fri',
 
 $min = $request_min_hourly_rate ?? 0;
 $max = $request_max_hourly_rate ?? ($max_hourly_rate_fetch ?? 200);
-$sortValue = old('sort_type_value', $sort_type_value ?? request('sort_type_value', 'R'));
+$sortValue = old('sort_type_value',$sort_type_value ?? request('sort_type_value', 'D'));
 $totalTutors = method_exists($tutors, 'total') ? $tutors->total() : count($tutors);
 $hasAdvanced = !empty(request('availability')) || request()->filled('review')
 || request()->filled('min_hourly_rate') || request()->filled('max_hourly_rate');
@@ -82,7 +82,7 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
                     <span class="vt-strip-ico"><i class="fas fa-bullseye"></i></span>
                     <div>
                         <h4>Program-aligned teaching</h4>
-                        <p>Delivers structured, outcome-based learning from our Academic Learning Programs (ALPs).</p>
+                        <p>Delivers structured, outcome-based learning from our Managed Learning Programs.</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-4 vt-strip-item">
@@ -224,10 +224,11 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
                 <label for="sort_type_id" class="sort_by">Sort by:</label>
                 <div class="vt-select vt-select-plain">
                     <select name="sort_type_value" id="sort_type_id" form="searchVtutorForm">
-                        <option value="R" @if ($sortValue=='R' ) selected @endif>Recommended</option>
-                        <option value="H" @if ($sortValue=='H' ) selected @endif>$ High to Low</option>
-                        <option value="L" @if ($sortValue=='L' ) selected @endif>$ Low to High</option>
-                        <option value="E" @if ($sortValue=='E' ) selected @endif>Experience</option>
+                        <option value="D" {{ ($sortValue ?? '') == 'D' ? 'selected' : '' }}>Recommended</option>
+                            <option value="R" {{ ($sortValue ?? '') == 'R' ? 'selected' : '' }}>Ratings: High to Low</option>
+                            <option value="E" {{ ($sortValue ?? '') == 'E' ? 'selected' : '' }}>Experience: Most to Least</option>
+                            <option value="N" {{ ($sortValue ?? '') == 'N' ? 'selected' : '' }}>Name: A to Z</option>
+                            <option value="S" {{ ($sortValue ?? '') == 'S' ? 'selected' : '' }}>Subject: A to Z</option>
                     </select>
                 </div>
             </div>
@@ -271,10 +272,13 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
 
                                 <div class="vt-meta-row">
                                     <span class="vt-verified"><i class="fas fa-shield-alt"></i> WWCC Verified</span>
-                                    <span class="vt-rating"><i class="fa fa-star"></i>
-                                        {{ number_format($avg, 1) }}
-                                        <small>({{ $tutor->total_no_of_reviews ?? 0 }})</small>
-                                    </span>
+                                    @if(($tutor->total_no_of_reviews ?? 0) > 0)
+                                        <span class="vt-rating">
+                                            <i class="fa fa-star"></i>
+                                            {{ number_format($avg, 1) }}
+                                            <small>({{ $tutor->total_no_of_reviews }})</small>
+                                        </span>
+                                    @endif
                                 </div>
 
                                 <div class="vt-headline">{{ $tutor->skills }}</div>
@@ -1186,358 +1190,523 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
 <link rel="stylesheet"
 href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
 <script>
-    $(function() {
+    
+$(function () {
 
-        var $form = $("#searchVtutorForm");
-        var ajaxRequest = null;
-        var searchTimer;
-       var minRate = Number(@json($min));
-        var maxRate = Number(@json($max));
+    var $form = $("#searchVtutorForm");
+    var ajaxRequest = null;
+    var searchTimer = null;
+    var filterTimer = null;
 
-        $("#slider-range").slider({
-            range: true,
-            min: 0,
-            max: 200,
-            step: 1,
+    var minRate = Number(@json($min));
+    var maxRate = Number(@json($max));
 
-            values: [minRate, maxRate],
+    // State map
+    var stateMap = {
+        'New South Wales': 'NSW',
+        'Victoria': 'VIC',
+        'Queensland': 'QLD',
+        'South Australia': 'SA',
+        'Western Australia': 'WA',
+        'Tasmania': 'TAS',
+        'Northern Territory': 'NT',
+        'Australian Capital Territory': 'ACT'
+    };
 
-            slide: function(event, ui) {
+    // Price slider
+    $("#slider-range").slider({
 
-                $("#vtRateText").text(
-                    "$" + ui.values[0] + " - $" + ui.values[1]
+        range: true,
+        min: 0,
+        max: 200,
+        step: 1,
+        values: [minRate, maxRate],
+
+        slide: function (event, ui) {
+
+            $("#vtRateText").text(
+                "$" + ui.values[0] + " - $" + ui.values[1]
+            );
+
+            $("#min_hourly_rate_value").val(ui.values[0]);
+            $("#max_hourly_rate_value").val(ui.values[1]);
+
+        },
+
+        stop: function (event, ui) {
+
+            $("#min_hourly_rate_value").val(ui.values[0]);
+            $("#max_hourly_rate_value").val(ui.values[1]);
+
+            loadTutorResults();
+
+        }
+
+    });
+
+    // Escape HTML
+    function escapeHtml(value) {
+
+        return $('<div>')
+            .text(value == null ? '' : String(value))
+            .html();
+
+    }
+
+    // Strip HTML
+    function stripHtml(value) {
+
+        return $('<div>')
+            .html(value || '')
+            .text()
+            .trim();
+
+    }
+
+    function buildTutorCards(tutors) {
+
+        var html = '';
+
+        if (!tutors || tutors.length === 0) {
+            return `
+                <div class="vt-empty">
+                    <img src="{{ public_asset('assets/images/empty_img.png') }}"
+                         alt="No tutors found">
+
+                    <h2>No tutors match your current filters.</h2>
+
+                    <p>Adjust your selections to explore more available tutors.</p>
+                </div>
+            `;
+        }
+
+        html += '<div class="row vt-cards">';
+
+        tutors.forEach(function (tutor) {
+
+            var profile =
+                "{{ url('tutor-public-profile') }}/" +
+                encodeURIComponent(tutor.slug || '');
+
+            var photo = tutor.profile_pic
+                ? "{{ asset('storage/teacher_profile_pic') }}/" +
+                    encodeURIComponent(tutor.profile_pic)
+                : (
+                    tutor.avatar ||
+                    "{{ public_asset('assets/images/blank1.png') }}"
                 );
 
-                $("#min_hourly_rate_value").val(ui.values[0]);
-                $("#max_hourly_rate_value").val(ui.values[1]);
+            var avg = parseFloat(tutor.avg_review || 0).toFixed(1);
+
+            // States
+            var states = '';
+
+            if (tutor.unique_wwcc_states) {
+
+                tutor.unique_wwcc_states.forEach(function (state) {
+
+                    var abbreviation =
+                        stateMap[state.state_name] || '';
+
+                    if (abbreviation) {
+
+                        states += `
+                            <span class="vt-state">
+                                ${escapeHtml(abbreviation)}
+                            </span>
+                        `;
+
+                    }
+
+                });
+
+            }
+
+            // Subjects
+            var subjects = [];
+
+            if (Array.isArray(tutor.get_tutor_ship_plan)) {
+
+                tutor.get_tutor_ship_plan.forEach(function (plan) {
+
+                    var branchName =
+                        plan.getbranch?.branch_name;
+
+                    if (
+                        branchName &&
+                        !subjects.includes(branchName)
+                    ) {
+                        subjects.push(branchName);
+                    }
+
+                });
+
+            }
+
+            var subjectText = subjects.slice(0, 3).join(' • ');
+
+            if (!subjectText) {
+                subjectText = tutor.subjects || 'Subjects not listed';
+            }
+
+            // Learning programs
+            var programs = '';
+
+            if (
+                tutor.learning_programs &&
+                tutor.learning_programs.length
+            ) {
+
+                programs += `
+                    <div class="vt-prog-title">
+                        Learning Programs <span>|</span> Support
+                    </div>
+
+                    <div class="vt-chips">
+                `;
+
+                tutor.learning_programs
+                    .slice(0, 4)
+                    .forEach(function (chip) {
+
+                        programs += `
+                            <span class="vt-chip">
+                                ${escapeHtml(chip)}
+                            </span>
+                        `;
+
+                    });
+
+                programs += '</div>';
+
+            }
+
+            // Year levels
+            var yearRange = tutor.year_levels
+                ? `
+                    <li>
+                        <i class="fas fa-layer-group"></i>
+                        ${escapeHtml(tutor.year_levels)}
+                    </li>
+                `
+                : '';
+
+            // Capabilities
+            var capabilities = stripHtml(tutor.capabilities);
+
+            if (capabilities.length > 110) {
+
+                capabilities =
+                    capabilities.substring(0, 107) + '...';
+
+            }
+
+            // Reviews: show only when reviews exist
+            var ratingHtml = '';
+
+            if (Number(tutor.total_no_of_reviews || 0) > 0) {
+
+                ratingHtml = `
+                    <span class="vt-rating">
+                        <i class="fa fa-star"></i>
+                        ${avg}
+                        <small>
+                            (${escapeHtml(tutor.total_no_of_reviews)})
+                        </small>
+                    </span>
+                `;
+
+            }
+
+            html += `
+                <div class="col-lg-4 col-md-6 mb-4 d-flex">
+
+                    <article class="vt-card">
+
+                        <div class="vt-card-top">
+
+                            <img src="${escapeHtml(photo)}"
+                                 alt="${escapeHtml(tutor.f_name)} ${escapeHtml(tutor.l_name)}"
+                                 class="vt-avatar">
+
+                            <div class="vt-card-main">
+
+                                <div class="vt-name-row">
+
+                                    <h3>
+                                        <a href="${escapeHtml(profile)}"
+                                           target="_blank"
+                                           class="save_input_data_on_click"
+                                           data-type="PP"
+                                           data-id="${escapeHtml(tutor.id)}">
+
+                                            ${escapeHtml(tutor.f_name)}
+                                            ${escapeHtml(tutor.l_name)}
+
+                                        </a>
+                                    </h3>
+
+                                    <span class="vt-states">
+                                        ${states}
+                                    </span>
+
+                                </div>
+
+                                <div class="vt-meta-row">
+
+                                    <span class="vt-verified">
+                                        <i class="fas fa-shield-alt"></i>
+                                        WWCC Verified
+                                    </span>
+
+                                    ${ratingHtml}
+
+                                </div>
+
+                                <div class="vt-headline">
+                                    ${escapeHtml(tutor.skills || '')}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <ul class="vt-info">
+
+                            <li>
+                                <i class="fas fa-graduation-cap"></i>
+                                ${escapeHtml(subjectText)}
+                            </li>
+
+                            ${yearRange}
+
+                        </ul>
+
+                        ${programs}
+
+                        <div class="vt-card-foot">
+
+                            <p>${escapeHtml(capabilities)}</p>
+
+                            <a href="${escapeHtml(profile)}"
+                               target="_blank"
+                               class="vt-btn-outline save_input_data_on_click"
+                               data-type="PP"
+                               data-id="${escapeHtml(tutor.id)}">
+
+                                View Profile
+                                <i class="fas fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                </div>
+            `;
+
+        });
+
+        html += '</div>';
+
+        return html;
+
+    }
+
+    // Load tutor results
+    function loadTutorResults(url = null) {
+
+        // Cancel previous request
+        if (ajaxRequest) {
+            ajaxRequest.abort();
+        }
+
+        ajaxRequest = $.ajax({
+
+            url: url || $form.attr("action"),
+
+            type: "GET",
+
+            data: $form.serialize(),
+
+            dataType: "json",
+
+            cache: false,
+
+            beforeSend: function () {
+
+                $("#tutorResults").css("opacity", "0.5");
+
             },
 
-            stop: function(event, ui) {
+            success: function (response) {
 
-                $("#min_hourly_rate_value").val(ui.values[0]);
-                $("#max_hourly_rate_value").val(ui.values[1]);
+                var tutors =
+                    response.tutors?.data || [];
+
+                var html = buildTutorCards(tutors);
+
+                // Pagination
+                if (tutors.length > 0 && response.pagination) {
+
+                    html += `
+                        <div class="vt-pagination">
+                            ${response.pagination}
+                        </div>
+                    `;
+
+                }
+
+                $("#tutorResults").html(html);
+
+                // Total count
+                var total = Number(response.total || 0);
+
+                $(".vt-result-head h2").text(
+                    total + " Learning " +
+                    (total === 1 ? "Specialist" : "Specialists")
+                );
+
+            },
+
+            error: function (xhr, status) {
+
+                if (status !== "abort") {
+
+                    console.log(
+                        "Tutor AJAX Error:",
+                        xhr.responseText
+                    );
+
+                }
+
+            },
+
+            complete: function () {
+
+                $("#tutorResults").css("opacity", "1");
+
+            }
+
+        });
+
+    }
+
+    // Filter changes - debounce
+    $(document).on(
+        "change",
+        ".change_apply, #sort_type_id, .click_apply",
+        function () {
+
+            clearTimeout(filterTimer);
+
+            filterTimer = setTimeout(function () {
 
                 loadTutorResults();
+
+            }, 300);
+
+        }
+    );
+
+    // Search input - debounce
+    $('input[name="q"]').on("input", function () {
+
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(function () {
+
+            loadTutorResults();
+
+        }, 300);
+
+    });
+
+    // AJAX pagination
+    $(document).on(
+        "click",
+        "#tutorResults .pagination a",
+        function (e) {
+
+            e.preventDefault();
+
+            var url = $(this).attr("href");
+
+            if (url) {
+
+                clearTimeout(filterTimer);
+                loadTutorResults(url);
+
             }
-        });
-        function escapeHtml(value) {
-            return $('<div>').text(value == null ? '' : String(value)).html();
-        }
 
-        function stripHtml(value) {
-            return $('<div>').html(value || '').text().trim();
         }
+    );
 
-        function loadTutorResults(url = null) {
+    // Advanced filter toggle
+    $(document).on(
+        "click",
+        "#vtToggleAdvanced",
+        function () {
+
+            $("#vtAdvanced").stop(true, true).slideToggle(200);
+
+            $(this).toggleClass("active");
+
+        }
+    );
+
+    // Clear filters
+    $(document).on(
+        "click",
+        "#vtClearFilters",
+        function (e) {
+
+            e.preventDefault();
+
+            clearTimeout(filterTimer);
+            clearTimeout(searchTimer);
 
             if (ajaxRequest) {
                 ajaxRequest.abort();
             }
 
-            ajaxRequest = $.ajax({
-                url: url || $form.attr("action"),
-                type: "GET",
-                data: $form.serialize(),
-                dataType: "json",
-
-                beforeSend: function() {
-                    $("#tutorResults").css("opacity", "0.5");
-                },
-
-                success: function(response) {
-                    let html = '';
-
-                    if (response.tutors.data.length > 0) {
-
-                        html += '<div class="row vt-cards">';
-
-                        $.each(response.tutors.data, function(index, tutor) {
-
-                            let profile = "{{ url('tutor-public-profile') }}/" + encodeURIComponent(tutor.slug);
-
-                            let photo = tutor.profile_pic ?
-                                "{{ asset('storage/teacher_profile_pic') }}/" + encodeURIComponent(tutor.profile_pic) :
-                                (tutor.avatar || "{{ public_asset('assets/images/blank1.png') }}");
-
-                            let avg = parseFloat(tutor.avg_review || 0).toFixed(1);
-
-                            let states = '';
-
-                            let stateMap = {
-                                'New South Wales': 'NSW',
-                                'Victoria': 'VIC',
-                                'Queensland': 'QLD',
-                                'South Australia': 'SA',
-                                'Western Australia': 'WA',
-                                'Tasmania': 'TAS',
-                                'Northern Territory': 'NT',
-                                'Australian Capital Territory': 'ACT'
-                            };
-
-                            if (tutor.unique_wwcc_states) {
-                                $.each(tutor.unique_wwcc_states, function(i, state) {
-
-                                    let abbreviation = stateMap[state.state_name] || '';
-
-                                    if (abbreviation) {
-                                        states += `<span class="vt-state">${escapeHtml(abbreviation)}</span>`;
-                                    }
-                                });
-                            }
-
-                            let subjects = [];
-
-                            if (Array.isArray(tutor.get_tutor_ship_plan)) {
-                                tutor.get_tutor_ship_plan.forEach(function(plan) {
-
-                                    let branchName = plan.getbranch?.branch_name;
-
-                                    if (branchName && !subjects.includes(branchName)) {
-                                        subjects.push(branchName);
-                                    }
-
-                                });
-                            }
-
-                            let subjectText = subjects.slice(0, 3).join(' • ');
-
-                            if (!subjectText) {
-                                subjectText = tutor.subjects || 'Subjects not listed';
-                            }
-
-                            let programs = '';
-
-                            if (tutor.learning_programs && tutor.learning_programs.length) {
-
-                                programs += `
-                                <div class="vt-prog-title">
-                                    Learning Programs <span>|</span> Support
-                                </div>
-
-                                <div class="vt-chips">
-                            `;
-
-                                tutor.learning_programs.slice(0, 4).forEach(function(chip) {
-                                    programs += `
-                                    <span class="vt-chip">
-                                        ${escapeHtml(chip)}
-                                    </span>
-                                `;
-                                });
-
-                                programs += '</div>';
-                            }
-
-                            let yearRange = tutor.year_levels ?
-                                `<li><i class="fas fa-layer-group"></i> ${escapeHtml(tutor.year_levels)}</li>` :
-                                '';
-
-                            let capabilities = stripHtml(tutor.capabilities);
-
-                            if (capabilities.length > 110) {
-                                capabilities = capabilities.substring(0, 107) + '...';
-                            }
-
-                            html += `
-                            <div class="col-lg-4 col-md-6 mb-4 d-flex">
-
-                                <article class="vt-card">
-
-                                    <div class="vt-card-top">
-
-                                        <img src="${escapeHtml(photo)}"
-                                             alt="${escapeHtml(tutor.f_name)} ${escapeHtml(tutor.l_name)}"
-                                             class="vt-avatar">
-
-                                        <div class="vt-card-main">
-
-                                            <div class="vt-name-row">
-
-                                                <h3>
-                                                    <a href="${escapeHtml(profile)}"
-                                                       target="_blank"
-                                                       class="save_input_data_on_click"
-                                                       data-type="PP"
-                                                       data-id="${escapeHtml(tutor.id)}">
-
-                                                        ${escapeHtml(tutor.f_name)} ${escapeHtml(tutor.l_name)}
-
-                                                    </a>
-                                                </h3>
-
-                                                <span class="vt-states">
-                                                    ${states}
-                                                </span>
-
-                                            </div>
-
-                                            <div class="vt-meta-row">
-
-                                                <span class="vt-verified">
-                                                    <i class="fas fa-shield-alt"></i>
-                                                    WWCC Verified
-                                                </span>
-
-                                                <span class="vt-rating">
-                                                    <i class="fa fa-star"></i>
-                                                    ${avg}
-                                                    <small>(${escapeHtml(tutor.total_no_of_reviews || 0)})</small>
-                                                </span>
-
-                                            </div>
-
-                                            <div class="vt-headline">
-                                                ${escapeHtml(tutor.skills || '')}
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <ul class="vt-info">
-
-                                        <li>
-                                            <i class="fas fa-graduation-cap"></i>
-                                            ${escapeHtml(subjectText)}
-                                        </li>
-
-                                        ${yearRange}
-
-                                    </ul>
-
-                                    ${programs}
-
-                                    <div class="vt-card-foot">
-
-                                        <p>${escapeHtml(capabilities)}</p>
-
-                                        <a href="${escapeHtml(profile)}"
-                                           target="_blank"
-                                           class="vt-btn-outline save_input_data_on_click"
-                                           data-type="PP"
-                                           data-id="${escapeHtml(tutor.id)}">
-
-                                            View Profile
-                                            <i class="fas fa-arrow-right"></i>
-
-                                        </a>
-
-                                    </div>
-
-                                </article>
-
-                            </div>
-                        `;
-                        });
-
-                        html += '</div>';
-
-                        if (response.pagination) {
-
-                            html += `
-                            <div class="vt-pagination">
-                                ${response.pagination}
-                            </div>
-                        `;
-                        }
-
-                    } else {
-
-                        html = `
-                        <div class="vt-empty">
-
-                            <img src="{{ public_asset('assets/images/empty_img.png') }}"
-                                 alt="No tutors found">
-
-                            <h2>No tutors match your current filters.</h2>
-
-                        </div>
-                    `;
-                    }
-
-                    $("#tutorResults").html(html);
-
-                    $(".vt-result-head h2").text(
-                        response.total + " Learning " +
-                        (response.total == 1 ? "Specialist" : "Specialists")
-                    );
-
-                    $("#tutorResults").css("opacity", "1");
-                },
-
-                error: function(xhr, status) {
-                    if (status !== "abort") {
-                        console.log(xhr.responseText);
-                        $("#tutorResults").css("opacity", "1");
-                    }
-                }
-            });
-        }
-
-        $(document).on(
-            "change",
-            ".change_apply, #sort_type_id, .click_apply",
-            function() {
-                loadTutorResults();
-            }
-        );
-
-        $('input[name="q"]').on("keyup", function() {
-
-            clearTimeout(searchTimer);
-
-            searchTimer = setTimeout(function() {
-                loadTutorResults();
-            }, 500);
-        });
-
-        $(document).on(
-            "click",
-            "#tutorResults .pagination a",
-            function(e) {
-
-                e.preventDefault();
-
-                let url = $(this).attr("href");
-
-                if (url) {
-                    loadTutorResults(url);
-                }
-            }
-        );
-        $(document).on('click', '#vtToggleAdvanced', function() {
-
-            $('#vtAdvanced').slideToggle(300);
-
-            $(this).toggleClass('active');
-
-        });
-        $(document).on('click', '#vtClearFilters', function(e) {
-
-            e.preventDefault();
-
             $form[0].reset();
 
+            // Reset price slider
             if ($("#slider-range").hasClass("ui-slider")) {
 
-                let min = $("#slider-range").slider("option", "min");
-                let max = $("#slider-range").slider("option", "max");
+                var min = $("#slider-range").slider("option", "min");
+                var max = $("#slider-range").slider("option", "max");
 
-                $("#slider-range").slider("values", [min, max]);
+                $("#slider-range").slider(
+                    "values",
+                    [min, max]
+                );
 
                 $("#min_hourly_rate_value").val(min);
                 $("#max_hourly_rate_value").val(max);
 
-                $("#vtRateText").text("$" + min + " - $" + max);
+                $("#vtRateText").text(
+                    "$" + min + " - $" + max
+                );
+
             }
 
-            $("#vtAdvanced").slideUp(300);
+            // Reset advanced filters
+            $("#vtAdvanced").stop(true, true).slideUp(200);
+
             $("#vtToggleAdvanced").removeClass("active");
 
-            $("#sort_type_id").val("R");
+            // Default sorting
+            $("#sort_type_id").val("D");
 
             loadTutorResults();
-        });
-    });
+
+        }
+    );
+
+});
+
 </script>
 @endsection

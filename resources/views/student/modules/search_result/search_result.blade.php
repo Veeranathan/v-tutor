@@ -1538,8 +1538,6 @@ $(function () {
             },
 
             success: function (response) {
-                console.log(response.tutors.data);
-
                 var tutors =
                     response.tutors?.data || [];
 

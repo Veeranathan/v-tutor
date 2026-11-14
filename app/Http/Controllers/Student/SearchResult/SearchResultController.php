@@ -473,6 +473,12 @@ class SearchResultController extends Controller
         $data['grade_obj'] = Grade::where('slug', $request->grade)->select('id', 'slug', 'grade_name', 'status', 'capture_code')->first();
         $data['grade_value'] = $request->grade;
         $data['subject_slugs'] = $subjectSlugs;
+        $data['allBranches'] = Branch::where('status', 'A')
+            ->orderBy('branch_name', 'ASC')
+            ->get();
+        $data['allGrades'] = Grade::where('status', 'A')
+            ->orderBy('grade_name', 'ASC')
+            ->get();
         $data['branch_slugs'] = $branchSlugs;
         $data['state_value'] = State::where('slug', $request->state)->select('id', 'slug', 'state_name')->first();
         $data['state_slug'] = $request->state;

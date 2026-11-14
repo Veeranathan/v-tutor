@@ -124,25 +124,26 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
                     <i class="fas fa-sliders-h"></i>
                 </button>
                 <div class="vt-select">
-                    <select name="branch_id[]" id="branch_id" class="change_apply">
+                   <select name="branch_id[]" id="branch_id" class="change_apply">
                         <option value="">All Subjects</option>
-                        @if (!empty($branches) && is_iterable($branches))
-                        @foreach ($branches as $branch)
-                        <option value="{{ $branch->slug }}"
-                            @if (!empty($branch_slugs) && in_array($branch->slug, $branch_slugs)) selected @endif>
-                            {{ $branch->branch_name }}
-                        </option>
+
+                        @foreach ($allBranches as $branch)
+                            <option value="{{ $branch->slug }}"
+                                {{ in_array($branch->slug, $branch_slugs ?? []) ? 'selected' : '' }}>
+                                {{ $branch->branch_name }}
+                            </option>
                         @endforeach
-                        @endif
                     </select>
                 </div>
                 <div class="vt-select">
-                    <select name="grade" id="grade" class="change_apply">
+                  <select name="grade" id="grade" class="change_apply">
                         <option value="">All Year Levels</option>
-                        @foreach ($grades as $grade)
-                        <option value="{{ $grade->slug }}" {{ request('grade') == $grade->slug ? 'selected' : '' }}>
-                            {{ $grade->grade_name }}
-                        </option>
+
+                        @foreach ($allGrades as $grade)
+                            <option value="{{ $grade->slug }}"
+                                {{ request('grade') == $grade->slug ? 'selected' : '' }}>
+                                {{ $grade->grade_name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -1646,51 +1647,60 @@ $(function () {
         }
     );
 
-    $(document).on(
-        "click",
-        "#vtClearFilters",
-        function (e) {
+  
+$(document).on("click", "#vtClearFilters", function (e) {
 
-            e.preventDefault();
+    e.preventDefault();
 
-            clearTimeout(filterTimer);
-            clearTimeout(searchTimer);
-
-            if (ajaxRequest) {
-                ajaxRequest.abort();
-            }
-
-            $form[0].reset();
-
-            if ($("#slider-range").hasClass("ui-slider")) {
-
-                var min = $("#slider-range").slider("option", "min");
-                var max = $("#slider-range").slider("option", "max");
-
-                $("#slider-range").slider(
-                    "values",
-                    [min, max]
-                );
-
-                $("#min_hourly_rate_value").val(min);
-                $("#max_hourly_rate_value").val(max);
-
-                $("#vtRateText").text(
-                    "$" + min + " - $" + max
-                );
-
-            }
-
-            $("#vtAdvanced").stop(true, true).slideUp(200);
-
-            $("#vtToggleAdvanced").removeClass("active");
-
-            $("#sort_type_id").val("D");
-
-            loadTutorResults();
-
-        }
+    window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
     );
+    clearTimeout(filterTimer);
+    clearTimeout(searchTimer);
+
+    if (ajaxRequest) {
+        ajaxRequest.abort();
+    }
+
+    $form[0].reset();
+
+    $("#branch_id").val("");
+
+    $("#grade").val("");
+
+    $('select[name="program_type"]').val("");
+
+    $('select[name="learning_program"]').val("");
+
+    $('input[name="q"]').val("");
+
+    $('input[name="availability[]"]').prop("checked", false);
+    $('input[name="review"]').prop("checked", false);
+
+    if ($("#slider-range").hasClass("ui-slider")) {
+
+        var min = $("#slider-range").slider("option", "min");
+        var max = $("#slider-range").slider("option", "max");
+
+        $("#slider-range").slider("values", [min, max]);
+
+        $("#min_hourly_rate_value").val(min);
+        $("#max_hourly_rate_value").val(max);
+
+        $("#vtRateText").text("$" + min + " - $" + max);
+    }
+
+    $("#sort_type_id").val("D");
+
+    $("#vtAdvanced").stop(true, true).slideUp(200);
+    $("#vtToggleAdvanced").removeClass("active");
+
+    loadTutorResults();
+
+});
+
 
 });
 

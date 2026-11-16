@@ -218,7 +218,7 @@ class SearchResultController extends Controller
                 });
             }
 
-            if ($request->review) {
+            if ($request->filled('review')) {
                 $baseQuery->where('avg_review','>=', $request->review);
             }
 
@@ -261,19 +261,35 @@ class SearchResultController extends Controller
                 $baseQuery->where('timezone_id', $request->timezone_id);
             }
 
-            if ($request->experience) {
-                $expSplit = explode("-", $request->experience);
-                if (!empty($expSplit[0]) && !empty($expSplit[1])) {
-                    $baseQuery->whereBetween('total_experience', [$expSplit[0], $expSplit[1]]);
-                } else {
-                    if (!empty($expSplit[0])) {
-                        $baseQuery->where('total_experience', '>=', $expSplit[0]);
-                    }
-                    if (!empty($expSplit[1])) {
-                        $baseQuery->where('total_experience', '<=', $expSplit[1]);
-                    }
-                }
+          if ($request->filled('experience')) {
+
+            $expSplit = explode("-", $request->experience);
+
+            $minExp = isset($expSplit[0]) && $expSplit[0] !== ''
+                ? (float) $expSplit[0]
+                : null;
+
+            $maxExp = isset($expSplit[1]) && $expSplit[1] !== ''
+                ? (float) $expSplit[1]
+                : null;
+
+            if ($minExp !== null && $maxExp !== null) {
+
+                $baseQuery->whereBetween('total_experience', [
+                    $minExp,
+                    $maxExp
+                ]);
+
+            } elseif ($minExp !== null) {
+
+                $baseQuery->where('total_experience', '>=', $minExp);
+
+            } elseif ($maxExp !== null) {
+
+                $baseQuery->where('total_experience', '<=', $maxExp);
+
             }
+        }
             if ($request->filled('program_type')) {
             $programs = AcademicProgram::where('status', 1)
                 ->where('program_type', $request->program_type)
@@ -338,23 +354,68 @@ class SearchResultController extends Controller
             $baseQuery->select('id', 'f_name', 'l_name', 'slug', 'user_type', 'student_type', 'status', 'avatar', 'profile_pic', 'about_me', 'profile_video', 'video_short_url', 'total_experience', 'total_no_of_reviews', 'avg_review', 'min_hourly_rate', 'created_at', 'state', 'timezone_id', 'city', 'free_trial');
 
             switch ($request->input('sort_type_value', 'D')) {
-                case 'D':
-                    $baseQuery->orderby('created_at', 'desc');
+              case 'D':
+                $baseQuery
+                    ->withExists([
+                        'tutorSkillsCapability as has_skills_capabilities' => function ($q) {
+                            $q->whereNotNull('skills')
+                            ->where('skills', '!=', '')
+                            ->whereNotNull('capabilities')
+                            ->where('capabilities', '!=', '');
+                        },
+                        'tutorReviews as has_reviews' => function ($q) {
+                            $q->whereNotNull('ratting');
+                        },
+                        'academicPrograms as has_academic_programs' => function ($q) {
+                            $q->whereHas('getAcademicProgram', function ($program) {
+                                $program->where('status', 1);
+                            });
+                        }
+                    ])
+                    ->orderByDesc('has_skills_capabilities')
+                    ->orderByDesc('has_academic_programs')
+                    ->orderByDesc('has_reviews')
+                    ->orderByDesc('created_at');
+
+                 break;
+              case 'R':
+               $baseQuery->orderByRaw("
+                    (
+                        SELECT AVG(ratting)
+                        FROM reviews
+                        WHERE reviews.tutor_id = users.id
+                    ) IS NULL ASC
+                ")
+                ->orderByRaw("
+                    (
+                        SELECT AVG(ratting)
+                        FROM reviews
+                        WHERE reviews.tutor_id = users.id
+                    ) DESC
+                ")
+                ->orderBy('users.id', 'DESC');
+
+                  break;
+            case 'E':
+                    $baseQuery->orderByRaw("
+                        (
+                            SELECT COUNT(*)
+                            FROM teacher_experience
+                            WHERE teacher_experience.teacher_id = users.id
+                            AND teacher_experience.status = 'A'
+                        ) DESC
+                    ")
+                    ->orderBy('users.id', 'DESC');
+
                     break;
-                case 'R':
-                    $baseQuery->orderby('avg_review', 'desc');
-                    break;
-                case 'E':
-                    $baseQuery->orderby('total_experience', 'desc');
-                    break;
-                case 'N':
+                    case 'N':
                     $baseQuery->orderBy('f_name', 'asc');
                     break;
                 case 'S':
                 $baseQuery->orderBy(
                     Branch::select('branch_name')
                         ->whereIn('branches.id', function ($q) {
-                            $q->select('branch_id')
+                            $q->select('branch_id') 
                                 ->from('tutorship_plan')
                                 ->whereColumn('tutorship_plan.teacher_id', 'users.id')
                                 ->where('tutorship_plan.status', 'A');
@@ -369,7 +430,30 @@ class SearchResultController extends Controller
                     break;
             }
         } else {
-            $baseQuery->orderby('created_at', 'desc');
+    $baseQuery
+        ->withExists([
+            'tutorSkillsCapability as has_skills_capabilities' => function ($q) {
+                $q->whereNotNull('skills')
+                  ->where('skills', '!=', '')
+                  ->whereNotNull('capabilities')
+                  ->where('capabilities', '!=', '');
+            },
+
+            'tutorReviews as has_reviews' => function ($q) {
+                $q->whereNotNull('ratting');
+            },
+
+            'academicPrograms as has_academic_programs' => function ($q) {
+                $q->whereHas('getAcademicProgram', function ($program) {
+                    $program->where('status', 1);
+                });
+            }
+        ])
+        ->orderByDesc('has_skills_capabilities')
+        ->orderByDesc('has_academic_programs')
+        ->orderByDesc('has_reviews')
+        ->orderByDesc('created_at');
+
         }
         $search = trim($request->input('q', ''));
 

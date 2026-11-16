@@ -44,6 +44,15 @@ class User extends Authenticatable
         })->filter()->unique('id'); // Filter out nulls and get unique states by ID
     }
 
+    public function tutorReviews()
+    {
+        return $this->hasMany(ReviewModel::class, 'tutor_id', 'id');
+    }
+    public function academicPrograms()
+    {
+        return $this->hasMany(TutorshipPlan::class, 'teacher_id', 'id')
+            ->where('status', 'A');
+    }
     public function getTutorShipPlan()
     {
         return $this->hasMany('App\Models\TutorshipPlan', 'teacher_id', 'id')->where('status', 'A');

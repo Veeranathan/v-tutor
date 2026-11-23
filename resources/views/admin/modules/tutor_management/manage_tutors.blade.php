@@ -8,68 +8,664 @@ Tutor Management
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
 <style>
-    
-/* Toggle Switch */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 46px;
-  height: 22px;
-}
-.switch input { display:none; }
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 34px;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 2px;
-  bottom: 2px;
-  background: #fff;
-  transition: .4s;
-  border-radius: 50%;
-}
-input:checked + .slider { background-color: #28a745; }
-input:checked + .slider:before { transform: translateX(24px); }
-/* Dropdown menu positioning */
-.show-actions {
-    position: absolute;
-    right: 0;                 /* Align to right edge */
-    top: 28px;                /* Place below the dots */
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    min-width: 130px;
-    z-index: 9999;
-    padding: 6px 0;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-    display: none;            /* always hidden until clicked */
-}
+    :root {
+        --tm-navy: #0f1d4a;
+        --tm-red: #d0021b;
+        --tm-red-dark: #b00217;
+        --tm-text: #1f2a44;
+        --tm-muted: #5b6785;
+        --tm-border: #dfe4ee;
+        --tm-bg: #f6f8fc;
+        --tm-radius: 10px;
+    }
 
-/* Remove list bullets */
-.show-actions ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
+    .tm-page {
+        color: var(--tm-text);
+        font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+        padding-bottom: 30px;
+    }
 
-.show-actions ul li a {
-    display: block;
-    padding: 8px 12px;
-    text-decoration: none;
-    color: #333;
-}
+    .tm-page * {
+        box-sizing: border-box;
+    }
 
-.show-actions ul li a:hover {
-    background: #f7f7f7;
-}
+    /* ---------- Page header ---------- */
+    .tm-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 10px 0 22px;
+        flex-wrap: wrap;
+    }
+
+    .tm-title {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 800;
+        color: var(--tm-navy);
+        line-height: 1.2;
+    }
+
+    .tm-subtitle {
+        margin: 6px 0 0;
+        font-size: 16px;
+        color: var(--tm-muted);
+    }
+
+    .tm-btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 20px;
+        background: #fff;
+        color: var(--tm-navy);
+        border: 1.5px solid var(--tm-navy);
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .tm-btn-outline:hover {
+        background: var(--tm-navy);
+        color: #fff;
+    }
+
+    /* ---------- Stat cards ---------- */
+    .tm-stats {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    @media (max-width: 991px) {
+        .tm-stats {
+            flex-wrap: wrap;
+        }
+
+        .tm-stat {
+            flex: 1 1 45% !important;
+        }
+    }
+
+    .tm-toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .tm-stat {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 18px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(15, 29, 74, .06);
+        border: 1px solid rgba(15, 29, 74, .04);
+    }
+
+    .tm-stat i {
+        font-size: 34px;
+    }
+
+    .tm-stat .tm-num {
+        display: block;
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--tm-navy);
+    }
+
+    .tm-stat .tm-lbl {
+        display: block;
+        margin-top: 6px;
+        font-size: 16px;
+        color: var(--tm-text);
+    }
+
+    .tm-stat.total {
+        background: #e8effc;
+    }
+
+    .tm-stat.total i {
+        color: #3b5bb5;
+    }
+
+    .tm-stat.approved {
+        background: #e5f5e9;
+    }
+
+    .tm-stat.approved i {
+        color: #1e8e3e;
+    }
+
+    .tm-stat.pending {
+        background: #fff0dc;
+    }
+
+    .tm-stat.pending i {
+        color: #f39c12;
+    }
+
+    .tm-stat.rejected {
+        background: #f1e8fb;
+    }
+
+    .tm-stat.rejected i {
+        color: #8e44ad;
+    }
+
+    .tm-stat.suspended {
+        background: #fde6ea;
+    }
+
+    .tm-stat.suspended i {
+        color: #d0021b;
+    }
+
+    .tm-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .tm-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        height: 48px;
+        padding: 0 24px;
+        background: #fff;
+        color: var(--tm-navy);
+        border: 1.5px solid var(--tm-border);
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 16px;
+        text-decoration: none !important;
+        transition: .2s;
+    }
+
+    .tm-tab:hover {
+        border-color: var(--tm-navy);
+        color: var(--tm-navy);
+    }
+
+    .tm-tab.active {
+        background: var(--tm-red);
+        border-color: var(--tm-red);
+        color: #fff;
+    }
+
+    .tm-card {
+        background: var(--tm-bg);
+        border: 1px solid var(--tm-border);
+        border-radius: 14px;
+        padding: 18px;
+    }
+
+    .tm-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+    }
+
+    .tm-filters .tm-field {
+        display: flex;
+        flex-direction: column;
+        min-width: 150px;
+    }
+
+    .tm-filters .tm-field.grow {
+        flex: 1 1 280px;
+    }
+
+    .tm-filters label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--tm-muted);
+        margin: 0 0 4px;
+    }
+
+    .tm-filters .form-control,
+    .tm-filters select.form-control {
+        height: 42px;
+        border: 1px solid var(--tm-border);
+        border-radius: 8px;
+        background: #fff;
+        font-size: 14px;
+        color: var(--tm-text);
+        box-shadow: none;
+        padding: 6px 12px;
+        width: 100%;
+    }
+
+    .tm-filters .form-control:focus {
+        border-color: var(--tm-navy);
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(15, 29, 74, .08);
+    }
+
+    .tm-search-wrap {
+        position: relative;
+    }
+
+    .tm-search-wrap i {
+        position: absolute;
+        left: 13px;
+        top: 13px;
+        color: var(--tm-muted);
+    }
+
+    .tm-search-wrap .form-control {
+        padding-left: 38px;
+    }
+
+    .tm-filter-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .tm-btn {
+        height: 42px;
+        padding: 0 20px;
+        border-radius: 8px;
+        border: 1.5px solid transparent;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .tm-btn-primary {
+        background: var(--tm-red);
+        color: #fff;
+    }
+
+    .tm-btn-primary:hover {
+        background: var(--tm-red-dark);
+    }
+
+    .tm-btn-light {
+        background: #fff;
+        color: var(--tm-navy);
+        border-color: var(--tm-border);
+    }
+
+    .tm-btn-light:hover {
+        border-color: var(--tm-navy);
+    }
+
+    .tm-more {
+        display: none;
+        width: 100%;
+        padding-top: 12px;
+        margin-top: 4px;
+        border-top: 1px dashed var(--tm-border);
+    }
+
+    .tm-more.open {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .tm-more .tm-field {
+        flex: 1 1 200px;
+    }
+
+    .tm-more .error {
+        color: #ef5350;
+        font-size: 12px;
+    }
+
+    .tm-more .ui.calendar .ui.input {
+        position: relative;
+        display: block;
+    }
+
+    .tm-more .over_llp1 {
+        position: absolute;
+        right: 12px;
+        top: 11px;
+    }
+
+    .tm-more .over_llp1 img {
+        width: 18px;
+    }
+
+    .tm-table-wrap {
+        background: #fff;
+        border: 1px solid var(--tm-border);
+        border-radius: 12px;
+        margin-top: 16px;
+        padding: 4px 14px 14px;
+        overflow: hidden;
+    }
+
+    #example {
+        width: 100% !important;
+        border: 0 !important;
+        margin: 0 !important;
+        border-collapse: collapse !important;
+    }
+
+    #example thead th {
+        background: #eef1f7;
+        color: var(--tm-navy);
+        font-weight: 700;
+        font-size: 15px;
+        padding: 14px 16px !important;
+        border: 0 !important;
+        white-space: nowrap;
+    }
+
+    #example thead th:first-child {
+        border-radius: 8px 0 0 8px;
+    }
+
+    #example thead th:last-child {
+        border-radius: 0 8px 8px 0;
+    }
+
+    #example tbody td {
+        padding: 14px 16px !important;
+        vertical-align: middle !important;
+        border: 0 !important;
+        border-bottom: 1px solid #edf0f6 !important;
+        font-size: 14px;
+        color: var(--tm-text);
+        background: #fff !important;
+    }
+
+    #example tbody tr:hover td {
+        background: #fafbff !important;
+    }
+
+    #example.dataTable.no-footer {
+        border-bottom: 0;
+    }
+
+    table.dataTable thead .sorting,
+    table.dataTable thead .sorting_asc,
+    table.dataTable thead .sorting_desc {
+        background-color: #eef1f7;
+    }
+
+    .tm-tutor {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .tm-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #dfe6fb;
+        color: #3b4f9e;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .tm-tutor-name {
+        display: block;
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--tm-navy);
+    }
+
+    .tm-tutor-id {
+        display: block;
+        font-size: 13px;
+        color: var(--tm-muted);
+    }
+
+    .green_color,
+    .pending_color,
+    .suspend_color,
+    .reject_color {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .green_color {
+        background: #d8f2dd;
+        color: #1b7a34;
+    }
+
+    .green_color:before {
+        content: "\f058";
+        font-family: FontAwesome, "Font Awesome 5 Free";
+        font-weight: 900;
+    }
+
+    .pending_color {
+        background: #fff0cf;
+        color: #b9770e;
+    }
+
+    .suspend_color {
+        background: #fde0e4;
+        color: #c0152a;
+    }
+
+    .reject_color {
+        background: #f1e3fa;
+        color: #7d3c98;
+    }
+
+    .gj_reason_qc {
+        margin-left: 6px;
+        color: var(--tm-muted);
+        cursor: pointer;
+    }
+
+    .tm-avail {
+        font-weight: 600;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 22px;
+        margin: 0;
+    }
+
+    .switch input {
+        display: none;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 2px;
+        bottom: 2px;
+        background: #fff;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked+.slider {
+        background-color: #28a745;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(24px);
+    }
+
+    .tm-actions {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tm-manage {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 18px;
+        background: #fff;
+        color: var(--tm-navy) !important;
+        border: 1.5px solid var(--tm-navy);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .tm-manage:hover {
+        background: var(--tm-navy);
+        color: #fff !important;
+    }
+
+    .show-actions {
+        position: absolute;
+        right: 0;
+        top: 44px;
+        background: #fff;
+        border: 1px solid var(--tm-border);
+        border-radius: 8px;
+        min-width: 150px;
+        z-index: 9999;
+        padding: 6px 0;
+        box-shadow: 0 6px 18px rgba(15, 29, 74, .15);
+        display: none;
+    }
+
+    .show-actions ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .show-actions ul li a {
+        display: block;
+        padding: 9px 16px;
+        text-decoration: none;
+        color: var(--tm-text);
+        font-size: 14px;
+    }
+
+    .show-actions ul li a:hover {
+        background: #f3f5fb;
+        color: var(--tm-red);
+    }
+
+    .show-actions .angle {
+        display: none;
+    }
+
+    .dataTables_wrapper .dataTables_info {
+        padding-top: 16px;
+        color: var(--tm-muted);
+        font-size: 13px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        padding-top: 12px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 6px !important;
+        border: 1px solid var(--tm-border) !important;
+        background: #fff !important;
+        color: var(--tm-navy) !important;
+        margin: 0 2px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: var(--tm-red) !important;
+        border-color: var(--tm-red) !important;
+        color: #fff !important;
+    }
+
+    .dataTables_wrapper .dataTables_processing {
+        background: rgba(255, 255, 255, .9);
+        border-radius: 8px;
+        color: var(--tm-navy);
+        font-weight: 600;
+    }
+
+    .adminpasswordPopup .modal-content {
+        border: 0;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .adminpasswordPopup .modal-header {
+        background: var(--tm-navy);
+        color: #fff;
+        border: 0;
+    }
+
+    .adminpasswordPopup .modal-header .close {
+        color: #fff;
+        opacity: 1;
+    }
+
+    .adminpasswordPopup .modal-title {
+        color: #fff;
+    }
+
+    .adminpasswordPopup .modal-footer {
+        border: 0;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .adminpasswordPopup .gj_popup_warning {
+        color: #c0152a;
+        font-size: 13px;
+    }
+
+    @media (max-width: 767px) {
+        .tm-title {
+            font-size: 24px;
+        }
+
+        .tm-tab {
+            flex: 1 1 100%;
+            justify-content: center;
+        }
+
+        .tm-filters .tm-field {
+            min-width: 100%;
+        }
+    }
 </style>
 @endsection
 @section('header')
@@ -80,286 +676,197 @@ input:checked + .slider:before { transform: translateX(24px); }
 @endsection
 @section('content')
 <div class="content">
-    <div class="container">
-        <!-- Page-Title -->
-        <div class="row">
-            <div class="col-sm-12 col-xs-12">
-            {{-- <div class="col-sm-12"> --}}
-                <h1 class="pull-left page-title">Tutor Management</h1>
-                <ol class="breadcrumb pull-right">
-                </ol>
+    <div class="container tm-page">
+
+        <div class="tm-header">
+            <div>
+                <h1 class="tm-title">Tutor Management</h1>
+                <p class="tm-subtitle">Manage tutor profiles, approvals, capabilities and availability.</p>
+            </div>
+            <button class="tm-btn-outline download" id="download" type="submit" form="tutorFilterForm">
+                <i class="fa fa-download"></i> Export
+            </button>
+        </div>
+
+        <div class="tm-stats">
+            <div class="tm-stat total">
+                <i class="fa fa-users"></i>
+                <div><span class="tm-num" id="total_tutors">{{ (int)@$tot_active + (int)@$total_approve + (int)@$total_reject + (int)@$tot_inactive }}</span><span class="tm-lbl">Total Tutors</span></div>
+            </div>
+            <div class="tm-stat approved">
+                <i class="fa fa-check-circle"></i>
+                <div><span class="tm-num" id="total_approve">{{ @$total_approve }}</span><span class="tm-lbl">Approved</span></div>
+            </div>
+            <div class="tm-stat pending">
+                <i class="fa fa-clock-o"></i>
+                <div><span class="tm-num" id="total_active">{{ @$tot_active }}</span><span class="tm-lbl">Pending</span></div>
+            </div>
+            <div class="tm-stat rejected">
+                <i class="fa fa-times-circle"></i>
+                <div><span class="tm-num" id="total_reject">{{ @$total_reject }}</span><span class="tm-lbl">Rejected</span></div>
+            </div>
+            <div class="tm-stat suspended">
+                <i class="fa fa-ban"></i>
+                <div><span class="tm-num" id="total_inactive">{{ @$tot_inactive }}</span><span class="tm-lbl">Suspended</span></div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading rm02 rm04">
-                        <form method="get" action="{{ route('tutor.management.list.tab') }}">
-                            <div data-column="1" class="form-group">
-                                <label for="col1_filter">Name/Email/Phone/Tutor ID</label>
-                                <input type="text" placeholder="Name/Email/Phone" id="col1_filter" name="col1_filter" class="form-control reset_val" value="" autocomplete="off" onfocus="this.removeAttribute('readonly');" readonly="" onclick="this.removeAttribute('readonly');" onblur="this.removeAttribute('readonly');">
-                            </div>
-                            <div data-column="6" class="form-group">
-    <label for="col5_filter">Availability</label>
-    <select id="col5_filter" name="col5_filter" class="form-control reset_val">
-        <option value="">Select Availability</option>
-        <option value="Y">Yes</option>
-        <option value="N">No</option>
-    </select>
-</div>
-                            <div data-column="2" class="form-group">
-                                <label for="col2_filter">Status</label>
-                                <select id="col2_filter" name="col2_filter" class="form-control reset_val">
-                                    <option value="">Select Status</option>
-                                    <option value="A">Pending</option>
-                                    <option value="AP">Approved</option>
-                                    <option value="R">Rejected</option>
-                                    <option value="I">Suspended</option>
-                                    {{-- <option value="U">Unverified</option>
-                                    <option value="AA">In Progress</option>
-                                    <option value="draft">Submitted</option>
-                                    <option value="C">Closed</option> --}}
-                                </select>
-                            
-                            </div>
-                            {{-- <div data-column="6" class="form-group">
-                                <label for="col6_filter">Submitted</label>
-                                <select id="col6_filter" name="col6_filter" class="form-control reset_val">
-                                    <option value="">Select Status</option>
-                                    <option value="N">Submitted</option>
-                                    <option value="Y">Not Submitted</option>
 
-                                </select>
-                            </div> --}}
-                            
-                            <div data-column="3" class="form-group">
-                                <div class="dash-d1">
-                                    <label for="col3_filter">Search From Date</label>
-                                    <div class="ui calendar" id="from_date">
-                                        <div class="ui input left icon">
-                                          <input type="text" id="col3_filter" name="col3_filter" placeholder="date joined from" class="form-control " autocomplete="off" onfocus="this.removeAttribute('readonly');" readonly="" onclick="this.removeAttribute('readonly');" onblur="this.removeAttribute('readonly');">
-                                          <span class="over_llp1"><img src="{{ public_asset('admin/assets/images/cal.png') }}" alt=""></span>
-                                          <span class="error_from_date error"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-    <label for="featured_filter">Featured</label>
-    <select id="featured_filter" name="featured_filter" class="form-control reset_val">
-        <option value="">Select</option>
-        <option value="1">Yes</option>
-        <option value="0">No</option>
-    </select>
-</div>
+        <div class="tm-tabs">
+            <a href="javascript:void(0);" class="tm-tab active"><i class="fa fa-users"></i> All Tutors</a>
+            <a href="javascript:void(0);" class="tm-tab"><i class="fa fa-shield"></i> Compliance</a>
+            <a href="javascript:void(0);" class="tm-tab"><i class="fa fa-th-large"></i> Program Capabilities</a>
+            <a href="javascript:void(0);" class="tm-tab"><i class="fa fa-id-card-o"></i> Profile Management</a>
+        </div>
 
-<div class="form-group">
-    <label for="free_trial_filter">Free Trial</label>
-    <select id="free_trial_filter" name="free_trial_filter" class="form-control reset_val">
-        <option value="">Select</option>
-        <option value="1">Yes</option>
-        <option value="0">No</option>
-    </select>
-</div>
+        <div class="tm-card">
+            @include('admin.includes.message')
 
-                            <div data-column="4" class="form-group">
-                                <div class="dash-d1">
-                                    <label for="col4_filter">Search To Date </label>
-                                    <div class="ui calendar" id="to_date">
-                                        <div class="ui input left icon">
-                                          <input type="text" id="col4_filter" name="col4_filter" placeholder="date joined to" class="form-control " autocomplete="off" onfocus="this.removeAttribute('readonly');" readonly="" onclick="this.removeAttribute('readonly');" onblur="this.removeAttribute('readonly');">
-                                          <span class="over_llp1"><img src="{{ public_asset('admin/assets/images/cal.png') }}" alt=""></span>
-                                          <span class="error_to_date error"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <div class="centerButtons">
-                                <div class="rm05">
-                                    <button class="btn btn-primary waves-effect waves-light w-md search_click" type="button">Search</button>
-                                </div>
-                                <div class="rm05">
-                                    <button class="btn btn-primary waves-effect waves-light w-md reset_search" type="button">Reset </button>
-                                </div>
-
-                             <div class="rm05 rightButtons">
-                                    <button class="btn btn-primary waves-effect waves-light w-md download" id="download" type="submit">Download </button>
-                                </div> 
-                            </div>
-                            <div class="clearfix"></div>
-                        </form>
+            <form method="get" id="tutorFilterForm" action="{{ route('tutor.management.list.tab') }}">
+                <div class="tm-filters">
+                    <div class="tm-field grow" data-column="1">
+                        <label for="col1_filter">Name / Email / Phone / Tutor ID</label>
+                        <div class="tm-search-wrap">
+                            <i class="fa fa-search"></i>
+                            <input type="text" placeholder="Search tutor name, email, phone or ID" id="col1_filter" name="col1_filter" class="form-control reset_val" value="" autocomplete="off" onfocus="this.removeAttribute('readonly');" readonly="" onclick="this.removeAttribute('readonly');" onblur="this.removeAttribute('readonly');">
+                        </div>
                     </div>
 
-                    <div class="panel-body">
-                        @include('admin.includes.message')
-                        <div class="row">
-                           <div class="col-md-12 col-sm-12 col-xs-12 d-lestis">
-                              {{-- <div class="col-md-3 col-sm-3 col-lg-2">
-                                 <div class="mini-stat clearfix bx-shadow bg-white">
-                                    <span class="mini-stat-icon bg-info"><i class="fa fa-book" aria-hidden="true"></i></span>
-                                    <div class="mini-stat-info text-right text-dark">
-                                       <span class="counter text-dark" id="total_submitted">{{ @$tot_submitted }}</span>
-                                       <b> Submitted</b>
-                                    </div>
-                                 </div>
-                              </div> --}}
-                              {{-- <div class="col-md-3 col-sm-3 col-lg-2">
-                                 <div class="mini-stat clearfix bx-shadow bg-white">
-                                    <span class="mini-stat-icon bg-warning"><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span>
-                                    <div class="mini-stat-info text-right text-dark">
-                                       <span class="counter text-dark" id="total_in_progress">{{ @$tot_in_progress }}</span>
-                                       <b>In Progress</b>
-                                    </div>
-                                 </div>
-                              </div> --}}
-                              {{-- <div class="col-md-3 col-sm-3 col-lg-2">
-                                 <div class="mini-stat clearfix bx-shadow bg-white">
-                                    <span class="mini-stat-icon bg-pink"><i class="fas fa-user-tie"></i></span>
-                                    <div class="mini-stat-info text-right text-dark">
-                                       <span class="counter text-dark" id="total_unverified">{{ @$tot_unverified }}</span>
-                                       <b>Unverified </b>
-                                    </div>
-                                 </div>
-                              </div> --}}
-                              {{-- <div class="col-md-3 col-sm-3 col-lg-2">
-                                 <div class="mini-stat clearfix bx-shadow bg-white">
-                                    <span class="mini-stat-icon bg-success"><i class="far fa-user"></i></span>
-                                    <div class="mini-stat-info text-right text-dark">
-                                       <span class="counter text-dark" id="total_closed">{{ @$tot_closed }}</span>
-                                       <b>Closed </b>
-                                    </div>
-                                 </div>
-                              </div> --}}
+                    <div class="tm-field" data-column="2">
+                        <label for="col2_filter">Status</label>
+                        <select id="col2_filter" name="col2_filter" class="form-control reset_val">
+                            <option value="">Select Status</option>
+                            <option value="A">Pending</option>
+                            <option value="AP">Approved</option>
+                            <option value="R">Rejected</option>
+                            <option value="I">Suspended</option>
+                        </select>
+                    </div>
 
-                                <div class="col-md-6 col-xs-6 col-sm-6 col-lg-3">
-                                    <div class="mini-stat clearfix bx-shadow bg-white">
-                                        <span class="mini-stat-icon bg-info"><i class="fa fa-book" aria-hidden="true"></i></span>
-                                        <div class="mini-stat-info text-right text-dark">
-                                        <span class="counter text-dark" id="total_active">{{ @$tot_active }}</span>
-                                        <b> Pending</b>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="tm-field" data-column="6">
+                        <label for="col5_filter">Availability</label>
+                        <select id="col5_filter" name="col5_filter" class="form-control reset_val">
+                            <option value="">Select Availability</option>
+                            <option value="Y">Yes</option>
+                            <option value="N">No</option>
+                        </select>
+                    </div>
 
-                                <div class="col-md-6 col-xs-6 col-sm-6 col-lg-3">
-                                    <div class="mini-stat clearfix bx-shadow bg-white">
-                                        <span class="mini-stat-icon bg-pink"><i class="fa fa-check-square-o" aria-hidden="true"></i></span>
-                                        <div class="mini-stat-info text-right text-dark">
-                                        <span class="counter text-dark" id="total_approve">{{ @$total_approve }}</span>
-                                        <b>Approved</b>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="tm-field">
+                        <label for="state_filter">State</label>
+                        <select id="state_filter" name="state_filter" class="form-control reset_val">
+                            <option value="">All States</option>
 
-                                <div class="col-md-6 col-xs-6 col-sm-6 col-lg-3">
-                                    <div class="mini-stat clearfix bx-shadow bg-white">
-                                        <span class="mini-stat-icon bg-success"><i class="far fa-user"></i></span>
-                                        <div class="mini-stat-info text-right text-dark">
-                                        <span class="counter text-dark" id="total_reject">{{ @$total_reject }}</span>
-                                        <b>Rejected </b>
-                                        </div>
-                                    </div>
-                                </div>
+                            @foreach($states as $state)
+                            <option value="{{ $state->id }}">
+                                {{ $state->state_name }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                                <div class="col-md-6 col-xs-6 col-sm-6 col-lg-3">
-                                    <div class="mini-stat clearfix bx-shadow bg-white">
-                                        <span class="mini-stat-icon bg-warning"><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span>
-                                        <div class="mini-stat-info text-right text-dark">
-                                        <span class="counter text-dark" id="total_inactive">{{ @$tot_inactive }}</span>
-                                        <b>Suspended</b>
-                                        </div>
-                                    </div>
-                                </div>
-                           </div>
+                    <div class="tm-field">
+                        <label for="featured_filter">Featured</label>
+                        <select id="featured_filter" name="featured_filter" class="form-control reset_val">
+                            <option value="">Select</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+
+                    <div class="tm-filter-actions">
+                        <button class="tm-btn tm-btn-light" type="button" id="toggleMoreFilters"><i class="fa fa-filter"></i> More filters</button>
+                        <button class="tm-btn tm-btn-primary search_click" type="button">Search</button>
+                        <button class="tm-btn tm-btn-light reset_search" type="button">Reset</button>
+                    </div>
+
+                    <div class="tm-more" id="moreFilters">
+                        <div class="tm-field">
+                            <label for="free_trial_filter">Free Trial</label>
+                            <select id="free_trial_filter" name="free_trial_filter" class="form-control reset_val">
+                                <option value="">Select</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
                         </div>
-                        {{-- <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12 d-lestis">
-                                <p>Total Submitted     :<span>{{ @$tot_submitted }}</span></p>
-                                <p> In Progress   :<span >{{ @$tot_in_progress }}</span></p>
-                                <p> Unverified    :<span >{{ @$tot_unverified }}</span></p>
-                                <p> Closed        :<span >{{ @$tot_closed }}</span></p>
-                                <p> Active        :<span >{{ @$tot_active }}</span></p>
+
+                        <div class="tm-field" data-column="3">
+                            <label for="col3_filter">Search From Date</label>
+                            <div class="ui calendar" id="from_date">
+                                <div class="ui input left icon">
+                                    <input type="text" id="col3_filter" name="col3_filter" placeholder="date joined from" class="form-control" autocomplete="off" onfocus="this.removeAttribute('readonly');" readonly="" onclick="this.removeAttribute('readonly');" onblur="this.removeAttribute('readonly');">
+                                    <span class="over_llp1"><img src="{{ public_asset('admin/assets/images/cal.png') }}" alt=""></span>
+                                    <span class="error_from_date error"></span>
+                                </div>
                             </div>
-                        </div> --}}
-                        {{-- <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12 d-lestis">
-                                <p> Submitted     :<span id="total_submitted"></span></p>
-                                <p> In Progress   :<span id="total_in_progress"></span></p>
-                                <p> Unverified    :<span id="total_unverified"></span></p>
-                                <p> Closed        :<span id="total_closed"></span></p>
-                                <p>Active        :<span id="total_active"></span></p>
-                            </div>
-                        </div> --}}
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th class="rm07">Tutor ID</th>
-                                                <th class="rm07">Name</th>
-                                                <th class="rm07">Email</th>
-                                                <th class="rm07">Phone</th>
-                                                <th class="rm07">Date Joined</th>
-                                                <th class="rm07">Availability</th>
-                                                <th class="rm07">Featured</th>
-                                                <th class="rm07">Free Trial</th>
-                                                <th class="rm07 mt_sts_col">Status</th>
-                                                
-                                                <th class="rm07">Closed on</th>
-                                                <th class="rm07">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                        </div>
+
+                        <div class="tm-field" data-column="4">
+                            <label for="col4_filter">Search To Date</label>
+                            <div class="ui calendar" id="to_date">
+                                <div class="ui input left icon">
+                                    <input type="text" id="col4_filter" name="col4_filter" placeholder="date joined to" class="form-control" autocomplete="off" onfocus="this.removeAttribute('readonly');" readonly="" onclick="this.removeAttribute('readonly');" onblur="this.removeAttribute('readonly');">
+                                    <span class="over_llp1"><img src="{{ public_asset('admin/assets/images/cal.png') }}" alt=""></span>
+                                    <span class="error_to_date error"></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </form>
+
+            <div class="tm-table-wrap">
+                <div class="table-responsive">
+                    <table class="table" id="example">
+                        <thead>
+                            <tr>
+                                <th>Tutor ID</th>
+                                <th>Tutor</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Date Joined</th>
+                                <th>Availability</th>
+                                <th>Featured</th>
+                                <th>Free Trial</th>
+                                <th class="mt_sts_col">Status</th>
+                                <th>Closed on</th>
+                                <th>Action</th>
+                                <th>State</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        <!-- End row -->
     </div>
-    <!-- container -->
 </div>
 
+{{-- ===================== Modals (unchanged behaviour) ===================== --}}
 <div class="modal res-modal newqusmo instructionModal adminpasswordPopup" id="approveTutorModal">
     <div class="modal-dialog modal-dialog-centered instructionModal">
         <div class="modal-content instructionModal">
-            <!-- Modal Header -->
             <div class="modal-header instructionModal">
-            <h4 class="modal-title passText">Confirmation</h4>
-            <button type="button" class="close" onclick="ClosePopupModel(this)" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title passText">Confirmation</h4>
+                <button type="button" class="close" onclick="ClosePopupModel(this)" data-dismiss="modal">&times;</button>
             </div>
-            <!-- Modal body -->
             <div class="modal-body instructionModal noinsBodyDev">
-            
                 <div class="divs">
-                    <div class="appome_input form_box_area cls1 ">
+                    <div class="appome_input form_box_area cls1">
                         <div class="gj_confirm_div">
                             <p class="gj_popup_text">Are you sure you want to approve this tutor?</p>
                         </div>
-
                         <div class="gj_submit_div" style="display: none;">
                             <div class="app_frm_div">
                                 <input type="email" name="zoom_email" id="zoom_email" class="form-control" placeholder="Enter Zoom Email ID">
                                 <p class="zoom_email_error" style="color: #ef5350;"></p>
                             </div>
-
                             <button type="button" class="btn btn-new btn-danger" id="submit_approve" style="color: #b80f0a;" onclick="submitApproveFn(this)">Submit</button>
                         </div>
                     </div>
                 </div>
-                
                 <input type="hidden" value="" name="tut_id" id="tut_id">
             </div>
-
             <div class="modal-footer adm_modal_Footer">
-                <!-- <button type="button" class="btn btn-new btn-danger" id="yes_tut_approve" onclick="yesApproveSubmitModal(this)" style="color: #b80f0a;">Yes</button> -->
                 <button type="button" class="btn btn-new btn-danger" id="yes_tut_approve" onclick="approveTutorNow(this)" style="color: #b80f0a;">Yes</button>
                 <button type="button" data-bs-dismiss="modal" class="btn btn-new btn-danger popup_no" onclick="ClosePopupModel(this)" style="color: #b80f0a;">No</button>
             </div>
@@ -370,20 +877,16 @@ input:checked + .slider:before { transform: translateX(24px); }
 <div class="modal res-modal newqusmo instructionModal adminpasswordPopup" id="rejectTutorModal">
     <div class="modal-dialog modal-dialog-centered instructionModal">
         <div class="modal-content instructionModal">
-            <!-- Modal Header -->
             <div class="modal-header instructionModal">
-            <h4 class="modal-title passText gj_modal_title">Confirmation</h4>
-            <button type="button" class="close" onclick="ClosePopupModel(this)" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title passText gj_modal_title">Confirmation</h4>
+                <button type="button" class="close" onclick="ClosePopupModel(this)" data-dismiss="modal">&times;</button>
             </div>
-            <!-- Modal body -->
             <div class="modal-body instructionModal noinsBodyDev">
-            
                 <div class="divs">
-                    <div class="appome_input form_box_area cls1 ">
+                    <div class="appome_input form_box_area cls1">
                         <div class="gj_confirm_div">
                             <p class="gj_popup_text">Are you sure you want to reject this tutor?</p>
                         </div>
-
                         <div class="gj_submit_div">
                             <textarea class="form-control" name="reject_reason" id="reject_reason" placeholder="Enter your reason"></textarea>
                             <p class="reject_reason_error" style="color: #ef5350;"></p>
@@ -391,13 +894,10 @@ input:checked + .slider:before { transform: translateX(24px); }
                         </div>
                     </div>
                 </div>
-                
                 <input type="hidden" value="" name="rtut_id" id="rtut_id">
             </div>
-
             <div class="modal-footer adm_modal_Footer">
                 <button type="button" class="btn btn-new btn-danger" id="yes_tut_reject" style="color: #b80f0a;" onclick="yesRejectFn(this)">Yes</button>
-                {{--  onclick="popupSuspendSubmitModal(this)" --}}
                 <button type="button" data-bs-dismiss="modal" class="btn btn-new btn-danger popup_no" onclick="ClosePopupModel(this)" style="color: #b80f0a;">No</button>
             </div>
         </div>
@@ -407,21 +907,17 @@ input:checked + .slider:before { transform: translateX(24px); }
 <div class="modal res-modal newqusmo instructionModal adminpasswordPopup" id="suspendTutorModal">
     <div class="modal-dialog modal-dialog-centered instructionModal">
         <div class="modal-content instructionModal">
-            <!-- Modal Header -->
             <div class="modal-header instructionModal">
-            <h4 class="modal-title passText gj_modal_title">Confirmation</h4>
-            <button type="button" class="close" onclick="ClosePopupModel(this)" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title passText gj_modal_title">Confirmation</h4>
+                <button type="button" class="close" onclick="ClosePopupModel(this)" data-dismiss="modal">&times;</button>
             </div>
-            <!-- Modal body -->
             <div class="modal-body instructionModal noinsBodyDev">
-            
                 <div class="divs">
-                    <div class="appome_input form_box_area cls1 ">
+                    <div class="appome_input form_box_area cls1">
                         <div class="gj_confirm_div">
                             <p class="gj_popup_text">Are you sure you want to suspend this tutor?</p>
                             <p class="gj_popup_warning">Warning: This action will disable the user’s ability to login. Consider the impact before proceeding.</p>
                         </div>
-
                         <div class="gj_submit_div">
                             <div class="gj_status_change_user"><span>Name: </span> <span>{{ @Auth::guard('admin')->user()->name }}</span></div>
                             <div class="gj_status_change_date"><span>Date: </span> <span>{{ date('d M Y') }}</span></div>
@@ -431,13 +927,10 @@ input:checked + .slider:before { transform: translateX(24px); }
                         </div>
                     </div>
                 </div>
-                
                 <input type="hidden" value="" name="stut_id" id="stut_id">
             </div>
-
             <div class="modal-footer adm_modal_Footer">
                 <button type="button" class="btn btn-new btn-danger" id="yes_tut_suspend" style="color: #b80f0a;" onclick="yesSuspendFn(this)">Yes</button>
-                {{--  onclick="popupSuspendSubmitModal(this)" --}}
                 <button type="button" data-bs-dismiss="modal" class="btn btn-new btn-danger popup_no" onclick="ClosePopupModel(this)" style="color: #b80f0a;">No</button>
             </div>
         </div>
@@ -447,16 +940,13 @@ input:checked + .slider:before { transform: translateX(24px); }
 <div class="modal res-modal newqusmo instructionModal adminpasswordPopup" id="adminReasonTutorModal">
     <div class="modal-dialog modal-dialog-centered instructionModal">
         <div class="modal-content instructionModal">
-            <!-- Modal Header -->
             <div class="modal-header instructionModal">
-            <h4 class="modal-title passText gj_modal_title">Admin Reason</h4>
-            <button type="button" class="close" onclick="ClosePopupModel(this)" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title passText gj_modal_title">Admin Reason</h4>
+                <button type="button" class="close" onclick="ClosePopupModel(this)" data-dismiss="modal">&times;</button>
             </div>
-            <!-- Modal body -->
             <div class="modal-body instructionModal noinsBodyDev">
-            
                 <div class="divs">
-                    <div class="appome_input form_box_area cls1 ">
+                    <div class="appome_input form_box_area cls1">
                         <div class="gj_reason_div">
                             <ul>
                                 <li class="gj_popupname_text text-left"></li>
@@ -467,15 +957,12 @@ input:checked + .slider:before { transform: translateX(24px); }
                     </div>
                 </div>
             </div>
-
             <div class="modal-footer adm_modal_Footer">
-                
                 <button type="button" data-bs-dismiss="modal" class="btn btn-new btn-danger popup_no" onclick="ClosePopupModel(this)" style="color: #b80f0a;">Ok</button>
             </div>
         </div>
     </div>
 </div>
-
 @endsection
 @section('footer')
 @include('admin.includes.footer')
@@ -484,155 +971,85 @@ input:checked + .slider:before { transform: translateX(24px); }
 @include('admin.includes.script')
 <script src="{{ public_asset('assets/js/chosen.jquery.js') }}" type="text/javascript"></script>
 <script src="{{ public_asset('assets/js/init.js') }}" type="text/javascript"></script>
-{{-- for datatable --}}
-{{-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> --}}
+
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
-{{-- for validation --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
-{{-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script> --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" crossorigin="anonymous"></script>
 <script type="text/javascript">
-
-    function differenceInDates(from_date,to_date){
-        // var from_date = from_date,
-        // to_date = to_date;
-        // var date_from_value = ($.trim($("#from_date").val()).toString()),
-        // date_to_value = ($.trim($("#from_date").val()).toString());
-        // alert(date_from_value);
-        // var convertedTime_from_time_val = moment(date_from_value,'Y-m-d').format('HH:mm');
-        // alert("date_from_value : "+date_from_value+" date_to_value : "+date_to_value);
-        // alert(from_date+" "+to_date);
-        // const date1 = new Date(),
-        // date2 = new Date();
-        // diffTime = Math.abs(date2 - date1),
-        // diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    function fmtDate(value) {
+        if (!value) return '';
+        var d = new Date(value);
+        return ("0" + d.getDate()).slice(-2) + '-' + ("0" + (d.getMonth() + 1)).slice(-2) + '-' + d.getFullYear();
     }
-    $(document).ready(function(){
+
+    function initials(f, l) {
+        return ((f ? f.charAt(0) : '') + (l ? l.charAt(0) : '')).toUpperCase() || '?';
+    }
+
+    function calFormatter() {
+        return {
+            date: function(date) {
+                if (!date) return '';
+                var day = ('0' + date.getDate()).slice(-2);
+                var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                return date.getFullYear() + '-' + month + '-' + day;
+            }
+        };
+    }
+
+    $(document).ready(function() {
         $("#from_date").calendar({
             type: 'date',
-            formatter: {
-                date: function (date, settings) {
-                    if (!date) return '';
-                    var day = date.getDate() + '';
-                    if(day.length < 2) {
-                        day = '0' + day;
-                    }
-                    var month = (date.getMonth() + 1) + '';
-                    if (month.length < 2) {
-                        month = '0' + month;
-                    }
-                    var year = date.getFullYear();
-                    var date_value = year + '-' + month + '-' + day;
-                    // if(date_value > $.trim($("#to_time").val())){
-                    //     $("#to_time").val("");
-                    // }
-                    return date_value;
-                }
-            }
+            formatter: calFormatter()
         });
         $("#to_date").calendar({
             type: 'date',
-            formatter: {
-                date: function (date, settings) {
-                    if (!date) return '';
-                    var day = date.getDate() + '';
-                    if (day.length < 2) {
-                        day = '0' + day;
-                    }
-                    var month = (date.getMonth() + 1) + '';
-                    if (month.length < 2) {
-                        month = '0' + month;
-                    }
-                    var year = date.getFullYear();
-                    var date_value = year + '-' + month + '-' + day;
-                    // if(date_value > $.trim($("#from_time").val())){
-                    //     $("#to_time").val("");
-                    // }
-                    return date_value;
-                }
-            }
+            formatter: calFormatter()
         });
-        function filterColumn ( i ) {
-            console.log(i);
-            $('#example').DataTable().column( i ).search(
-                $('#col'+i+'_filter').val(),
-            ).draw();
+
+        // "More filters" toggle
+        $('#toggleMoreFilters').on('click', function() {
+            $('#moreFilters').toggleClass('open');
+        });
+
+        function filterColumn(i) {
+            $('#example').DataTable().column(i).search($('#col' + i + '_filter').val()).draw();
         }
+
+        function filterColumnForSelect(selectId, columnIndex) {
+            $('#example').DataTable().column(columnIndex).search($('#' + selectId).val()).draw();
+        }
+
         var dataTableObj = {
-            // dom: "<div class='table-res'></div>"+'p'+'B',
-            // buttons: [
-            //     {
-            //         extend: 'excelHtml5',
-            //         exportOptions: {
-            //             columns: [ 0, 1,2,3,4,5 ]
-            //         }
-            //     },
-            //     'colvis'
-            // ],
             "bStateSave": true,
-        // "fnStateSave": function (oSettings, oData) {
-        //     localStorage.setItem('offersDataTables', JSON.stringify(oData));
-        // },
-        // "fnStateLoad": function (oSettings) {
-        //     return JSON.parse(localStorage.getItem('offersDataTables'));
-        // },
-            columnDefs: [ { targets: 0, type: 'natural' } ],
+            columnDefs: [{
+                targets: 0,
+                type: 'natural'
+            }],
             stateSave: false,
             "order": [
                 [4, "desc"]
             ],
-            "stateLoadParams": function (settings, data) {
-
-                // $('#col1_filter').val(data.search.col1_filter);
-                // $('#col2_filter').val(data.search.col2_filter);
-                // $('#col3_filter').val(data.search.col3_filter);
-                // $('#col4_filter').val(data.search.col4_filter);
-                if(localStorage.getItem("pageNo") != NaN && localStorage.getItem("pageNo") != null){
-
-                    table.page(parseInt(localStorage.getItem("pageNo"))).draw('page');
-                }
-                else{
-                    table.page(0).draw('page');
-
-                }
-
-
-            },
-            stateSaveParams: function (settings, data) {
-                // var p = (this.api().page.info());
-                // localStorage.setItem("page",this.api().page.info());
-                // localStorage.setItem("pageNo",p.page);
-                // data.search.col1_filter = $('#col1_filter').val();
-                // data.search.col2_filter = $('#col2_filter').val();
-                // data.search.col3_filter = $('#col3_filter').val();
-                // data.search.col4_filter = $('#col4_filter').val();
-
+            "stateLoadParams": function() {
+                var p = localStorage.getItem("pageNo");
+                table.page(p != null && !isNaN(parseInt(p)) ? parseInt(p) : 0).draw('page');
             },
             "processing": true,
             "serverSide": true,
             'serverMethod': 'post',
-            "createdRow": function( row, data, dataIndex ) {
-                var id = (JSON.stringify(data.id));
-                var r = JSON.stringify(dataIndex);
-                $(row).addClass("tr_class_"+id);
-                $(row).addClass("tr_row_class");
-                $(row).children(':nth-child(10)').addClass('rm07');
-                $(row).children(':nth-child(10)').addClass('reviews-lists');
-                $(row).children(':nth-child(10)').attr('data-id',r);
-                // console.log(dataIndex)
+            "language": {
+                search: "",
+                paginate: {
+                    previous: "&lsaquo;",
+                    next: "&rsaquo;"
+                }
+            },
+            "createdRow": function(row, data) {
+                $(row).addClass("tr_class_" + data.id).addClass("tr_row_class");
             },
             "ajax": {
                 "url": "{{ route('list.tutors') }}",
-                "data": function ( d ) {
-                    // console.log(d);
+                "data": function(d) {
                     d.myKey = "myValue";
                     d._token = "{{ @csrf_token() }}";
                 },
@@ -641,1038 +1058,497 @@ input:checked + .slider:before { transform: translateX(24px); }
                     $('#total_approve').html(response.total_approve);
                     $('#total_reject').html(response.total_reject);
                     $('#total_inactive').html(response.total_inactive);
-                    // $('#total_submitted').html(response.total_submitted);
-                    // $('#total_unverified').html(response.total_unverified);
-                    // $('#total_in_progress').html(response.total_in_progress);
-                    // $('#total_closed').html(response.total_closed);
-
-                    return response.aaData
+                    $('#total_tutors').html(
+                        (parseInt(response.total_active) || 0) + (parseInt(response.total_approve) || 0) +
+                        (parseInt(response.total_reject) || 0) + (parseInt(response.total_inactive) || 0)
+                    );
+                    return response.aaData;
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    // Do something here
-                    console.log("'error in datatable");
-                    // location.reload();
+                error: function() {
+                    console.log("error in datatable");
                 }
             },
-            drawCallback : function() {
-               // processInfo(this.api().page.info());
-                // var p = (this.api().page.info());
-                // localStorage.setItem("page",this.api().page.info());
-                // localStorage.setItem("pageNo",p.page);
+            initComplete: function() {
+                var p = localStorage.getItem("pageNo");
+                table.page(p != null && !isNaN(parseInt(p)) ? parseInt(p) : 0).draw('page');
             },
-            initComplete: function () {
-
-              if(localStorage.getItem("pageNo") != NaN && localStorage.getItem("pageNo") != null){
-
-                    table.page(parseInt(localStorage.getItem("pageNo"))).draw('page');
-                }
-                else{
-                    table.page(0).draw('page');
-
-                }
-            },
-            'columns': [
-             {
+            // NOTE: column order/indexes are unchanged so server-side column search keeps working.
+            'columns': [{ // 0 Tutor ID (hidden, shown inside the Tutor cell)
                     data: "id",
-                    render: function(data, type, full, meta){
-
+                    visible: false,
+                    render: function(data, type, full) {
                         return full.unique_id;
                     }
                 },
-                {
+                { // 1 Tutor (avatar + name + ID)
                     data: "id",
-                    render: function(data, type, full, meta){
-                        var name = "";
-                        if(full.f_name != null ){
-                            name += full.f_name+" ";
-                        }
-                        if(full.l_name != null ){
-                            name += full.l_name;
-                        }
-                        return name;
+                    render: function(data, type, full) {
+                        var name = '';
+                        if (full.f_name != null) name += full.f_name + ' ';
+                        if (full.l_name != null) name += full.l_name;
+                        return '<div class="tm-tutor">' +
+                            '<span class="tm-avatar">' + initials(full.f_name, full.l_name) + '</span>' +
+                            '<div><span class="tm-tutor-name">' + name + '</span>' +
+                            '<span class="tm-tutor-id">' + (full.unique_id || '') + '</span></div>' +
+                            '</div>';
                     }
                 },
                 {
                     data: "email",
-                    render: function(data, type, full, meta){
+                    visible: false,
+                    render: function(data) {
                         return data;
                     }
                 },
                 {
                     data: "phone",
-                    render: function(data, type, full, meta){
+                    visible: false,
+                    render: function(data) {
                         return data;
                     }
                 },
                 {
                     data: "created_at",
-                    render: function(data, type, full, meta){
-                        if(full.created_at) {
-                            var date = new Date(full.created_at),
-                            day = date.getDate(),
-                            month = date.getMonth(),
-                            year = date.getFullYear();
-                            return ("0" + day).slice(-2)+'-'+("0" + (month+ 1)).slice(-2)+'-'+year;
-                            // return year+'-'+("0" + (month+ 1)).slice(-2)+'-'+("0" + day).slice(-2);
-                        }else{
-                            return ' ';
-                        }
+                    visible: false,
+                    render: function(data, type, full) {
+                        return fmtDate(full.created_at) || ' ';
                     }
                 },
-               {
-    data: "availability",
-    render: function(data, type, full, meta){
-        return full.availability == 'Y' ? 'Yes' : 'No';
-    }
-},
-
-{
-    data: 'featured_button', orderable: false, searchable: false
-},
-{
-    data: 'free_trial_button', orderable: false, searchable: false
-},
-                
                 {
+                    data: "availability",
+                    render: function(data, type, full) {
+                        return '<span class="tm-avail">' + (full.availability == 'Y' ? 'Yes' : 'No') + '</span>';
+                    }
+                },
+                {
+                    data: 'featured_button',
+                    visible: false,
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: 'free_trial_button',
+                    visible: false,
+                    orderable: false,
+                    searchable: false
+                },
+                { // 8 Status
                     data: "status",
-                    render: function(data, type, full, meta){
-                        if(full.status == 'A' && full.subscription == 'S' && full.draft == 'N'){
-                            return '<span class="green_color status_update_'+full.id+'">Approved</span>';
-                        } else if(data == 'A'){
-                            return '<span class="pending_color status_update_'+full.id+'">Pending</span>';
+                    render: function(data, type, full) {
+                        if (full.status == 'A' && full.subscription == 'S' && full.draft == 'N') {
+                            return '<span class="green_color status_update_' + full.id + '">Approved</span>';
+                        } else if (data == 'A') {
+                            return '<span class="pending_color status_update_' + full.id + '">Pending</span>';
                         }
 
-                        var sc_user = '-';
-                        if(full.status_change_user_id && full.status_change_user && full.status_change_user.name) {
-                            sc_user = full.status_change_user.name;
-                        }
-                        
-                        var sc_date = '-';
-                        if(full.status_change_date) {
-                            var csc_date = new Date(full.status_change_date),
-                            csc_day = csc_date.getDate(),
-                            csc_month = csc_date.getMonth(),
-                            csc_year = csc_date.getFullYear();
-                            sc_date = ("0" + csc_day).slice(-2)+'-'+("0" + (csc_month+ 1)).slice(-2)+'-'+csc_year;
-                        }
-                        
-                        var reason = '';
-                        if(full.admin_rej_sus_reason) {
-                            reason = full.admin_rej_sus_reason;
-                        }
+                        var sc_user = (full.status_change_user_id && full.status_change_user && full.status_change_user.name) ? full.status_change_user.name : '-';
+                        var sc_date = full.status_change_date ? fmtDate(full.status_change_date) : '-';
+                        var reason = full.admin_rej_sus_reason ? full.admin_rej_sus_reason : '';
+                        var info = reason ?
+                            '<span class="fa fa-question-circle gj_reason_qc" data-id="' + full.id + '" data-reason="' + reason + '" data-sc_user="' + sc_user + '" data-sc_date="' + sc_date + '"></span>' :
+                            '';
 
-                        if(data == 'I'){
-                            if(reason) {
-                                return '<span class="suspend_color status_update_'+full.id+'">Suspended<span><span class="fa fa-question-circle gj_reason_qc" data-id="'+full.id+'" data-reason="'+reason+'" data-sc_user="'+sc_user+'" data-sc_date="'+sc_date+'"></span>';
-                            } else {
-                                return '<span class="suspend_color status_update_'+full.id+'">Suspended<span>';
-                            }
-                        }
-                        
-                        if(data == 'R'){
-                            if(reason) {
-                                return '<span class="reject_color status_update_'+full.id+'">Rejected<span><span class="fa fa-question-circle gj_reason_qc" data-id="'+full.id+'" data-reason="'+reason+'" data-sc_user="'+sc_user+'" data-sc_date="'+sc_date+'"></span>';
-                            } else {
-                                return '<span class="reject_color status_update_'+full.id+'">Rejected<span>';
-                            }
-                        }
-
-                        /* if(data == 'U'){
-                            return '<span class=" status_update_'+full.id+'">Unverified</span>';
-                        }
-                        if(data == 'AA'){
-                            if(full.draft == 'N'){
-                                return '<span class=" status_update_'+full.id+'">Submitted</span>';
-                            }else{
-                                return '<span class="status_update_'+full.id+'">In Progress</span>';
-                            }
-
-                        }
-                        if(data == 'C'){
-                            return '<span class="status_update_'+full.id+'">Closed</span>';
-                        } */
+                        if (data == 'I') return '<span class="suspend_color status_update_' + full.id + '">Suspended</span>' + info;
+                        if (data == 'R') return '<span class="reject_color status_update_' + full.id + '">Rejected</span>' + info;
                         return data;
                     }
                 },
-              
-                {
+                { // 9 Closed on (hidden – only ever applied to status C)
                     data: "updated_at",
-                    render: function(data, type, full, meta){
-                        if(full.status != 'C'){
-                            return '';
-                        }
-                        if(full.updated_at) {
-                            var date = new Date(full.updated_at),
-                            day = date.getDate(),
-                            month = date.getMonth(),
-                            year = date.getFullYear();
-                            return ("0" + day).slice(-2)+'-'+("0" + (month+ 1)).slice(-2)+'-'+year;
-                            // return year+'-'+("0" + (month+ 1)).slice(-2)+'-'+("0" + day).slice(-2);
-                        }else{
-                            return ' ';
-                        }
+                    visible: false,
+                    render: function(data, type, full) {
+                        if (full.status != 'C') return '';
+                        return fmtDate(full.updated_at) || ' ';
                     }
                 },
-                {
+                { // 10 Action
                     data: "id",
-                    render: function(data, type, full, meta){
-                        var a='',changeStatus = "";
-                            if(full.status == 'A'){
-                                changeStatus = '<span class="text_change_'+full.id+'">Suspend</span>';
-                            }
-                            if(full.status == 'I'){
-                                changeStatus = '<span class="text_change_'+full.id+'">Activate</span>';
-                            }
+                    orderable: false,
+                    render: function(data, type, full) {
+                        var a = '<div class="tm-actions">' +
+                            '<a target="_self" href="{{ url('
+                        admin / view - tutor - personal - info ').' / ' }}' + full.id + '" class="tm-manage action" data-key="' + full.id + '" id="action' + full.id + '">' +
+                            '<i class="fa fa-pencil"></i> Manage</a>' +
+                            '</div>';
+                        // var a = '<div class="tm-actions">' +
+                        //         '<a href="javascript:void(0);" class="tm-manage action" data-key="' + full.id + '" id="action' + full.id + '"><i class="fa fa-pencil"></i> Manage</a>' +
+                        //         '<div class="show-actions" id="show-action' + full.id + '" style="display:none;"><ul>';
 
-                            if(full.status == 'AA'){
-                                changeStatus = '<span class="text_change_'+full.id+'">Approve</span>';
-                            }
-                            if(full.status == 'C'){
-                                changeStatus = '<span class="text_change_'+full.id+'">Activate</span>';
-                            }
+                        // a += '<li><a target="_self" href="{{ url('admin/view-tutor-personal-info').'/' }}' + full.id + '">View</a></li>';
+                        // a += '<li class="tm-toggle-row"><span>Featured</span>' + (full.featured_button || '') + '</li>';
+                        // a += '<li class="tm-toggle-row"><span>Free Trial</span>' + (full.free_trial_button || '') + '</li>';
 
-                            a+= '<a href="javascript:void(0);" class="action-dots action" data-key="'+full.id+'" id="action'+full.id+'"><img src="{{ public_asset('admin/assets/images/action-dots.png') }}" alt=""></a>\n\
-                                <div class="show-actions" id="show-action'+full.id+'" style="display: none;">\n\
-                                    <span class="angle"><img src="{{ public_asset('admin/assets/images/angle.png') }}" alt=""></span>\n\
-                                    <ul>';
+                        // if (full.status == 'A') {
+                        //     if (full.subscription == 'S' && full.draft == 'N') {
+                        //         a += '<li><a class="status_change_suspend" data-id="' + full.id + '" href="javascript:void(0);">Suspend</a></li>';
+                        //     } else {
+                        //         a += '<li><a class="status_change_approved" data-id="' + full.id + '" href="javascript:void(0);">Approve</a></li>';
+                        //         a += '<li><a class="status_change_reject" data-id="' + full.id + '" href="javascript:void(0);">Reject</a></li>';
+                        //     }
+                        // }
+                        // if (full.status == 'I') {
+                        //     a += '<li><a class="status_change_approved" data-id="' + full.id + '" href="javascript:void(0);">Approve</a></li>';
+                        // }
 
-                            a+='<li><a target="_self" href="{{ url('admin/view-tutor-personal-info').'/' }}'+full.id+'">View </a></li>';
-
-                            // a+='<li><a class="suspended_change_user" data-id="'+full.id+'" href="javascript:void(0);">Suspend</a></li>';
-                            /* if(full.status == 'AA'){
-                                a+='<li><a class="suspended_change_user" data-id="'+full.id+'" href="javascript:void(0);">Suspend</a></li>';
-                            } */
-
-                            /* if(changeStatus) {
-                                a+='<li><a class="status_change_user" data-id="'+full.id+'" href="javascript:void(0);">'+changeStatus+'</a></li>';
-                            } */
-
-                            /* if(full.status == 'U'){
-                                a+='<li><a class="resend_verify" data-id="'+full.id+'" href="javascript:void(0);">Verification Mail</a></li>';
-                            } */
-
-                            if(full.status == 'A'){
-                                if(full.subscription == 'S' && full.draft == 'N'){
-                                    a+='<li><a class="status_change_suspend" data-id="'+full.id+'" href="javascript:void(0);">Suspend</a></li>';
-                                } else {
-                                    a+='<li><a class="status_change_approved" data-id="'+full.id+'" href="javascript:void(0);">Approve</a></li>';
-
-                                    a+='<li><a class="status_change_reject" data-id="'+full.id+'" href="javascript:void(0);">Reject</a></li>';
-                                }
-                            }
-
-                            if(full.status == 'I'){
-                                a+='<li><a class="status_change_approved" data-id="'+full.id+'" href="javascript:void(0);">Approve</a></li>';
-                            }
-
-                            /* if(full.status == 'R'){
-                                a+='<li><a class="status_change_approved" data-id="'+full.id+'" href="javascript:void(0);">Approve</a></li>';
-                            } */
-
-                            a+='</ul>\n\
-                            </div>';
+                        a += '</ul></div></div>';
                         return a;
                     }
                 },
+                { // 11 State (hidden, used only for the State filter)
+                    data: "state",
+                    visible: false,
+                    orderable: false,
+                    defaultContent: ''
+                }
             ]
         };
-        var table = dataTableCall(dataTableObj,"example");
-        // table.page(JSON.stringify(localStorage.getItem('page'))).draw('page');
+
+        var table = dataTableCall(dataTableObj, "example");
+        window.table = table;
         $("#example_filter").hide();
-        $(document).on("click",".action",function(e){
+
+        // Manage dropdown
+        $(document).on("click", ".action", function(e) {
+            e.stopPropagation();
             var id = $(this).data("key");
-            $("#show-action"+id).slideToggle();
+            $(".show-actions").not("#show-action" + id).slideUp(120);
+            $("#show-action" + id).slideToggle(120);
         });
+        $(document).on("click", function(e) {
+            if ($(e.target).closest('.tm-toggle-row').length) {
+                return;
+            }
+            $(".show-actions").slideUp(120);
+        });
+
+        // Reset
         $('body').on('click', '.reset_search', function() {
             $(".reset_val").val("");
-            $("#col4_filter").val("");
-            $("#col3_filter").val("");
-            $("#col5_filter").val("");
+            $("#col3_filter, #col4_filter, #col5_filter").val("");
             $('#example').DataTable().search('').columns().search('').draw();
         });
-        function filterColumnForSelect(selectId, columnIndex) {
-    var value = $('#' + selectId).val(); 
-    $('#example').DataTable().column(columnIndex).search(value).draw();
-}
-       $(document).on('click', '.search_click', function () {
-    filterColumn(1); // Name
-    filterColumn(2); // Status
-    filterColumn(3); // From Date
-    filterColumn(4); // To Date
-    filterColumn(5); // Availability (column index 5)
-    filterColumnForSelect('featured_filter', 6);
 
-    // FREE TRIAL (col 7)
-    filterColumnForSelect('free_trial_filter', 7);
-});
-        $('body').on('click','.search_click', function() {
-            filterColumn( 3 );
+        // Search
+        $(document).on('click', '.search_click', function() {
+            filterColumn(1); // Name / ID
+            filterColumn(2); // Status
+            filterColumn(3); // From date
+            filterColumn(4); // To date
+            filterColumn(5); // Availability
+            filterColumnForSelect('featured_filter', 6);
+            filterColumnForSelect('free_trial_filter', 7);
+            filterColumnForSelect('state_filter', 11);
         });
-        $(document).on("click",".delete_user",function(e){
-            var targetId = $(this).attr("id");
-            $("#tId").val(targetId);
-            $("#type_popup_next").val("A");
-            // var tName = "Do you want to delete "+temp.f_name+" "+temp.l_name+" student ?";
-            $("#ajax_url").val("{{ route('ajax.delete.user') }}");
-            $('#instructionModal').modal('show');
-            var id = $(e.currentTarget).data("id"),
-            obj = $(this),
-            reqData = {
-                'jsonrpc' : '2.0',
-                '_token'  : '{{csrf_token()}}',
-                'data'    : {
-                    'id'    : id
-                }
-            },
-            temp = table.row('.tr_class_'+id).data();
-            var tName = "Do you want to delete this tutor ?";
-            $("#tName").val(tName);
-            $("#data_table_data_s").val(table);
-            $("#ajax_data_id").val(id);
-            // var id = $(e.currentTarget).attr("data-id"),
-            // obj = $(this),
-            // temp = table.row('.tr_class_'+id).data(),
-            // reqData = {
-            //     'jsonrpc' : '2.0',
-            //     '_token'  : '{{csrf_token()}}',
-            //     'data'    : {
-            //         'id'    : id
-            //     }
-            // };
-
-            // if(confirm("Do you want to delete "+temp.f_name+" "+temp.l_name+" tutor ?")){
-            //     $.ajax({
-            //         url:"{{ route('ajax.delete.user') }}",
-            //         dataType: 'json',
-            //         data: reqData,
-            //         type: 'post',
-            //         success:function(resp){
-            //             if(resp.status == 1){
-            //                 table.row('.tr_class_'+id).remove().draw( false );
-            //                 toastr.success(resp.message);
-            //             }else{
-            //                 toastr.error(resp.message);
-            //             }
-            //         },
-            //         error:function(){
-            //             toastr.error("Something went wrong!Ajax error!");
-            //         }
-            //     });
-            // }
-        });
-        $(document).on("click",".status_change_user",function(e){
-            var id = $(e.currentTarget).data("id"),
-            obj = $(this),
-            reqData = {
-                'jsonrpc' : '2.0',
-                '_token'  : '{{csrf_token()}}',
-                'data'    : {
-                    'id'    : id
-                }
-            },
-            temp = table.row('.tr_class_'+id).data();
-            $("#data_table_data_s").val(table);
-            $("#ajax_data_id").val(id);
-            var tName = "Do you want to change the status of this tutor?";
-            var ajax_url = "{{ route('ajax.status.change.user') }}";
-            var targetId = $(this).attr("id");
-            $("#tId").val(targetId);
-            $("#type_popup_next").val("A");
-            $("#ajax_url").val(ajax_url);
-            $("#tName").val(tName);
-            isAuthorizedByAdmin(tName,targetId,id);
-            // var id = $(e.currentTarget).data("id"),
-            // obj = $(this),
-            // reqData = {
-            //     'jsonrpc' : '2.0',
-            //     '_token'  : '{{csrf_token()}}',
-            //     'data'    : {
-            //         'id'    : id
-            //     }
-            // },
-            // temp = table.row('.tr_class_'+id).data();
-
-            // if(confirm("Do you want to change the status of "+temp.f_name+" "+temp.l_name+" tutor?")){
-            //     $.ajax({
-            //         url:"{{ route('ajax.status.change.user') }}",
-            //         dataType: 'json',
-            //         data: reqData,
-            //         type: 'post',
-            //         success:function(resp){
-
-            //             if(resp.status == 1){
-            //                 table.row('.tr_class_'+id).draw( false );
-            //                 toastr.success(resp.message);
-            //             }else{
-            //                 toastr.error(resp.message);
-
-            //             }
-            //         }
-            //     });
-            // }
-        });
-        $(document).on("click",".suspended_change_user",function(e){
-            var id = $(e.currentTarget).data("id"),
-            obj = $(this),
-            reqData = {
-                'jsonrpc' : '2.0',
-                '_token'  : '{{csrf_token()}}',
-                'data'    : {
-                    'id'    : id
-                }
-            },
-            temp = table.row('.tr_class_'+id).data();
-            $("#data_table_data_s").val(table);
-            $("#ajax_data_id").val(id);
-            var tName = "Do you want to change the status of this tutor?";
-            var ajax_url = "{{ route('ajax.status.change.user.inactive') }}";
-            var targetId = $(this).attr("id");
-            $("#tId").val(targetId);
-            $("#type_popup_next").val("A");
-            $("#ajax_url").val(ajax_url);
-            $("#tName").val(tName);
-            isAuthorizedByAdmin(tName,targetId,id);
-            // var id = $(e.currentTarget).data("id"),
-            // obj = $(this),
-            // reqData = {
-            //     'jsonrpc' : '2.0',
-            //     '_token'  : '{{csrf_token()}}',
-            //     'data'    : {
-            //         'id'    : id
-            //     }
-            // },
-            // temp = table.row('.tr_class_'+id).data();
-
-            // if(confirm("Do you want to change the status of "+temp.f_name+" "+temp.l_name+" tutor?")){
-            //     $.ajax({
-            //         url:"{{ route('ajax.status.change.user') }}",
-            //         dataType: 'json',
-            //         data: reqData,
-            //         type: 'post',
-            //         success:function(resp){
-
-            //             if(resp.status == 1){
-            //                 table.row('.tr_class_'+id).draw( false );
-            //                 toastr.success(resp.message);
-            //             }else{
-            //                 toastr.error(resp.message);
-
-            //             }
-            //         }
-            //     });
-            // }
+        $('#col1_filter').on('keypress', function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                $('.search_click').first().click();
+            }
         });
 
-        $(document).on("click",".status_change_approved",function(e){
-            // Zoom app integration code
-            // var id = $(e.currentTarget).data("id");
-            // $('#tut_id').val(id);
-            // $('#approveTutorModal .gj_modal_title').text('Confirmation');
-            // $('#approveTutorModal .adm_modal_Footer').show();
-            // $('#approveTutorModal .gj_confirm_div').show(); 
-            // $('#approveTutorModal .gj_submit_div').hide(); 
-            // $('#approveTutorModal .zoom_email_error').hide(); 
-            // $('#approveTutorModal').modal('show');
-              
-                var id = $(e.currentTarget).data("id");
-                $('#tut_id').val(id);
-
-                $('#approveTutorModal .gj_modal_title').text('Confirmation');
-                $('#approveTutorModal .gj_popup_text').text('Are you sure you want to approve this tutor?');
-
-                $('#approveTutorModal .adm_modal_Footer').show();
-                $('#approveTutorModal .gj_confirm_div').show();
-
-                $('#approveTutorModal').modal('show');
-                
-            });
-
-        
-        $(document).on("click",".status_change_reject",function(e){
+        // Status modals
+        $(document).on("click", ".status_change_approved", function(e) {
             var id = $(e.currentTarget).data("id");
-            $('#rtut_id').val(id);
+            $('#tut_id').val(id);
+            $('#approveTutorModal .gj_modal_title').text('Confirmation');
+            $('#approveTutorModal .gj_popup_text').text('Are you sure you want to approve this tutor?');
+            $('#approveTutorModal .adm_modal_Footer').show();
+            $('#approveTutorModal .gj_confirm_div').show();
+            $('#approveTutorModal').modal('show');
+        });
+
+        $(document).on("click", ".status_change_reject", function(e) {
+            $('#rtut_id').val($(e.currentTarget).data("id"));
             $('#rejectTutorModal .gj_modal_title').text('Confirmation');
             $('#rejectTutorModal .adm_modal_Footer').show();
-            $('#rejectTutorModal .gj_confirm_div').show(); 
-            $('#rejectTutorModal .gj_submit_div').hide(); 
-            $('#rejectTutorModal .suspend_reason_error').hide(); 
-            $('#rejectTutorModal').modal('show');            
+            $('#rejectTutorModal .gj_confirm_div').show();
+            $('#rejectTutorModal .gj_submit_div').hide();
+            $('#rejectTutorModal .reject_reason_error').hide();
+            $('#rejectTutorModal').modal('show');
         });
-        
-        $(document).on("click",".status_change_suspend",function(e){
-            var id = $(e.currentTarget).data("id");
-            $('#stut_id').val(id);
+
+        $(document).on("click", ".status_change_suspend", function(e) {
+            $('#stut_id').val($(e.currentTarget).data("id"));
             $('#suspendTutorModal .gj_modal_title').text('Confirmation');
             $('#suspendTutorModal .adm_modal_Footer').show();
-            $('#suspendTutorModal .gj_confirm_div').show(); 
-            $('#suspendTutorModal .gj_submit_div').hide(); 
-            $('#suspendTutorModal .suspend_reason_error').hide(); 
-            $('#suspendTutorModal').modal('show');            
-        });
-        
-        $(document).on("click",".gj_reason_qc",function(e){
-            var id = $(e.currentTarget).data("id");
-            var name = 'Name: ' + $(e.currentTarget).data("sc_user");
-            var date = 'Date: ' + $(e.currentTarget).data("sc_date");
-            var reason = 'Reason: ' + $(e.currentTarget).data("reason");
-
-            if(name) {
-                $('#adminReasonTutorModal .gj_popupname_text').text(name);            
-            }
-
-            if(date) {
-                $('#adminReasonTutorModal .gj_popupdate_text').text(date);            
-            }
-
-            if(reason) {
-                $('#adminReasonTutorModal .gj_popuprsn_text').text(reason);            
-            }
-
-            $('#adminReasonTutorModal').modal('show');            
+            $('#suspendTutorModal .gj_confirm_div').show();
+            $('#suspendTutorModal .gj_submit_div').hide();
+            $('#suspendTutorModal .suspend_reason_error').hide();
+            $('#suspendTutorModal').modal('show');
         });
 
-        $(document).on("click",".resend_verify",function(e){
-            var id = $(e.currentTarget).data("id"),
-            obj = $(this),
-            reqData = {
-                'jsonrpc' : '2.0',
-                '_token'  : '{{csrf_token()}}',
-                'data'    : {
-                    'id'    : id
-                }
-            },
-            temp = table.row('.tr_class_'+id).data();
-            $("#data_table_data_s").val(table);
-            $("#ajax_data_id").val(id);
-            var tName = "Do you want to resend verification link to "+temp.email+" ?";
-            var ajax_url = "{{ route('ajax.resend.verification.link') }}";
-            var targetId = $(this).attr("id");
-            $("#tId").val(targetId);
-            $("#type_popup_next").val("A");
-            $("#ajax_url").val(ajax_url);
-            $("#tName").val(tName);
-            isAuthorizedByAdmin(tName,targetId,id);
-
+        $(document).on("click", ".gj_reason_qc", function(e) {
+            var t = $(e.currentTarget);
+            $('#adminReasonTutorModal .gj_popupname_text').text('Name: ' + t.data("sc_user"));
+            $('#adminReasonTutorModal .gj_popupdate_text').text('Date: ' + t.data("sc_date"));
+            $('#adminReasonTutorModal .gj_popuprsn_text').text('Reason: ' + t.data("reason"));
+            $('#adminReasonTutorModal').modal('show');
         });
-        $(document).on("blur","#col3_filter",function(){
-            var from_date = $("#col3_filter").val(),
-            to_date = $("#col4_filter").val();
-            var from_split = from_date.split("-");
-            var to_split = to_date.split("-");
-            var new_from_date = from_split[0]+"-"+from_split[1]+"-"+from_split[2];
-            var new_to_date = to_split[0]+"-"+to_split[1]+"-"+to_split[2];
-            var d2 = Date.parse(new_from_date);
-            var d1 = Date.parse(new_to_date);
-            if (d1 < d2) {
+
+        // Date range validation
+        function validateDates() {
+            var from = Date.parse($("#col3_filter").val());
+            var to = Date.parse($("#col4_filter").val());
+            if (!isNaN(from) && !isNaN(to) && to < from) {
                 $("#col3_filter").val("");
                 $("#col4_filter").val("");
-                $(".error_from_date").html("to date cannot be grater from from date");
+                $(".error_from_date").html("To date cannot be earlier than from date");
+            } else {
+                $(".error_from_date").html("");
             }
-        });
-
-
-
-        // $(document).on("click",".onModalShow",function(e){
-        //     var id= $.trim($(e.currentTarget).attr("data-id"));
-        //     var href= $.trim($(e.currentTarget).attr("data-href"));
-        //     // $('#editTutorInfoPasswordForm').attr("action",href);
-        //     $('#instructionModal').modal('show');
-        //     // $('#instructionModal').modal('hide');
-        //     // $("#order_id_reassign").val(id);
-        // });
-        // function setEditConfPasswordId(id){
-        //     $("#instructionModal").show();
-        //     // $("#editTutorInfoPasswordForm").attr("action",{{ url('confirm-admin-change-password') }});
-        // }
-        $(document).on("blur","#col4_filter",function(){
-            var from_date = $("#col3_filter").val(),
-            to_date = $("#col4_filter").val();
-            var from_split = from_date.split("-");
-            var to_split = to_date.split("-");
-            var new_from_date = from_split[0]+"-"+from_split[1]+"-"+from_split[2];
-            var new_to_date = to_split[0]+"-"+to_split[1]+"-"+to_split[2];
-            var d2 = Date.parse(new_from_date);
-            var d1 = Date.parse(new_to_date);
-            if (d1 < d2) {
-                $("#col3_filter").val("");
-                $("#col4_filter").val("");
-                $(".error_from_date").html("to date cannot be grater from from date");
-            }
-        });
+        }
+        $(document).on("blur", "#col3_filter, #col4_filter", validateDates);
 
         $('#instructionModal').modal('hide');
-        // $("#download").click(function(){
-        //     $(".buttons-excel").trigger("click");
-        // });
-        // $("#example_wrapper div").eq(0).addClass("table-res");
-        // $("#example_info").remove();
-        // $("#example_length").remove();
-        $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
-      {
-        return {
-          "iStart":         oSettings._iDisplayStart,
-          "iEnd":           oSettings.fnDisplayEnd(),
-          "iLength":        oSettings._iDisplayLength,
-          "iTotal":         oSettings.fnRecordsTotal(),
-          "iFilteredTotal": oSettings.fnRecordsDisplay(),
-          "iPage":          Math.ceil( oSettings._iDisplayStart / oSettings._iDisplayLength ),
-          "iTotalPages":    Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
+
+        $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings) {
+            return {
+                "iStart": oSettings._iDisplayStart,
+                "iEnd": oSettings.fnDisplayEnd(),
+                "iLength": oSettings._iDisplayLength,
+                "iTotal": oSettings.fnRecordsTotal(),
+                "iFilteredTotal": oSettings.fnRecordsDisplay(),
+                "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+                "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+            };
         };
-      };
-        $('#example').on('page.dt',function(){
-            // alert("sakjkfhas");
+
+        $('#example').on('page.dt', function() {
             var info = table.page.info();
-            // alert(info.page);
-            // var p = (this.api().page.info());
-            if(isNaN(info.page) == false){
-                // alert(isNaN(info.page));
-                localStorage.setItem("page",info);
-                localStorage.setItem("pageNo",info.page);
-            }else{
-
-                localStorage.setItem("pageNo",0);
-
-            // $('#pageInfo').html( 'Showing page: '+info.page+' of '+info.pages );
-            }
+            localStorage.setItem("pageNo", isNaN(info.page) ? 0 : info.page);
         });
     });
 </script>
 
 <script>
-    function proceedConfirm() {
-        var ajax_data_id= $("#ajax_data_id").val();
-        var ajax_url= $("#ajax_url").val();
-
-        var reqData = {
-            'jsonrpc' : '2.0',
-            '_token'  : '{{csrf_token()}}',
-            'data'    : {
-                'id'    : ajax_data_id
-            }
-        };
-
-        var type = $.trim($("#type_popup_next").val());
-
-        if(type == 'H') {
-            window.location.href = ajax_url;
-        } else {
-            $.ajax({
-                url:ajax_url,
-                dataType: 'json',
-                data: reqData,
-                type: 'post',
-                success:function(resp){
-                    $('#admConfirmModal').modal('hide');
-                    if(resp.status == 1){
-                        table.row('.tr_class_'+ajax_data_id).remove().draw( false );
-                        toastr.success(resp.message);
-                    }else{
-                        toastr.error(resp.message);
-                    }
-                },
-                error:function(){
-                    toastr.error("Something went wrong!Ajax error!");
-                }
-            });
-        }
-    }
-
-    function admCloseModel() {
-        $('#admConfirmModal').modal('hide');
-    }
-
     function ClosePopupModel(its) {
         $(its).closest('.modal').modal('hide');
     }
 
-    function popupApproveSubmitModal(its) {
-        $(its).closest('.modal').modal('hide');
-        var id = $('#tut_id').val(),
-        obj = $(this),
-        reqData = {
-            'jsonrpc' : '2.0',
-            '_token'  : '{{csrf_token()}}',
-            'data'    : {
-                'id'    : id
+    // ---------- Approve ----------
+    function approveTutorNow() {
+        var id = $('#tut_id').val();
+        $('#approveTutorModal').modal('hide');
+        $("#v_tutor_Loader").css("display", "flex");
+
+        $.ajax({
+            url: "{{ route('ajax.status.change.user.approved') }}",
+            dataType: 'json',
+            data: {
+                'jsonrpc': '2.0',
+                '_token': '{{csrf_token()}}',
+                'data': {
+                    'id': id
+                }
+            },
+            type: 'post',
+            success: function(resp) {
+                if (resp.status == 1) {
+                    table.row('.tr_class_' + id).remove().draw(false);
+                    toastr.success(resp.message);
+                } else {
+                    toastr.error(resp.message);
+                }
+            },
+            error: function() {
+                toastr.error("Something went wrong! Ajax error!");
+            },
+            complete: function() {
+                $("#v_tutor_Loader").hide();
             }
-        },
-        temp = table.row('.tr_class_'+id).data();
-        $("#data_table_data_s").val(table);
-        $("#ajax_data_id").val(id);
-        var tName = "Do you want to change the status of this tutor?";
-        var ajax_url = "{{ route('ajax.status.change.user.approved') }}";
-        var targetId = $(this).attr("id");
-        $("#tId").val(targetId);
-        $("#type_popup_next").val("A");
-        $("#ajax_url").val(ajax_url);
-        $("#tName").val(tName);
-        isAuthorizedByAdmin(tName,targetId,id);
+        });
     }
 
-    function yesApproveSubmitModal(its) {
-        $('#approveTutorModal .gj_modal_title').text('Enter Zoom Mail ID');
-        $('#approveTutorModal .adm_modal_Footer').hide();            
-        $('#approveTutorModal .gj_confirm_div').hide();   
-        $('#approveTutorModal #zoom_email').val('');
-        $('#approveTutorModal .gj_submit_div').show();     
-        $('#approveTutorModal .zoom_email_error').hide();
-    }
-    
     function submitApproveFn(its) {
-        var ajax_url = "{{ route('ajax.status.change.user.approved') }}";
         var id = $('#tut_id').val();
         var zoom_email = $('#zoom_email').val();
-
-        if(id && zoom_email) {
-            var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (!regex.test(zoom_email)) {
-                $('#approveTutorModal .zoom_email_error').text('Please enter valid email id'); 
-                $('#approveTutorModal .zoom_email_error').show();
-            } else {
-                $(its).closest('.modal').modal('hide');
-
-                $("#v_tutor_Loader").css("display", "flex");
-                
-                var reqData = {
-                    'jsonrpc' : '2.0',
-                    '_token'  : '{{csrf_token()}}',
-                    'data'    : {
-                        'id'    : id,
-                        'zoom_email'    : zoom_email,
-                    }
-                };
-
-                $.ajax({
-                    url:ajax_url,
-                    dataType: 'json',
-                    data: reqData,
-                    type: 'post',
-                    success:function(resp){
-                        if(resp.status == 1) {
-                            table.row('.tr_class_'+id).remove().draw( false );
-                            toastr.success(resp.message);
-                        } else {
-                            toastr.error(resp.message);
-                        }
-                    },
-                    error:function(){
-                        toastr.error("Something went wrong!Ajax error!");
-                    },
-                    complete: function() {
-                        $("#v_tutor_Loader").hide();
-                    }
-                });
+        if (id && zoom_email) {
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(zoom_email)) {
+                $('#approveTutorModal .zoom_email_error').text('Please enter valid email id').show();
+                return;
             }
-        } else {
-            // toastr.error("Something went wrong, please try again later"); 
-            $('#approveTutorModal .zoom_email_error').text('This field is required'); 
-            $('#approveTutorModal .zoom_email_error').show(); 
-        }
-    }
-
-    function yesRejectFn(its) {
-        $('#rejectTutorModal .gj_modal_title').text('Reject this Tutor?');
-        $('#rejectTutorModal .adm_modal_Footer').hide();            
-        $('#rejectTutorModal .gj_confirm_div').hide();   
-        $('#rejectTutorModal #reject_reason').val(''); 
-        $('#rejectTutorModal .gj_submit_div').show();    
-        $('#rejectTutorModal .suspend_reason_error').hide();
-    }
-    
-    function submitRejectFn(its) {
-        var ajax_url = "{{ route('ajax.status.change.user.rejected') }}";
-        var id = $('#rtut_id').val();
-        var reason = $('#reject_reason').val();
-        if(id && reason) {
             $(its).closest('.modal').modal('hide');
-            $('#suspendTutorModal .reject_reason_error').text(''); 
-            $('#suspendTutorModal .reject_reason_error').hide(); 
-
             $("#v_tutor_Loader").css("display", "flex");
-            
-            var reqData = {
-                'jsonrpc' : '2.0',
-                '_token'  : '{{csrf_token()}}',
-                'data'    : {
-                    'id'    : id,
-                    'reason': reason,
-                }
-            };
-
-            $.ajax({
-                url:ajax_url,
-                dataType: 'json',
-                data: reqData,
-                type: 'post',
-                success:function(resp){
-                    if(resp.status == 1) {
-                        table.row('.tr_class_'+id).remove().draw( false );
-                        toastr.success(resp.message);
-                    } else {
-                        toastr.error(resp.message);
-                    }
-                },
-                error:function(){
-                    toastr.error("Something went wrong!Ajax error!");
-                },
-                complete: function() {
-                    $("#v_tutor_Loader").hide();
-                }
-            });
-        } else {
-            $('#suspendTutorModal .reject_reason_error').text('This field is required'); 
-            $('#suspendTutorModal .reject_reason_error').show(); 
-        }
-    }
-
-    function popupRejectSubmitModal(its) {
-        $(its).closest('.modal').modal('hide');
-        var id = $('#rtut_id').val(),
-        obj = $(this),
-        reqData = {
-            'jsonrpc' : '2.0',
-            '_token'  : '{{csrf_token()}}',
-            'data'    : {
-                'id'    : id
-            }
-        },
-        temp = table.row('.tr_class_'+id).data();
-        $("#data_table_data_s").val(table);
-        $("#ajax_data_id").val(id);
-        var tName = "Do you want to change the status of this tutor?";
-        var ajax_url = "{{ route('ajax.status.change.user.rejected') }}";
-        var targetId = $(this).attr("id");
-        $("#tId").val(targetId);
-        $("#type_popup_next").val("A");
-        $("#ajax_url").val(ajax_url);
-        $("#tName").val(tName);
-        isAuthorizedByAdmin(tName,targetId,id);
-    }
-
-    function yesSuspendFn(its) {
-        $('#suspendTutorModal .gj_modal_title').text('Reason to suspend');
-        $('#suspendTutorModal .adm_modal_Footer').hide();            
-        $('#suspendTutorModal .gj_confirm_div').hide();   
-        $('#suspendTutorModal #suspend_reason').val('');
-        $('#suspendTutorModal .gj_submit_div').show();     
-        $('#suspendTutorModal .suspend_reason_error').hide();
-    }
-    
-    function submitSuspendFn(its) {
-        var ajax_url = "{{ route('ajax.status.change.user.suspended') }}";
-        var id = $('#stut_id').val();
-        var reason = $('#suspend_reason').val();
-        if(id && reason) {
-            $(its).closest('.modal').modal('hide');
-            $('#suspendTutorModal .suspend_reason_error').text(''); 
-            $('#suspendTutorModal .suspend_reason_error').hide(); 
-
-            $("#v_tutor_Loader").css("display", "flex");
-            
-            var reqData = {
-                'jsonrpc' : '2.0',
-                '_token'  : '{{csrf_token()}}',
-                'data'    : {
-                    'id'    : id,
-                    'reason': reason,
-                }
-            };
-
-            $.ajax({
-                url:ajax_url,
-                dataType: 'json',
-                data: reqData,
-                type: 'post',
-                success:function(resp){
-                    if(resp.status == 1) {
-                        table.row('.tr_class_'+id).remove().draw( false );
-                        toastr.success(resp.message);
-                    } else {
-                        toastr.error(resp.message);
-                    }
-                },
-                error:function(){
-                    toastr.error("Something went wrong!Ajax error!");
-                },
-                complete: function() {
-                    $("#v_tutor_Loader").hide();
-                }
-            });
-        } else {
-            $('#suspendTutorModal .suspend_reason_error').text('This field is required'); 
-            $('#suspendTutorModal .suspend_reason_error').show(); 
-        }
-    }
-
-    /* $(document).on("click","#yes_tut_suspend",function(e){
-        alert();
-        $('#suspendTutorModal .gj_modal_title').text('Suspend the Tutor?');
-        $('#suspendTutorModal .adm_modal_Footer').hide();            
-        $('#suspendTutorModal .gj_confirm_div').hide();   
-        $('#suspendTutorModal .gj_submit_div').show();     
-        $('#suspendTutorModal .suspend_reason_error').hide();      
-    }); */
-
-    /* $(document).on("click","#submit_suspend",function(e){
-        var ajax_url = "{{ route('ajax.status.change.user.suspended') }}";
-        var id = $('#stut_id').val();
-        var reason = $('#suspend_reason').val();
-        if(id && reason) {
-            $(its).closest('.modal').modal('hide');
-            $('#suspendTutorModal .suspend_reason_error').text(''); 
-            $('#suspendTutorModal .suspend_reason_error').hide(); 
-
-            $("#v_tutor_Loader").css("display", "flex");
-            
-            var reqData = {
-                'jsonrpc' : '2.0',
-                '_token'  : '{{csrf_token()}}',
-                'data'    : {
-                    'id'    : ajax_data_id,
-                    'reason': reason,
-                }
-            };
-
-            $.ajax({
-                url:ajax_url,
-                dataType: 'json',
-                data: reqData,
-                type: 'post',
-                success:function(resp){
-                    if(resp.status == 1) {
-                        table.row('.tr_class_'+ajax_data_id).remove().draw( false );
-                        toastr.success(resp.message);
-                    } else {
-                        toastr.error(resp.message);
-                    }
-                },
-                error:function(){
-                    toastr.error("Something went wrong!Ajax error!");
-                },
-                complete: function() {
-                    $("#v_tutor_Loader").hide();
-                }
-            });
-        } else {
-            $('#suspendTutorModal .suspend_reason_error').text('This field is required'); 
-            $('#suspendTutorModal .suspend_reason_error').show(); 
-        }
-    }); */
-
-    function popupSuspendSubmitModal(its) {
-        $(its).closest('.modal').modal('hide');
-        var id = $('#stut_id').val(),
-        obj = $(this),
-        reqData = {
-            'jsonrpc' : '2.0',
-            '_token'  : '{{csrf_token()}}',
-            'data'    : {
-                'id'    : id
-            }
-        },
-        temp = table.row('.tr_class_'+id).data();
-        $("#data_table_data_s").val(table);
-        $("#ajax_data_id").val(id);
-        var tName = "Do you want to change the status of this tutor?";
-        var ajax_url = "{{ route('ajax.status.change.user.suspended') }}";
-        var targetId = $(this).attr("id");
-        $("#tId").val(targetId);
-        $("#type_popup_next").val("A");
-        $("#ajax_url").val(ajax_url);
-        $("#tName").val(tName);
-        // isAuthorizedByAdmin(tName,targetId,id);
-
-        
-    }
-    $(document).on('change', '.featuredToggle', function () {
-    var tutor_id = $(this).data('id');
-    var status = $(this).is(':checked') ? 1 : 0;
-
-    $.ajax({
-        url: "{{ route('update.featured.status') }}",
-        type: "POST",
-        data: {
-            _token: "{{ csrf_token() }}",
-            tutor_id: tutor_id,
-            status: status
-        },
-        success: function(res) {
-            if (res.status) {
-                if (typeof toastr !== 'undefined') {
-                    toastr.success(res.message);
-                }
-            } else {
-                if (typeof toastr !== 'undefined') {
-                    toastr.error('Failed to update featured status');
-                }
-            }
-        },
-        error: function() {
-            if (typeof toastr !== 'undefined') {
-                toastr.error('Error updating featured status');
-            }
-        }
-    });
-});
-$(document).on('change', '.freeTrailToggle', function () {
-    var tutor_id = $(this).data('id');
-    var status = $(this).is(':checked') ? 1 : 0;
-
-    $.ajax({
-        url: "{{ route('update.free.trail.status') }}",
-        type: "POST",
-        data: {
-            _token: "{{ csrf_token() }}",
-            tutor_id: tutor_id,
-            status: status
-        },
-        success: function(res) {
-            if (res.status) {
-                toastr.success(res.message);
-            } else {
-                toastr.error('Failed to update free trial status');
-            }
-        },
-        error: function() {
-            toastr.error('Error updating free trial status');
-        }
-    });
-});
-function approveTutorNow(){
-            var id = $('#tut_id').val();
-            $('#approveTutorModal').modal('hide');
-            $("#v_tutor_Loader").css("display", "flex");
-
-            var reqData = {
-                'jsonrpc' : '2.0',
-                '_token'  : '{{csrf_token()}}',
-                'data'    : {
-                'id' : id
-                }
-            };
-
             $.ajax({
                 url: "{{ route('ajax.status.change.user.approved') }}",
                 dataType: 'json',
-                data: reqData,
+                data: {
+                    'jsonrpc': '2.0',
+                    '_token': '{{csrf_token()}}',
+                    'data': {
+                        'id': id,
+                        'zoom_email': zoom_email
+                    }
+                },
                 type: 'post',
-                success:function(resp){
-
-                if(resp.status == 1){
-                    table.row('.tr_class_'+id).remove().draw(false);
-                    toastr.success(resp.message);
+                success: function(resp) {
+                    if (resp.status == 1) {
+                        table.row('.tr_class_' + id).remove().draw(false);
+                        toastr.success(resp.message);
                     } else {
                         toastr.error(resp.message);
                     }
                 },
-                error:function(){
-                toastr.error("Something went wrong! Ajax error!");
-            },
-                complete: function(){
-                $("#v_tutor_Loader").hide();
-            }
+                error: function() {
+                    toastr.error("Something went wrong!Ajax error!");
+                },
+                complete: function() {
+                    $("#v_tutor_Loader").hide();
+                }
             });
+        } else {
+            $('#approveTutorModal .zoom_email_error').text('This field is required').show();
         }
+    }
+
+    function yesApproveSubmitModal() {
+        $('#approveTutorModal .gj_modal_title').text('Enter Zoom Mail ID');
+        $('#approveTutorModal .adm_modal_Footer').hide();
+        $('#approveTutorModal .gj_confirm_div').hide();
+        $('#approveTutorModal #zoom_email').val('');
+        $('#approveTutorModal .gj_submit_div').show();
+        $('#approveTutorModal .zoom_email_error').hide();
+    }
+
+    // ---------- Reject ----------
+    function yesRejectFn() {
+        $('#rejectTutorModal .gj_modal_title').text('Reject this Tutor?');
+        $('#rejectTutorModal .adm_modal_Footer').hide();
+        $('#rejectTutorModal .gj_confirm_div').hide();
+        $('#rejectTutorModal #reject_reason').val('');
+        $('#rejectTutorModal .gj_submit_div').show();
+        $('#rejectTutorModal .reject_reason_error').hide();
+    }
+
+    function submitRejectFn(its) {
+        var id = $('#rtut_id').val();
+        var reason = $('#reject_reason').val();
+        if (id && reason) {
+            $(its).closest('.modal').modal('hide');
+            $('#rejectTutorModal .reject_reason_error').text('').hide();
+            $("#v_tutor_Loader").css("display", "flex");
+            $.ajax({
+                url: "{{ route('ajax.status.change.user.rejected') }}",
+                dataType: 'json',
+                data: {
+                    'jsonrpc': '2.0',
+                    '_token': '{{csrf_token()}}',
+                    'data': {
+                        'id': id,
+                        'reason': reason
+                    }
+                },
+                type: 'post',
+                success: function(resp) {
+                    if (resp.status == 1) {
+                        table.row('.tr_class_' + id).remove().draw(false);
+                        toastr.success(resp.message);
+                    } else {
+                        toastr.error(resp.message);
+                    }
+                },
+                error: function() {
+                    toastr.error("Something went wrong!Ajax error!");
+                },
+                complete: function() {
+                    $("#v_tutor_Loader").hide();
+                }
+            });
+        } else {
+            $('#rejectTutorModal .reject_reason_error').text('This field is required').show();
+        }
+    }
+
+    // ---------- Suspend ----------
+    function yesSuspendFn() {
+        $('#suspendTutorModal .gj_modal_title').text('Reason to suspend');
+        $('#suspendTutorModal .adm_modal_Footer').hide();
+        $('#suspendTutorModal .gj_confirm_div').hide();
+        $('#suspendTutorModal #suspend_reason').val('');
+        $('#suspendTutorModal .gj_submit_div').show();
+        $('#suspendTutorModal .suspend_reason_error').hide();
+    }
+
+    function submitSuspendFn(its) {
+        var id = $('#stut_id').val();
+        var reason = $('#suspend_reason').val();
+        if (id && reason) {
+            $(its).closest('.modal').modal('hide');
+            $('#suspendTutorModal .suspend_reason_error').text('').hide();
+            $("#v_tutor_Loader").css("display", "flex");
+            $.ajax({
+                url: "{{ route('ajax.status.change.user.suspended') }}",
+                dataType: 'json',
+                data: {
+                    'jsonrpc': '2.0',
+                    '_token': '{{csrf_token()}}',
+                    'data': {
+                        'id': id,
+                        'reason': reason
+                    }
+                },
+                type: 'post',
+                success: function(resp) {
+                    if (resp.status == 1) {
+                        table.row('.tr_class_' + id).remove().draw(false);
+                        toastr.success(resp.message);
+                    } else {
+                        toastr.error(resp.message);
+                    }
+                },
+                error: function() {
+                    toastr.error("Something went wrong!Ajax error!");
+                },
+                complete: function() {
+                    $("#v_tutor_Loader").hide();
+                }
+            });
+        } else {
+            $('#suspendTutorModal .suspend_reason_error').text('This field is required').show();
+        }
+    }
+
+    // ---------- Featured / Free trial toggles ----------
+    function notify(type, msg) {
+        if (typeof toastr !== 'undefined') {
+            toastr[type](msg);
+        }
+    }
+
+    $(document).on('change', '.featuredToggle', function() {
+        $.ajax({
+            url: "{{ route('update.featured.status') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                tutor_id: $(this).data('id'),
+                status: $(this).is(':checked') ? 1 : 0
+            },
+            success: function(res) {
+                res.status ? notify('success', res.message) : notify('error', 'Failed to update featured status');
+            },
+            error: function() {
+                notify('error', 'Error updating featured status');
+            }
+        });
+    });
+
+    $(document).on('change', '.freeTrailToggle', function() {
+        $.ajax({
+            url: "{{ route('update.free.trail.status') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                tutor_id: $(this).data('id'),
+                status: $(this).is(':checked') ? 1 : 0
+            },
+            success: function(res) {
+                res.status ? notify('success', res.message) : notify('error', 'Failed to update free trial status');
+            },
+            error: function() {
+                notify('error', 'Error updating free trial status');
+            }
+        });
+    });
 </script>
 @endsection

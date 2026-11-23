@@ -312,6 +312,10 @@ Route::get('/admin/topics-export', [SubjectTopicsController::class, 'exportTopic
 
             Route::any('/edit-tutor-advance-page/{id}', [TutorManagementController::class,'editTutorAdvancePage'])->name('edit.tutor.advance.page');
             Route::any('/view-tutor-personal-info/{id}', [TutorManagementController::class,'viewTutorPersonalInfo'])->name('view.tutor.personal.info.step.1');
+            Route::get('/view-tutor-overview/{id}', [TutorManagementController::class,'viewTutorOverView'])->name('view.tutor.overview');
+            Route::get('/view-tutor-learning-programs/{id}', [TutorManagementController::class, 'viewTutorLearningPrograms'])->name('view.tutor.learning.programs');
+            Route::get('/view-tutor-public-profile/{id}',[TutorManagementController::class, 'viewTutorPublicProfile'])->name('view.tutor.public.profile');
+
 
             Route::any('/view-tutor-advance-page/{id}', [TutorManagementController::class,'viewTutorAdvancePage'])->name('view.tutor.advance.page');
             Route::get('/view-tutorship-plans/{id}', [TutorManagementController::class,'viewTutorshipPlans'])->name('view.tutor.tutorship.plans');

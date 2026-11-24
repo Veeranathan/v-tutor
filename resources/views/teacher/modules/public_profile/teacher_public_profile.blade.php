@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-<title>V-Tutor  | Tutor public profile</title>
+<title>V-Tutor | Tutor public profile</title>
 @endsection
 
 @section('left_part')
@@ -29,229 +29,526 @@
     .vt-page *::after {
         box-sizing: border-box;
     }
-/* Guest Registration Modal */
 
-#guestRegisterModal {
-    z-index: 99999;
-}
+    /* Guest Registration Modal */
 
-#guestRegisterModal .guest-modal-dialog {
-    width: 100%;
-    max-width: 470px;
-    margin: 30px auto;
-}
-
-#guestRegisterModal .guest-modal {
-    border: none;
-    border-radius: 20px;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 0 20px 60px rgba(0,0,0,.18);
-}
-
-/* Header */
-
-#guestRegisterModal .guest-modal-header {
-    position: relative;
-    padding: 30px 32px 25px;
-    background: linear-gradient(135deg, #fff1f3, #fff);
-    border-bottom: 1px solid #f5dfe2;
-}
-
-#guestRegisterModal .guest-header-icon {
-    width: 52px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #d0021b;
-    color: #fff;
-    border-radius: 15px;
-    font-size: 23px;
-    margin-bottom: 18px;
-}
-
-#guestRegisterModal .guest-tag {
-    display: block;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    color: #d0021b;
-    margin-bottom: 8px;
-}
-
-#guestRegisterModal .guest-modal-header h3 {
-    font-size: 25px;
-    font-weight: 800;
-    color: #20202b;
-    margin: 0 0 9px;
-}
-
-#guestRegisterModal .guest-modal-header p {
-    color: #777784;
-    font-size: 14px;
-    line-height: 1.6;
-    margin: 0;
-    max-width: 350px;
-}
-
-#guestRegisterModal .guest-close {
-    position: absolute;
-    right: 20px;
-    top: 18px;
-    width: 34px;
-    height: 34px;
-    border: none;
-    border-radius: 50%;
-    background: #fff;
-    color: #555;
-    font-size: 25px;
-    line-height: 30px;
-    cursor: pointer;
-}
-
-#guestRegisterModal .guest-close:hover {
-    background: #d0021b;
-    color: #fff;
-}
-
-/* Body */
-
-#guestRegisterModal .guest-modal-body {
-    padding: 26px 32px 30px;
-}
-
-#guestRegisterModal .guest-form-group {
-    margin-bottom: 19px;
-}
-
-#guestRegisterModal .guest-form-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: 700;
-    color: #292936;
-    margin-bottom: 8px;
-}
-
-#guestRegisterModal .guest-form-group label span {
-    color: #d0021b;
-}
-
-/* Input */
-
-#guestRegisterModal .guest-input-wrap {
-    position: relative;
-}
-
-#guestRegisterModal .guest-input-wrap > i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #d0021b;
-    font-size: 15px;
-    z-index: 2;
-}
-
-#guestRegisterModal .guest-input {
-    height: 48px;
-    width: 100%;
-    border: 1px solid #e6e6ec;
-    border-radius: 10px;
-    padding: 10px 14px 10px 43px;
-    font-size: 14px;
-    color: #292936;
-    background-color: #fafafd;
-    box-shadow: none;
-    transition: .2s;
-}
-
-#guestRegisterModal .guest-input:focus {
-    border-color: #d0021b;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(208,2,27,.08);
-    outline: none;
-}
-
-/* Security note */
-
-#guestRegisterModal .guest-security {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 11px 13px;
-    background: #f0faf4;
-    border: 1px solid #d7f0e0;
-    border-radius: 9px;
-    color: #27804b;
-    font-size: 12px;
-    margin-bottom: 20px;
-}
-
-#guestRegisterModal .guest-security i {
-    font-size: 16px;
-}
-
-/* Error */
-
-#guestRegisterModal .guest-error {
-    font-size: 13px;
-}
-
-/* Submit button */
-
-#guestRegisterModal .guest-submit-btn {
-    width: 100%;
-    height: 51px;
-    border: none;
-    border-radius: 11px;
-    background: #d0021b;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: .25s;
-}
-
-#guestRegisterModal .guest-submit-btn:hover {
-    background: #ad0016;
-    box-shadow: 0 7px 18px rgba(208,2,27,.2);
-}
-
-#guestRegisterModal .guest-submit-btn i {
-    transition: transform .2s;
-}
-
-#guestRegisterModal .guest-submit-btn:hover i {
-    transform: translateX(4px);
-}
-
-/* Mobile */
-
-@media(max-width: 575px) {
-
-    #guestRegisterModal .guest-modal-dialog {
-        margin: 15px;
-        width: auto;
+    #guestRegisterModal {
+        z-index: 99999;
     }
 
+    #guestRegisterModal .guest-modal-dialog {
+        width: 100%;
+        max-width: 470px;
+        margin: 30px auto;
+    }
+
+    #watchIntroVideo {
+        position: relative;
+        z-index: 9999;
+        pointer-events: auto !important;
+        cursor: pointer;
+    }
+
+    #guestRegisterModal .guest-modal {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
+    }
+
+    /* Header */
+
     #guestRegisterModal .guest-modal-header {
-        padding: 24px 22px 20px;
+        position: relative;
+        padding: 30px 32px 25px;
+        background: linear-gradient(135deg, #fff1f3, #fff);
+        border-bottom: 1px solid #f5dfe2;
+    }
+
+    #guestRegisterModal .guest-header-icon {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #d0021b;
+        color: #fff;
+        border-radius: 15px;
+        font-size: 23px;
+        margin-bottom: 18px;
+    }
+
+    #guestRegisterModal .guest-tag {
+        display: block;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        color: #d0021b;
+        margin-bottom: 8px;
     }
 
     #guestRegisterModal .guest-modal-header h3 {
-        font-size: 22px;
+        font-size: 25px;
+        font-weight: 800;
+        color: #20202b;
+        margin: 0 0 9px;
     }
+
+    #guestRegisterModal .guest-modal-header p {
+        color: #777784;
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0;
+        max-width: 350px;
+    }
+
+    #guestRegisterModal .guest-close {
+        position: absolute;
+        right: 20px;
+        top: 18px;
+        width: 34px;
+        height: 34px;
+        border: none;
+        border-radius: 50%;
+        background: #fff;
+        color: #555;
+        font-size: 25px;
+        line-height: 30px;
+        cursor: pointer;
+    }
+
+    #guestRegisterModal .guest-close:hover {
+        background: #d0021b;
+        color: #fff;
+    }
+
+    /* Body */
 
     #guestRegisterModal .guest-modal-body {
-        padding: 22px;
+        padding: 26px 32px 30px;
     }
 
-}
+    #guestRegisterModal .guest-form-group {
+        margin-bottom: 19px;
+    }
+
+    #guestRegisterModal .guest-form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #292936;
+        margin-bottom: 8px;
+    }
+
+    #guestRegisterModal .guest-form-group label span {
+        color: #d0021b;
+    }
+
+    /* Input */
+
+    #guestRegisterModal .guest-input-wrap {
+        position: relative;
+    }
+
+    #guestRegisterModal .guest-input-wrap>i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #d0021b;
+        font-size: 15px;
+        z-index: 2;
+    }
+
+    #guestRegisterModal .guest-input {
+        height: 48px;
+        width: 100%;
+        border: 1px solid #e6e6ec;
+        border-radius: 10px;
+        padding: 10px 14px 10px 43px;
+        font-size: 14px;
+        color: #292936;
+        background-color: #fafafd;
+        box-shadow: none;
+        transition: .2s;
+    }
+
+    #guestRegisterModal .guest-input:focus {
+        border-color: #d0021b;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(208, 2, 27, .08);
+        outline: none;
+    }
+
+    /* Security note */
+
+    #guestRegisterModal .guest-security {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 13px;
+        background: #f0faf4;
+        border: 1px solid #d7f0e0;
+        border-radius: 9px;
+        color: #27804b;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    #guestRegisterModal .guest-security i {
+        font-size: 16px;
+    }
+
+    /* Error */
+
+    #guestRegisterModal .guest-error {
+        font-size: 13px;
+    }
+
+    /* Submit button */
+
+    #guestRegisterModal .guest-submit-btn {
+        width: 100%;
+        height: 51px;
+        border: none;
+        border-radius: 11px;
+        background: #d0021b;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+    #guestRegisterModal .guest-submit-btn:hover {
+        background: #ad0016;
+        box-shadow: 0 7px 18px rgba(208, 2, 27, .2);
+    }
+
+    #guestRegisterModal .guest-submit-btn i {
+        transition: transform .2s;
+    }
+
+    #guestRegisterModal .guest-submit-btn:hover i {
+        transform: translateX(4px);
+    }
+
+    /* Mobile */
+
+    @media(max-width: 575px) {
+
+        #guestRegisterModal .guest-modal-dialog {
+            margin: 15px;
+            width: auto;
+        }
+
+        #guestRegisterModal .guest-modal-header {
+            padding: 24px 22px 20px;
+        }
+
+        #guestRegisterModal .guest-modal-header h3 {
+            font-size: 22px;
+        }
+
+        #guestRegisterModal .guest-modal-body {
+            padding: 22px;
+        }
+
+    }
+
+    /* =====================================================================
+       INTRO VIDEO MODAL (new design)
+       ===================================================================== */
+    #introVideoModal {
+        z-index: 99998;
+        background: rgba(24, 6, 10, .55);
+        -webkit-backdrop-filter: blur(7px);
+        backdrop-filter: blur(7px);
+    }
+
+    #introVideoModal .vt-video-dialog {
+        max-width: 720px;
+        width: calc(100% - 30px);
+        margin: 24px auto;
+    }
+
+    /* pop-in animation */
+    #introVideoModal.fade .vt-video-dialog {
+        transform: translateY(30px) scale(.94);
+        opacity: 0;
+        transition: transform .35s cubic-bezier(.2, .9, .3, 1.2), opacity .3s ease;
+    }
+
+    #introVideoModal.show .vt-video-dialog {
+        transform: none;
+        opacity: 1;
+    }
+
+    #introVideoModal .vt-video-modal {
+        position: relative;
+        border: none;
+        border-radius: 26px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 30px 80px rgba(208, 2, 27, .28), 0 10px 30px rgba(0, 0, 0, .25);
+    }
+
+    /* red glow strip on top */
+    #introVideoModal .vt-video-modal::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #d0021b, #ff5a6e, #ef990e, #d0021b);
+        background-size: 200% 100%;
+        animation: vtVideoGlow 4s linear infinite;
+        z-index: 3;
+    }
+
+    @keyframes vtVideoGlow {
+        0% {
+            background-position: 0% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    /* close */
+    #introVideoModal .vt-video-close {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: #fff;
+        color: #444;
+        font-size: 26px;
+        line-height: 36px;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
+        transition: .25s;
+        z-index: 5;
+        padding: 0;
+    }
+
+    #introVideoModal .vt-video-close:hover {
+        background: var(--vt-red, #d0021b);
+        color: #fff;
+        transform: rotate(90deg);
+    }
+
+    /* header */
+    #introVideoModal .vt-video-head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 22px 64px 14px 24px;
+        background: linear-gradient(135deg, #fff1f3 0%, #fff 70%);
+    }
+
+    #introVideoModal .vt-video-avatar {
+        position: relative;
+        flex: 0 0 54px;
+        width: 54px;
+        height: 54px;
+    }
+
+    #introVideoModal .vt-video-avatar img {
+        width: 54px;
+        height: 54px;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 3px solid #fff;
+        box-shadow: 0 5px 14px rgba(208, 2, 27, .25);
+        display: block;
+    }
+
+    #introVideoModal .vt-video-avatar::after {
+        content: "\25B6";
+        position: absolute;
+        right: -8px;
+        bottom: -8px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #d0021b;
+        color: #fff;
+        font-size: 10px;
+        line-height: 26px;
+        text-align: center;
+        box-shadow: 0 3px 8px rgba(208, 2, 27, .4);
+        border: 2px solid #fff;
+    }
+
+    #introVideoModal .vt-video-tag {
+        display: block;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.6px;
+        color: #d0021b;
+        margin-bottom: 4px;
+    }
+
+    #introVideoModal .vt-video-title h4 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 800;
+        color: #20202b;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+
+    #introVideoModal .vt-video-title p {
+        display: none;
+    }
+
+    /* video frame */
+    #introVideoModal .vt-video-body {
+        padding: 4px 24px 6px;
+        background: #fff;
+    }
+
+    #introVideoModal .vt-video-frame {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 18px;
+        background: #12060a;
+        box-shadow: 0 0 0 5px #fdeef0, 0 14px 34px rgba(208, 2, 27, .22);
+    }
+
+    #introVideoModal .vt-video-frame iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /* loader shown behind iframe */
+    #introVideoModal .vt-video-loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 44px;
+        height: 44px;
+        margin: -22px 0 0 -22px;
+        border: 4px solid rgba(255, 255, 255, .2);
+        border-top-color: #ff5a6e;
+        border-radius: 50%;
+        animation: vtVideoSpin .8s linear infinite;
+    }
+
+    @keyframes vtVideoSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* footer */
+    #introVideoModal .vt-video-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 14px 24px 22px;
+    }
+
+    #introVideoModal .vt-video-foot .vt-video-note {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #6b6b7b;
+        font-weight: 500;
+    }
+
+    #introVideoModal .vt-video-foot .vt-video-note i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #12a150;
+        box-shadow: 0 0 0 4px rgba(18, 161, 80, .18);
+        display: inline-block;
+    }
+
+    #introVideoModal .vt-video-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: 0;
+        border-radius: 12px;
+        background: #d0021b;
+        color: #fff !important;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 10px 20px;
+        text-decoration: none !important;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+    #introVideoModal .vt-video-cta:hover {
+        background: #b00117;
+        box-shadow: 0 8px 20px rgba(208, 2, 27, .28);
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 575px) {
+        #introVideoModal .vt-video-dialog {
+            margin: 15px auto;
+        }
+
+        #introVideoModal .vt-video-modal {
+            border-radius: 20px;
+        }
+
+        #introVideoModal .vt-video-head {
+            padding: 16px 56px 10px 14px;
+            gap: 10px;
+        }
+
+        #introVideoModal .vt-video-avatar,
+        #introVideoModal .vt-video-avatar img {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+        }
+
+        #introVideoModal .vt-video-title h4 {
+            font-size: 16px;
+        }
+
+        #introVideoModal .vt-video-body {
+            padding: 4px 14px 4px;
+        }
+
+        #introVideoModal .vt-video-foot {
+            padding: 14px 16px 20px;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #introVideoModal .vt-video-cta {
+            width: 100%;
+            justify-content: center;
+        }
+    }
 
     .vt-page ul {
         list-style: none;
@@ -1135,6 +1432,7 @@
             grid-template-columns: repeat(2, 1fr);
         }
     }
+
     /* ---------- Year levels: 4 per row ---------- */
     .vt-split>div.vt-split-years {
         flex: 1.4 1 260px;
@@ -1563,171 +1861,181 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                 </div>
             </div>
 
-<!-- Guest Registration Modal -->
-<div class="modal fade" id="guestRegisterModal" tabindex="-1"
-    role="dialog" aria-labelledby="guestRegisterModalLabel">
+            <!-- Guest Registration Modal -->
+            <div class="modal fade" id="guestRegisterModal" tabindex="-1"
+                role="dialog" aria-labelledby="guestRegisterModalLabel">
 
-    <div class="modal-dialog modal-dialog-centered guest-modal-dialog"
-        role="document">
+                <div class="modal-dialog modal-dialog-centered guest-modal-dialog"
+                    role="document">
 
-        <div class="modal-content guest-modal">
+                    <div class="modal-content guest-modal">
 
-            <!-- Header -->
-            <div class="guest-modal-header">
+                        <!-- Header -->
+                        <div class="guest-modal-header">
 
 
-                <button type="button" class="guest-close"
-                    data-dismiss="modal" aria-label="Close">
-                    &times;
-                </button>
+                            <button type="button" class="guest-close"
+                                data-dismiss="modal" aria-label="Close">
+                                &times;
+                            </button>
 
-                <span class="guest-tag">YOUR LEARNING JOURNEY STARTS HERE</span>
+                            <span class="guest-tag">YOUR LEARNING JOURNEY STARTS HERE</span>
 
-                <h3 id="guestRegisterModalLabel">
-                    Book a Trial Session
-                </h3>
+                            <h3 id="guestRegisterModalLabel">
+                                Book a Trial Session
+                            </h3>
 
-                <p>
-                    Let's find the right learning experience for you.
-                    Just share a few details to get started.
-                </p>
-<div id="state_error" class="text-danger" style="display:none;"></div>
+                            <p>
+                                Let's find the right learning experience for you.
+                                Just share a few details to get started.
+                            </p>
+                            <div id="state_error" class="text-danger" style="display:none;"></div>
 
-            </div>
+                        </div>
 
-            <!-- Body -->
-            <div class="modal-body guest-modal-body">
+                        <!-- Body -->
+                        <div class="modal-body guest-modal-body">
 
-    <form id="guestRegisterForm">
+                            <form id="guestRegisterForm">
 
-        @csrf
+                                @csrf
 
-<input type="hidden" name="tutor_slug"
-       value="{{ $userDetails->slug }}">
+                                <input type="hidden" name="tutor_slug"
+                                    value="{{ $userDetails->slug }}">
 
-<input type="hidden" name="tutor_id"
-       value="{{ $userDetails->id }}">
-        <div class="row">
+                                <input type="hidden" name="tutor_id"
+                                    value="{{ $userDetails->id }}">
+                                <div class="row">
 
-            <!-- First Name -->
-            <div class="col-sm-6">
-                <div class="guest-form-group">
-                    <label>First Name <span>*</span></label>
-                    <div class="guest-input-wrap">
-                        <i class="fa fa-user"></i>
-                        <input type="text" name="f_name"
-                            class="form-control guest-input"
-                            placeholder="First name"
-                            minlength="3" required>
+                                    <!-- First Name -->
+                                    <div class="col-sm-6">
+                                        <div class="guest-form-group">
+                                            <label>First Name <span>*</span></label>
+                                            <div class="guest-input-wrap">
+                                                <i class="fa fa-user"></i>
+                                                <input type="text" name="f_name"
+                                                    class="form-control guest-input"
+                                                    placeholder="First name"
+                                                    minlength="3" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="col-sm-6">
+                                        <div class="guest-form-group">
+                                            <label>Email Address <span>*</span></label>
+                                            <div class="guest-input-wrap">
+                                                <i class="fa fa-envelope"></i>
+                                                <input type="email" name="email"
+                                                    class="form-control guest-input"
+                                                    placeholder="Email address"
+                                                    required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Year Level -->
+                                    <div class="col-sm-6">
+                                        <div class="guest-form-group">
+                                            <label>Year Level <span>*</span></label>
+                                            <div class="guest-input-wrap">
+                                                <i class="fa fa-graduation-cap"></i>
+                                                <select name="grade"
+                                                    class="form-control guest-input" required>
+                                                    <option value="">Select year level</option>
+                                                    @foreach($allGrades as $grade)
+                                                    <option value="{{ $grade->id }}">
+                                                        {{ $grade->grade_name }}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- State -->
+                                    <div class="col-sm-6">
+                                        <div class="guest-form-group">
+                                            <label>State <span>*</span></label>
+                                            <div class="guest-input-wrap">
+                                                <i class="fa fa-map-marker"></i>
+                                                <select name="parent_state" id="guest_parent_state"
+                                                    class="form-control guest-input" required>
+
+                                                    <option value="">Select state</option>
+
+                                                    @foreach($allStates as $state)
+                                                    <option value="{{ $state->id }}"
+                                                        data-timezone="{{ $state->time_zone }}">
+                                                        {{ $state->state_name }}
+                                                    </option>
+                                                    @endforeach
+
+                                                </select>
+
+                                                <input type="hidden" name="timezone_id" id="guest_timezone_id">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div id="guestRegisterError"
+                                    class="text-danger guest-error"></div>
+
+
+                                <button type="submit"
+                                    class="guest-submit-btn"
+                                    id="guestRegisterSubmit">
+                                    <span>Continue to Booking</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </button>
+
+                            </form>
+
+                        </div>
+
+
                     </div>
                 </div>
             </div>
-
-            <!-- Email -->
-            <div class="col-sm-6">
-                <div class="guest-form-group">
-                    <label>Email Address <span>*</span></label>
-                    <div class="guest-input-wrap">
-                        <i class="fa fa-envelope"></i>
-                        <input type="email" name="email"
-                            class="form-control guest-input"
-                            placeholder="Email address"
-                            required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Year Level -->
-            <div class="col-sm-6">
-                <div class="guest-form-group">
-                    <label>Year Level <span>*</span></label>
-                    <div class="guest-input-wrap">
-                        <i class="fa fa-graduation-cap"></i>
-                        <select name="grade"
-                            class="form-control guest-input" required>
-                            <option value="">Select year level</option>
-                            @foreach($allGrades as $grade)
-                                <option value="{{ $grade->id }}">
-                                    {{ $grade->grade_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- State -->
-            <div class="col-sm-6">
-                <div class="guest-form-group">
-                    <label>State <span>*</span></label>
-                    <div class="guest-input-wrap">
-                        <i class="fa fa-map-marker"></i>
-                       <select name="parent_state" id="guest_parent_state"
-    class="form-control guest-input" required>
-
-    <option value="">Select state</option>
-
-    @foreach($allStates as $state)
-        <option value="{{ $state->id }}"
-            data-timezone="{{ $state->time_zone }}">
-            {{ $state->state_name }}
-        </option>
-    @endforeach
-
-</select>
-
-<input type="hidden" name="timezone_id" id="guest_timezone_id">
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div id="guestRegisterError"
-            class="text-danger guest-error"></div>
-
-
-        <button type="submit"
-            class="guest-submit-btn"
-            id="guestRegisterSubmit">
-            <span>Continue to Booking</span>
-            <i class="fa fa-arrow-right"></i>
-        </button>
-
-    </form>
-
-</div>
-
-
-        </div>
-    </div>
-</div>
 
             <div class="vt-actions">
                 {!! $btn($message, 'Message Tutor', 'primary', 'chat') !!}
-       <!-- <button type="button"
-    class="vt-btn primary"
-    data-toggle="modal"
-    data-target="#guestRegisterModal">
-    <i class="fa fa-calendar"></i>
-    <span>Book a Trial Session</span>
-</button> -->
-@if(Auth::check())
-    <a href="{{ url('studentbook-class?search_tutor_slug_studentclass=' . $userDetails->slug . '&search_tutor_id_studentclass=' . $userDetails->id) }}"
-       class="vt-btn primary">
-        <i class="fa fa-calendar"></i>
-        <span>Book a Session</span>
-    </a>
-@else
-    <button type="button"
-        class="vt-btn primary"
-        data-toggle="modal"
-        data-target="#guestRegisterModal">
-        <i class="fa fa-calendar"></i>
-        <span>Book a Trial Session</span>
-    </button>
-@endif
-                {!! $btn($intro, 'Watch Intro Video (1 min)', 'ghost', 'play') !!}
+
+                @if(Auth::check())
+                <a href="{{ url('studentbook-class?search_tutor_slug_studentclass=' . $userDetails->slug . '&search_tutor_id_studentclass=' . $userDetails->id) }}"
+                    class="vt-btn primary">
+                    <i class="fa fa-calendar"></i>
+                    <span>Book a Trial Session</span>
+                </a>
+                @else
+                <button type="button"
+                    class="vt-btn primary"
+                    data-toggle="modal"
+                    data-target="#guestRegisterModal">
+                    <i class="fa fa-calendar"></i>
+                    <span>Book a Trial Session</span>
+                </button>
+                @endif
+
+                @if(!empty($tutorVideo))
+                <button type="button"
+                    class="vt-btn ghost js-watch-intro"
+                    id="watchIntroVideo"
+                    data-video="{{ $tutorVideo }}">
+                    {!! $svg('play', 20) !!}
+                    <span>Watch Intro Video (1 min)</span>
+                </button>
+                @else
+                <button type="button"
+                    class="vt-btn ghost pointerEventsNone addDisable"
+                    disabled>
+                    {!! $svg('play', 20) !!}
+                    <span>Watch Intro Video (1 min)</span>
+                </button>
+                @endif
             </div>
         </div>
 
@@ -2072,23 +2380,60 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
     </div>
     @endforeach
 
-    @if(@$userDetails->video_short_url)
-    <div class="modal fade" id="introVideoModal" role="dialog">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Intro Video</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div style="position:relative;padding-bottom:56.25%;height:0;">
-                        <iframe id="introVideoFrame" data-src="https://www.youtube.com/embed/{{ $userDetails->video_short_url }}"
-                            style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    {{-- ================= INTRO VIDEO MODAL (new design) ================= --}}
+    @if(!empty($tutorVideo))
+    <div class="modal fade"
+        id="introVideoModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="introVideoModalLabel"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered vt-video-dialog" role="document">
+
+            <div class="modal-content vt-video-modal">
+
+                <button type="button"
+                    class="vt-video-close"
+                    data-dismiss="modal"
+                    aria-label="Close">&times;</button>
+
+                {{-- Header: tutor photo + name --}}
+                <div class="vt-video-head">
+                    <div class="vt-video-avatar">
+                        @if ($userDetails->profile_pic)
+                        <img src="{{ asset('storage/teacher_profile_pic/' . $userDetails->profile_pic) }}" alt="{{ @$userDetails->f_name }}">
+                        @else
+                        <img src="{{ public_asset('assets/images/blank1.png') }}" alt="{{ @$userDetails->f_name }}">
+                        @endif
+                    </div>
+                    <div class="vt-video-title">
+                        <span class="vt-video-tag">MEET YOUR TUTOR</span>
+                        <h4 id="introVideoModalLabel">{{ @$userDetails->f_name . ' ' . @$userDetails->l_name }}</h4>
+                        <p>A quick 1-minute introduction</p>
                     </div>
                 </div>
+
+                {{-- Video --}}
+                <div class="vt-video-body">
+                    <div class="vt-video-frame">
+                        <span class="vt-video-loader"></span>
+                        <iframe
+                            id="introVideoFrame"
+                            src=""
+                            title="Tutor intro video"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            
+                </div>
+
             </div>
+
         </div>
+
     </div>
     @endif
 </div>
@@ -2097,7 +2442,9 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 @section('script')
 @include('include.script')
 <script src="{{ public_asset('assets/toastr/build/toastr.min.js') }}"></script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     // Favourite tutor
     $(document).on("click", ".saveUsertoFavourite", function(e) {
@@ -2129,201 +2476,219 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
         });
     });
 
-$(document).ready(function () {
-
-    $('#guestRegisterModal').on('show.bs.modal', function () {
-
-        $('#guest_tutor_id').val("{{ $userDetails->id }}");
-
-        $('#guest_tutor_slug').val("{{ $userDetails->slug }}");
-
-    });
-
-});
-    // Intro video: load on open, unload on close so it stops playing
-    $('#introVideoModal').on('show.bs.modal', function() {
-        var f = $('#introVideoFrame');
-        f.attr('src', f.data('src'));
-    }).on('hidden.bs.modal', function() {
-        $('#introVideoFrame').attr('src', '');
-    });
 
 
-$(document).ready(function () {
+    $(document).ready(function() {
 
-    // Set tutor details when modal opens
-    $('#guestRegisterModal').on('show.bs.modal', function () {
+        $('#guestRegisterModal').on('show.bs.modal', function() {
 
-        $('#guest_tutor_id').val("{{ $userDetails->id }}");
-        $('#guest_tutor_slug').val("{{ $userDetails->slug }}");
+            $('#guest_tutor_id').val("{{ $userDetails->id }}");
 
-    });
-
-// Get timezone based on selected state
-$('#guest_parent_state').on('change', function () {
-
-    var timezone = $(this).find(':selected').data('timezone') || '';
-
-    $('#guest_timezone_id').val(timezone);
-
-});
-    // Guest Registration Form Submit
-    $('#guestRegisterForm').on('submit', function (e) {
-
-    e.preventDefault();
-
-    var studentStateName = $('#guest_parent_state')
-    .find('option:selected')
-    .text()
-    .trim();
-
-if (
-    !$('#guest_parent_state').val() ||
-    studentStateName.toLowerCase() !== tutorStateName.trim().toLowerCase()
-) {
-    $('#guest_parent_state').trigger('change');
-    return false;
-}
-
-    // Continue with your existing AJAX code
-        var form = $(this);
-        var btn = $('#guestRegisterSubmit');
-
-        // Clear previous errors
-        $('#guestRegisterError').html('');
-
-        // Serialize form data
-        var formData = form.serialize();
-
-        // Pass default last name (controller requires it)
-        formData += '&l_name=N%2FA';
-
-        // Disable button
-        btn.prop('disabled', true);
-        btn.find('span').text('Please wait...');
-
-        $.ajax({
-
-            url: "{{ route('student.guest.register') }}",
-            type: "POST",
-            data: formData,
-            dataType: "json",
-
-            success: function (response) {
-
-           if (response.success) {
-
-    $('#guestRegisterModal').modal('hide');
-
-    let tutorSlug = $('#guestRegisterForm')
-        .find('input[name="tutor_slug"]').val();
-
-    let tutorId = $('#guestRegisterForm')
-        .find('input[name="tutor_id"]').val();
-
-    window.location.href =
-        "{{ url('studentbook-class') }}" +
-        "?search_tutor_slug_studentclass=" + encodeURIComponent(tutorSlug) +
-        "&search_tutor_id_studentclass=" + encodeURIComponent(tutorId);
-
-}else{
-
-}
-
-            },
-
-            error: function (xhr) {
-
-                var response = xhr.responseJSON;
-                var errorHtml = '';
-
-                if (response && response.errors) {
-
-                    $.each(response.errors, function (key, value) {
-                        errorHtml += '<div>' + value[0] + '</div>';
-                    });
-
-                } else if (response && response.message) {
-
-                    errorHtml = response.message;
-
-                } else {
-
-                    errorHtml = 'Something went wrong. Please try again.';
-
-                }
-
-                $('#guestRegisterError').html(errorHtml);
-
-            },
-
-            complete: function () {
-
-                btn.prop('disabled', false);
-                btn.find('span').text('Continue to Booking');
-
-            }
+            $('#guest_tutor_slug').val("{{ $userDetails->slug }}");
 
         });
 
     });
 
-});
-var tutorStateName = @json($tutorStateName);
+    // ---------- Watch Intro Video ----------
+    $(document).on('click', '#watchIntroVideo', function(e) {
 
-$('#guest_parent_state').on('change', function () {
+        e.preventDefault();
 
-    var studentStateName = $(this).find('option:selected').text().trim();
+        var videoUrl = $(this).attr('data-video');
 
-    var selectedTimezone = $(this).find(':selected').data('timezone');
-    $('#guest_timezone_id').val(selectedTimezone);
+        if (!videoUrl) {
+            console.error('Intro video URL not found');
+            return;
+        }
 
-    var isSameState =
-        studentStateName.toLowerCase() === tutorStateName.trim().toLowerCase();
+        videoUrl = videoUrl.trim();
 
-    if (!isSameState) {
-        $('#state_error')
-            .text('Sorry! This tutor is available only in ' + tutorStateName)
-            .show();
+        var match = videoUrl.match(
+            /(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/)|youtu\.be\/)([^&?\/]+)/
+        );
 
-        $('#guestRegisterSubmit').prop('disabled', true);
-    } else {
-        $('#state_error').hide().text('');
-        $('#guestRegisterSubmit').prop('disabled', false);
-    }
-});
-// State change validation
-// $('#guest_parent_state').on('change', function () {
+        if (!match) {
+            console.error('Invalid YouTube video URL:', videoUrl);
+            return;
+        }
 
-//     var studentState = $(this).val();
+        var videoId = match[1];
 
-//     if (studentState && studentState != tutorState) {
+        // rel=0 -> no unrelated suggestions, modestbranding -> cleaner player
+        var embedUrl = 'https://www.youtube.com/embed/' +
+            videoId + '?autoplay=1&rel=0&modestbranding=1';
 
-//         $('#state_error')
-//             .html(
-//                 'Sorry! This tutor is available only for students located in <strong>' +
-//                 tutorStateName +
-//                 '</strong>. Please choose another tutor who is available in your state.'
-//             )
-//             .show();
+        $('#introVideoFrame').attr('src', embedUrl);
 
-//         $('#guestRegisterSubmit').prop('disabled', true);
+        $('#introVideoModal').modal('show');
 
-//     } else {
+    });
 
-//         // Correct state selected
-//         $('#state_error').hide().html('');
+    // Stop video when modal closes
+    $('#introVideoModal').on('hidden.bs.modal', function() {
 
-//         $('#guestRegisterSubmit').prop('disabled', false);
+        $('#introVideoFrame').attr('src', '');
 
-//     }
+    });
 
-//     // Update timezone
-//     var timezone = $(this).find(':selected').data('timezone') || '';
+    // "Book a Trial Session" inside the video modal (guest users):
+    // close the video first, then open the guest registration modal
+    $(document).on('click', '.js-video-book', function() {
 
-//     $('#guest_timezone_id').val(timezone);
+        $('#introVideoModal').one('hidden.bs.modal', function() {
+            $('#guestRegisterModal').modal('show');
+        });
 
-// });
+        $('#introVideoModal').modal('hide');
+
+    });
+
+
+    $(document).ready(function() {
+
+        // Set tutor details when modal opens
+        $('#guestRegisterModal').on('show.bs.modal', function() {
+
+            $('#guest_tutor_id').val("{{ $userDetails->id }}");
+            $('#guest_tutor_slug').val("{{ $userDetails->slug }}");
+
+        });
+
+        // Get timezone based on selected state
+        $('#guest_parent_state').on('change', function() {
+
+            var timezone = $(this).find(':selected').data('timezone') || '';
+
+            $('#guest_timezone_id').val(timezone);
+
+        });
+        // Guest Registration Form Submit
+        $('#guestRegisterForm').on('submit', function(e) {
+
+            e.preventDefault();
+
+            var studentStateName = $('#guest_parent_state')
+                .find('option:selected')
+                .text()
+                .trim();
+
+            if (
+                !$('#guest_parent_state').val() ||
+                studentStateName.toLowerCase() !== tutorStateName.trim().toLowerCase()
+            ) {
+                $('#guest_parent_state').trigger('change');
+                return false;
+            }
+
+            // Continue with your existing AJAX code
+            var form = $(this);
+            var btn = $('#guestRegisterSubmit');
+
+            // Clear previous errors
+            $('#guestRegisterError').html('');
+
+            // Serialize form data
+            var formData = form.serialize();
+
+            // Pass default last name (controller requires it)
+            formData += '&l_name=N%2FA';
+
+            // Disable button
+            btn.prop('disabled', true);
+            btn.find('span').text('Please wait...');
+
+            $.ajax({
+
+                url: "{{ route('student.guest.register') }}",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+
+                success: function(response) {
+
+                    if (response.success) {
+
+                        $('#guestRegisterModal').modal('hide');
+
+                        let tutorSlug = $('#guestRegisterForm')
+                            .find('input[name="tutor_slug"]').val();
+
+                        let tutorId = $('#guestRegisterForm')
+                            .find('input[name="tutor_id"]').val();
+
+                        window.location.href =
+                            "{{ url('studentbook-class') }}" +
+                            "?search_tutor_slug_studentclass=" + encodeURIComponent(tutorSlug) +
+                            "&search_tutor_id_studentclass=" + encodeURIComponent(tutorId);
+
+                    } else {
+
+                    }
+
+                },
+
+                error: function(xhr) {
+
+                    var response = xhr.responseJSON;
+                    var errorHtml = '';
+
+                    if (response && response.errors) {
+
+                        $.each(response.errors, function(key, value) {
+                            errorHtml += '<div>' + value[0] + '</div>';
+                        });
+
+                    } else if (response && response.message) {
+
+                        errorHtml = response.message;
+
+                    } else {
+
+                        errorHtml = 'Something went wrong. Please try again.';
+
+                    }
+
+                    $('#guestRegisterError').html(errorHtml);
+
+                },
+
+                complete: function() {
+
+                    btn.prop('disabled', false);
+                    btn.find('span').text('Continue to Booking');
+
+                }
+
+            });
+
+        });
+
+    });
+    var tutorStateName = @json($tutorStateName);
+
+    $('#guest_parent_state').on('change', function() {
+
+        var studentStateName = $(this).find('option:selected').text().trim();
+
+        var selectedTimezone = $(this).find(':selected').data('timezone');
+        $('#guest_timezone_id').val(selectedTimezone);
+
+        var isSameState =
+            studentStateName.toLowerCase() === tutorStateName.trim().toLowerCase();
+
+        if (!isSameState) {
+            $('#state_error')
+                .text('Sorry! This tutor is available only in ' + tutorStateName)
+                .show();
+
+            $('#guestRegisterSubmit').prop('disabled', true);
+        } else {
+            $('#state_error').hide().text('');
+            $('#guestRegisterSubmit').prop('disabled', false);
+        }
+    });
+
     // Reviews slider (dots scoped to the reviews card only)
     (function() {
         var slides = $('.vt-slide'),

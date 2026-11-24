@@ -29,8 +29,7 @@ use App\Models\BookingToReviews;
 use App\Models\AdminDisableBookingDates;
 use App\Models\AdminDisableBookings;
 use App\Models\Payments;
-
-
+use App\Models\TutorSkillsCapability;
 
 class DashboardController extends Controller
 {
@@ -520,6 +519,11 @@ class DashboardController extends Controller
 
            $data['reviews'] = ReviewModel::where('tutor_id',$data['userDetails']->id)->get();
            //dd($data['reviews']);
+
+           $data['tutorVideo'] = TutorSkillsCapability::where(
+                'tutor_id',
+                $data['userDetails']->id
+            )->value('video_url');
 
         return view('teacher.modules.public_profile.teacher_public_profile')->with($data);
     }else{

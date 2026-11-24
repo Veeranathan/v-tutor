@@ -591,7 +591,7 @@ Tutor Overview
                         <div class="tw-ov-body" style="flex-wrap:wrap; gap:6px;">
                             @forelse($ovVerifiedStates as $state)
                                 <span class="tw-status tw-st-done"style="white-space:normal;">
-                                    Verified ({{ $state }})
+                                   {{ $state }} (Verified)
                                 </span>
                             @empty
                                 <span class="tw-status tw-st-neutral">
@@ -615,24 +615,22 @@ Tutor Overview
                             </strong>
                         </div>
                     </div>
-
                     <div class="tw-ov-card">
-                        <span class="tw-ov-label">Featured on Home Page</span>
-
-                        <div class="tw-ov-body">
-                            <label class="tw-switch">
-                                <input type="checkbox" id="featuredToggle" {{ $ovFeatured ? 'checked' : '' }}>
-                                <span class="tw-switch-slider"></span>
-                            </label>
-
-                            <strong class="tw-ov-value" id="featuredText">
-                                {{ $ovFeatured ? 'Yes' : 'No' }}
-                            </strong>
-                        </div>
+                    <span class="tw-ov-label">Featured</span>
+                    <div class="tw-ov-body">
+                        <label class="tw-switch">
+                            <input type="checkbox"
+                                id="featuredToggle"
+                                data-id="{{ $user->id }}"
+                                {{ old('featured', $user->featured) == 1 ? 'checked' : '' }}>
+                            <span class="tw-switch-slider"></span>
+                        </label>
+                        <strong class="tw-ov-value" id="featuredText">
+                            {{ $user->featured == 1 ? 'Yes' : 'No' }}
+                        </strong>
                     </div>
-
                 </div>
-
+                </div>
                 <div class="tw-ov-grid">
 
                     <div class="tw-ov-card">
@@ -663,7 +661,6 @@ Tutor Overview
                 <div class="tw-info">
                     Status choices:
                     <strong>Approved · Rejected · Suspended · Pending</strong>.
-                    Featured controls homepage listing; Free Trial indicates trial eligibility.
                 </div>
 
             </section>
@@ -689,35 +686,36 @@ $(document).ready(function () {
     var csrfToken = '{{ csrf_token() }}';
 
    
-    $('#featuredToggle').on('change', function () {
+   $('#featuredToggle').on('change', function () {
 
-        var toggle = $(this);
-        var status = toggle.is(':checked') ? 1 : 0;
+    var toggle = $(this);
+    var tutor_id = toggle.data('id');
+    var status = toggle.is(':checked') ? 1 : 0;
 
-        $.ajax({
-            url: "{{ route('update.featured.status') }}",
-            type: "POST",
-            data: {
-                _token: csrfToken,
-                tutor_id: tutorId,
-                status: status
-            },
-            success: function (res) {
+    $.ajax({
+        url: "{{ route('update.featured.status') }}",
+        type: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            tutor_id: tutor_id,
+            status: status
+        },
+        success: function(res) {
 
-                if (res.status) {
-                    $('#featuredText').text(status ? 'Yes' : 'No');
-                    toastr.success(res.message);
-                } else {
-                    toggle.prop('checked', !status);
-                    toastr.error(res.message || 'Unable to update featured status.');
-                }
-            },
-            error: function () {
+            if (res.status) {
+                $('#featuredText').text(status === 1 ? 'Yes' : 'No');
+                toastr.success(res.message);
+            } else {
                 toggle.prop('checked', !status);
-                toastr.error('Something went wrong!');
+                toastr.error(res.message || 'Failed to update featured status');
             }
-        });
+        },
+        error: function() {
+            toggle.prop('checked', !status);
+            toastr.error('Error updating featured status');
+        }
     });
+});
 
     
     $('#freeTrialToggle').on('change', function () {

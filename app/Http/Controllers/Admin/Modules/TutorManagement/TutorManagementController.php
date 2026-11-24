@@ -1547,7 +1547,8 @@ if ($request->columns[11]['search']['value'] !== null &&
         ]);
     }
 
-  public function saveAndShow(Request $request)
+  
+public function saveAndShow(Request $request)
 {
     $request->validate([
         'tutor_id' => 'required|exists:users,id',
@@ -1558,20 +1559,30 @@ if ($request->columns[11]['search']['value'] !== null &&
 
     $user = User::findOrFail($request->tutor_id);
 
-    $record = TutorSkillsCapability::firstOrNew([
-        'tutor_id' => $user->id
-    ]);
+    $record = TutorSkillsCapability::where(
+        'tutor_id',
+        $user->id
+    )->first();
+
+    if (!$record) {
+        $record = new TutorSkillsCapability();
+
+        $record->tutor_id = $user->id;
+        $record->skills = '';
+        $record->capabilities = '';
+        $record->video_url = '';
+    }
 
     if ($request->has('skills')) {
-        $record->skills = $request->skills;
+        $record->skills = $request->input('skills', '');
     }
 
     if ($request->has('capabilities')) {
-        $record->capabilities = $request->capabilities;
+        $record->capabilities = $request->input('capabilities', '');
     }
 
     if ($request->has('profile_video')) {
-        $record->video_url = $request->profile_video;
+        $record->video_url = $request->input('profile_video', '');
     }
 
     $record->save();
@@ -1582,6 +1593,7 @@ if ($request->columns[11]['search']['value'] !== null &&
         'data' => $record
     ]);
 }
+
 public function viewTutorLearningPrograms($id)
 {
     $user = User::with(['getState'])->findOrFail($id);

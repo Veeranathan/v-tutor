@@ -1164,7 +1164,7 @@ Tutor Management
                     orderable: false,
                     render: function(data, type, full) {
                         var a = '<div class="tm-actions">' +
-                    '<a target="_self" href="{{ url('admin/view-tutor-personal-info').'/' }}' + full.id + '" class="tm-manage action" data-key="' + full.id + '" id="action' + full.id + '">' +
+                    '<a target="_self" href="{{ url('admin/view-tutor-overview').'/' }}' + full.id + '" class="tm-manage action" data-key="' + full.id + '" id="action' + full.id + '">' +
                     '<i class="fa fa-pencil"></i> Manage</a>' +
                     '</div>';
                         // var a = '<div class="tm-actions">' +

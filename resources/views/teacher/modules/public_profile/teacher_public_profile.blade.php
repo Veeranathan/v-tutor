@@ -30,8 +30,6 @@
         box-sizing: border-box;
     }
 
-    /* Guest Registration Modal */
-
     #guestRegisterModal {
         z-index: 99999;
     }
@@ -145,7 +143,6 @@
         color: #d0021b;
     }
 
-    /* Input */
 
     #guestRegisterModal .guest-input-wrap {
         position: relative;
@@ -181,8 +178,6 @@
         outline: none;
     }
 
-    /* Security note */
-
     #guestRegisterModal .guest-security {
         display: flex;
         align-items: center;
@@ -200,13 +195,11 @@
         font-size: 16px;
     }
 
-    /* Error */
 
     #guestRegisterModal .guest-error {
         font-size: 13px;
     }
 
-    /* Submit button */
 
     #guestRegisterModal .guest-submit-btn {
         width: 100%;
@@ -238,7 +231,6 @@
         transform: translateX(4px);
     }
 
-    /* Mobile */
 
     @media(max-width: 575px) {
 
@@ -261,9 +253,7 @@
 
     }
 
-    /* =====================================================================
-       INTRO VIDEO MODAL (new design)
-       ===================================================================== */
+    
     #introVideoModal {
         z-index: 99998;
         background: rgba(24, 6, 10, .55);
@@ -277,7 +267,6 @@
         margin: 24px auto;
     }
 
-    /* pop-in animation */
     #introVideoModal.fade .vt-video-dialog {
         transform: translateY(30px) scale(.94);
         opacity: 0;
@@ -298,7 +287,6 @@
         box-shadow: 0 30px 80px rgba(208, 2, 27, .28), 0 10px 30px rgba(0, 0, 0, .25);
     }
 
-    /* red glow strip on top */
     #introVideoModal .vt-video-modal::before {
         content: "";
         position: absolute;
@@ -322,7 +310,6 @@
         }
     }
 
-    /* close */
     #introVideoModal .vt-video-close {
         position: absolute;
         right: 14px;
@@ -349,7 +336,6 @@
         transform: rotate(90deg);
     }
 
-    /* header */
     #introVideoModal .vt-video-head {
         display: flex;
         align-items: center;
@@ -414,7 +400,6 @@
         display: none;
     }
 
-    /* video frame */
     #introVideoModal .vt-video-body {
         padding: 4px 24px 6px;
         background: #fff;
@@ -439,7 +424,6 @@
         border: 0;
     }
 
-    /* loader shown behind iframe */
     #introVideoModal .vt-video-loader {
         position: absolute;
         top: 50%;
@@ -459,7 +443,6 @@
         }
     }
 
-    /* footer */
     #introVideoModal .vt-video-foot {
         display: flex;
         align-items: center;
@@ -588,7 +571,6 @@
         position: relative;
     }
 
-    /* Experience slider */
     .vt-exp-slider {
         display: flex;
         align-items: center;
@@ -614,7 +596,6 @@
         cursor: not-allowed;
     }
 
-    /* Learning programs slider */
     .vt-program-slider {
         display: flex;
         align-items: center;
@@ -706,7 +687,6 @@
         text-decoration: underline !important;
     }
 
-    /* ---------- Stars (always horizontal) ---------- */
     .vt-stars {
         display: inline-flex !important;
         flex-direction: row !important;
@@ -730,7 +710,6 @@
         height: 16px;
     }
 
-    /* ---------- Hero ---------- */
     .vt-hero {
         display: flex;
         flex-wrap: wrap;
@@ -934,7 +913,6 @@
         pointer-events: none;
     }
 
-    /* ---------- About + Philosophy ---------- */
     .vt-philosophy {
         padding-right: 150px;
         min-height: 190px;
@@ -957,7 +935,6 @@
         object-fit: contain;
     }
 
-    /* ---------- Lists / chips ---------- */
     .vt-check li {
         position: relative;
         padding-left: 28px;
@@ -1009,7 +986,6 @@
         padding: 9px 20px;
     }
 
-    /* ---------- Colored labels (cycled: vt-c1 ... vt-c6) ---------- */
     .vt-pills.colored li {
         font-weight: 700;
         border-width: 1px;
@@ -1081,7 +1057,6 @@
         margin-bottom: 14px;
     }
 
-    /* ---------- Programs ---------- */
     .vt-programs {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -1108,7 +1083,6 @@
         color: var(--vt-muted);
     }
 
-    /* ---------- Availability (day cards) ---------- */
     .vt-avail-card {
         height: auto;
     }
@@ -1201,7 +1175,6 @@
         color: #888;
     }
 
-    /* ---------- Review slider ---------- */
     .vt-slider {
         display: flex;
         align-items: center;
@@ -1330,7 +1303,6 @@
         margin: -6px 0 0;
     }
 
-    /* ---------- CTA ---------- */
     .vt-cta {
         display: flex;
         align-items: center;
@@ -1433,7 +1405,6 @@
         }
     }
 
-    /* ---------- Year levels: 4 per row ---------- */
     .vt-split>div.vt-split-years {
         flex: 1.4 1 260px;
     }
@@ -1451,7 +1422,6 @@
         white-space: nowrap;
     }
 
-    /* ---------- Extra responsive (tablet + mobile) ---------- */
     @media (min-width: 576px) and (max-width: 1199px) {
         .vt-days {
             grid-template-columns: repeat(4, 1fr);
@@ -1634,26 +1604,144 @@
             font-size: 22px;
         }
     }
+
+    .vt-page {
+        padding: 30px 24px;
+    }
+
+    .vt-wrap {
+        max-width: 1600px;
+        padding: 0;
+    }
+
+    .vt-hero {
+        padding: 22px;
+        gap: 20px;
+    }
+
+    .vt-avatar {
+        width: 185px;
+        flex: 0 0 185px;
+    }
+
+    .vt-avatar .vt-photo {
+        width: 185px;
+        height: 185px;
+    }
+
+    .vt-info h1 {
+        font-size: 30px;
+    }
+
+    .vt-chip-box {
+        font-size: 14px;
+        padding: 8px 14px;
+    }
+
+    .vt-btn {
+        font-size: 15px;
+        padding: 11px 14px;
+    }
+
+    .vt-card {
+        padding: 18px 22px;
+    }
+
+    .vt-card h2 {
+        font-size: 20px;
+    }
+
+    .vt-card h3.vt-sub {
+        font-size: 16px;
+    }
+
+    .vt-check li,
+    .vt-meta {
+        font-size: 14px;
+    }
+
+    .vt-cta {
+        padding: 22px 28px;
+    }
+
+    .vt-cta h2 {
+        font-size: 26px;
+    }
+
+    @media (max-width: 991px) {
+        .vt-page {
+            padding: 50px 16px 30px;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .vt-page {
+            padding: 90px 12px 24px;
+        }
+
+        .vt-info h1 {
+            font-size: 26px;
+        }
+
+        .vt-avatar,
+        .vt-avatar .vt-photo {
+            width: 160px;
+            height: 160px;
+            flex-basis: 160px;
+        }
+
+        .vt-hero,
+        .vt-card,
+        .vt-cta {
+            padding: 16px;
+        }
+
+        .vt-card h2 {
+            font-size: 18px;
+        }
+
+        .vt-cta h2 {
+            font-size: 22px;
+        }
+    }
+
+    .vt-card.vt-philosophy {
+        padding-right: 170px;
+        min-height: 190px;
+    }
+
+    .vt-card.vt-philosophy .vt-corner-img {
+        right: 20px;
+        bottom: 16px;
+        width: 130px;
+        height: 130px;
+    }
+
+    @media (max-width: 767px) {
+        .vt-card.vt-philosophy {
+            padding-right: 22px;
+            padding-bottom: 160px;
+            min-height: 0;
+        }
+
+        .vt-card.vt-philosophy .vt-corner-img {
+            right: 50%;
+            transform: translateX(50%);
+            bottom: 14px;
+        }
+    }
 </style>
 @endsection
 
 @section('content')
 @php
-/* =====================================================================
-EASY-TO-EDIT DEFAULTS (change these in one place)
-===================================================================== */
-// Message Tutor button link (put your chat / contact route here)
+
 $messageUrl = '#';
-// "View All" links (default placeholders)
 $allProgramsUrl = '#';
 $allReviewsUrl = '#';
-// Teaching philosophy default text
 $philosophyText = "I focus on building each student's confidence by delivering clear, step-by-step explanations, providing patient and encouraging support, and adapting to their individual learning pace. My goal is to make learning enjoyable, reduce pressure, and help students achieve steady, lasting progress.";
-// Corner image for the philosophy card. Put an image path here, e.g. public_asset('assets/images/philosophy.png')
-// Leave null to show the default plant-and-books drawing.
 $philosophyImage = null;
 
-/* ---------- inline SVG icons (no icon font needed) ---------- */
 $paths = [
 'user' => '
 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -1707,11 +1795,9 @@ $myGrade = @Auth::user()->grade;
 $avg = (float) @$userDetails->avg_review;
 $roundedRating = round($avg * 2) / 2;
 
-// Year levels & subjects (existing relations)
 $gradeNames = $plans->pluck('getGrade')->filter()->unique('id')->sortBy('id')->pluck('grade_name');
 $branchNames = $plans->pluck('getBranch')->filter()->unique('id')->sortBy('id')->pluck('branch_name');
 
-// Learning programs: one tile per subject, from the tutor's own plan rows
 $programs = $plans->filter(function ($p) { return $p->getBranch; })
 ->groupBy(function ($p) { return $p->getBranch->id; })
 ->map(function ($rows) {
@@ -1734,7 +1820,6 @@ $qualLabels = [
 '7' => 'Associate Degree', '8' => 'Advanced Diploma',
 ];
 
-/* ---------- Timezone / state (used in hero chip + availability subtitle) ---------- */
 $timezone = $userDetails->timezone_id;
 $timezoneCity = $timezone
 ? str_replace('_', ' ', basename(str_replace('\\', '/', $timezone)))
@@ -1756,7 +1841,6 @@ $stateMap = [
 
 $stateShort = $stateMap[$stateName] ?? $stateName;
 
-/* ---------- Book a session (same rules as original) ---------- */
 if ($isUser) {
 if (@$userDetails->status == 'AA') {
 $book = ['modal' => '#notapproved'];
@@ -1773,13 +1857,10 @@ $book = ['guest' => 'B'];
 $book = ['disabled' => true];
 }
 
-/* ---------- Message tutor ---------- */
 $message = @Auth::check() ? ['href' => $messageUrl] : ['guest' => 'M'];
 
-/* ---------- Intro video (existing field) ---------- */
 $intro = @$userDetails->video_short_url ? ['modal' => '#introVideoModal'] : ['disabled' => true];
 
-/* ---------- button renderer ---------- */
 $btn = function ($cfg, $label, $cls, $icon) use ($svg, $userDetails) {
 $inner = $svg($icon, 20) . ' <span>' . e($label) . '</span>';
 if (isset($cfg['href'])) {
@@ -1802,7 +1883,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 <section class="vt-page gj_tut_pub_pf_sec">
     <div class="vt-wrap">
 
-        {{-- ================= HERO ================= --}}
         <div class="vt-hero">
             <div class="vt-avatar">
                 @auth
@@ -1907,7 +1987,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                                     value="{{ $userDetails->id }}">
                                 <div class="row">
 
-                                    <!-- First Name -->
                                     <div class="col-sm-6">
                                         <div class="guest-form-group">
                                             <label>First Name <span>*</span></label>
@@ -1921,7 +2000,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                                         </div>
                                     </div>
 
-                                    <!-- Email -->
                                     <div class="col-sm-6">
                                         <div class="guest-form-group">
                                             <label>Email Address <span>*</span></label>
@@ -1935,7 +2013,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                                         </div>
                                     </div>
 
-                                    <!-- Year Level -->
                                     <div class="col-sm-6">
                                         <div class="guest-form-group">
                                             <label>Year Level <span>*</span></label>
@@ -1954,7 +2031,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                                         </div>
                                     </div>
 
-                                    <!-- State -->
                                     <div class="col-sm-6">
                                         <div class="guest-form-group">
                                             <label>State <span>*</span></label>
@@ -2039,7 +2115,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
             </div>
         </div>
 
-        {{-- ================= ABOUT + TEACHING PHILOSOPHY ================= --}}
         <div class="row vt-gap">
             <div class="col-lg-6 mb-4">
                 <div class="vt-card pink">
@@ -2052,7 +2127,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                     <h2>{!! $svg('leaf') !!} My Teaching Philosophy</h2>
                     <p class="mb-0">{{ $philosophyText }}</p>
 
-                    {{-- corner image slot --}}
                     <div class="vt-corner-img">
                         @if($philosophyImage)
                         <img src="{{ $philosophyImage }}" alt="Teaching philosophy">
@@ -2072,7 +2146,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
             </div>
         </div>
 
-        {{-- ================= QUALIFICATIONS / SUBJECTS / PROGRAMS ================= --}}
         <div class="row">
             <div class="col-lg-5 mb-4">
                 <div class="vt-card">
@@ -2193,7 +2266,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                     </div>
                 </div>
 
-                {{-- Managed Learning Programs --}}
                 <div class="vt-card" style="height:auto;">
 
                     <div class="vt-card-head">
@@ -2251,7 +2323,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
             </div>
         </div>
 
-        {{-- ================= AVAILABILITY (full width, day cards) ================= --}}
         <div class="vt-card vt-avail-card mb-4">
             <div class="vt-avail-head">
                 <div>
@@ -2282,7 +2353,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
             </div>
         </div>
 
-        {{-- ================= REVIEWS (existing design, now below availability) ================= --}}
         <div class="row">
             <div class="col-12 mb-4">
                 <div class="vt-card star">
@@ -2334,7 +2404,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
             </div>
         </div>
 
-        {{-- ================= CTA ================= --}}
         <div class="vt-cta">
             <div class="vt-cta-ic">{!! $svg('layers', 64) !!}</div>
             <div class="vt-cta-text">
@@ -2380,7 +2449,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
     </div>
     @endforeach
 
-    {{-- ================= INTRO VIDEO MODAL (new design) ================= --}}
     @if(!empty($tutorVideo))
     <div class="modal fade"
         id="introVideoModal"
@@ -2398,7 +2466,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                     data-dismiss="modal"
                     aria-label="Close">&times;</button>
 
-                {{-- Header: tutor photo + name --}}
                 <div class="vt-video-head">
                     <div class="vt-video-avatar">
                         @if ($userDetails->profile_pic)
@@ -2414,7 +2481,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                     </div>
                 </div>
 
-                {{-- Video --}}
                 <div class="vt-video-body">
                     <div class="vt-video-frame">
                         <span class="vt-video-loader"></span>
@@ -2426,8 +2492,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                             allowfullscreen>
                         </iframe>
                     </div>
-                </div>
-            
                 </div>
 
             </div>
@@ -2446,7 +2510,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    // Favourite tutor
     $(document).on("click", ".saveUsertoFavourite", function(e) {
         e.preventDefault();
         var obj = $(this);
@@ -2490,7 +2553,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 
     });
 
-    // ---------- Watch Intro Video ----------
     $(document).on('click', '#watchIntroVideo', function(e) {
 
         e.preventDefault();
@@ -2515,7 +2577,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 
         var videoId = match[1];
 
-        // rel=0 -> no unrelated suggestions, modestbranding -> cleaner player
         var embedUrl = 'https://www.youtube.com/embed/' +
             videoId + '?autoplay=1&rel=0&modestbranding=1';
 
@@ -2525,15 +2586,12 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 
     });
 
-    // Stop video when modal closes
     $('#introVideoModal').on('hidden.bs.modal', function() {
 
         $('#introVideoFrame').attr('src', '');
 
     });
 
-    // "Book a Trial Session" inside the video modal (guest users):
-    // close the video first, then open the guest registration modal
     $(document).on('click', '.js-video-book', function() {
 
         $('#introVideoModal').one('hidden.bs.modal', function() {
@@ -2547,7 +2605,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 
     $(document).ready(function() {
 
-        // Set tutor details when modal opens
         $('#guestRegisterModal').on('show.bs.modal', function() {
 
             $('#guest_tutor_id').val("{{ $userDetails->id }}");
@@ -2555,7 +2612,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 
         });
 
-        // Get timezone based on selected state
         $('#guest_parent_state').on('change', function() {
 
             var timezone = $(this).find(':selected').data('timezone') || '';
@@ -2563,7 +2619,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
             $('#guest_timezone_id').val(timezone);
 
         });
-        // Guest Registration Form Submit
         $('#guestRegisterForm').on('submit', function(e) {
 
             e.preventDefault();
@@ -2581,20 +2636,15 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                 return false;
             }
 
-            // Continue with your existing AJAX code
             var form = $(this);
             var btn = $('#guestRegisterSubmit');
 
-            // Clear previous errors
             $('#guestRegisterError').html('');
 
-            // Serialize form data
             var formData = form.serialize();
 
-            // Pass default last name (controller requires it)
             formData += '&l_name=N%2FA';
 
-            // Disable button
             btn.prop('disabled', true);
             btn.find('span').text('Please wait...');
 
@@ -2678,9 +2728,12 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
             studentStateName.toLowerCase() === tutorStateName.trim().toLowerCase();
 
         if (!isSameState) {
-            $('#state_error')
-                .text('Sorry! This tutor is available only in ' + tutorStateName)
-                .show();
+         $('#state_error')
+    .html(
+        'Sorry! This tutor is available only in ' + tutorStateName +
+        '. Kindly search tutors matching the State criteria.'
+    )
+    .show();
 
             $('#guestRegisterSubmit').prop('disabled', true);
         } else {
@@ -2689,7 +2742,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
         }
     });
 
-    // Reviews slider (dots scoped to the reviews card only)
     (function() {
         var slides = $('.vt-slide'),
             dots = $('.vt-review-dots i'),
@@ -2714,7 +2766,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
         });
     })();
 
-    /* LEARNING PROGRAMS SLIDER WITH DOTS */
     (function() {
 
         var items = $('#vtProgramList .vt-program-item');
@@ -2798,7 +2849,6 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 
     })();
 
-    /* EXPERIENCE SLIDER - 3 RECORDS PER PAGE */
     (function() {
 
         var items = $('.vt-experience-item');
@@ -2817,26 +2867,21 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
 
             currentPage = Math.max(0, Math.min(page, totalPages - 1));
 
-            // Hide all experience records
             items.removeClass('active');
 
-            // Display only 3 records
             items.slice(
                 currentPage * perPage,
                 (currentPage + 1) * perPage
             ).addClass('active');
 
-            // Update dots
             dotsContainer.find('i')
                 .removeClass('active')
                 .eq(currentPage)
                 .addClass('active');
 
-            // Arrow states
             prev.prop('disabled', currentPage === 0);
             next.prop('disabled', currentPage === totalPages - 1);
 
-            // Show arrows only when more than 3 records exist
             prev.toggle(items.length > perPage);
             next.toggle(items.length > perPage);
 

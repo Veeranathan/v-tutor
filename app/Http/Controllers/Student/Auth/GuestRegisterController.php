@@ -52,7 +52,7 @@ class GuestRegisterController extends Controller
 
         $user->state       = $request->parent_state;    
         $user->timezone_id = $request->timezone_id;
-
+        $user->grade = $request->grade;
         $user->save();
 
 

@@ -9,37 +9,228 @@ Academics
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.2.1/css/fixedColumns.dataTables.min.css"/>
 <style type="text/css">
-/*this is excel button needs to hide as we have already download option*/
-    .buttons-excel{
-    display: none;
-}
-.step_tab ul {
-    display: flex;
-    flex-wrap: nowrap !important;
-    padding-left: 0;
-    margin-bottom: 10px;
-}
+    .buttons-excel { display: none; }
 
-.step_tab ul li {
-    margin-right: 6px;
-}
+    :root {
+        --tw-primary: #d71f3e;
+        --tw-primary-soft: #fdebee;
+        --tw-ink: #1b2437;
+        --tw-muted: #6b7488;
+        --tw-border: #e6e9f0;
+        --tw-bg: #f6f7fb;
+        --tw-radius: 12px;
+    }
 
-.step_tab ul li a {
-    font-size: 11px !important;       /* Smaller font */
-    padding: 5px 10px !important;      /* Reduce tab width */
-    border-radius: 6px !important;     /* Slightly smaller curve */
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 4px;                          /* Reduce icon + text gap */
-}
+    .tw-page { background: var(--tw-bg); }
 
-.step_tab ul li a span img {
-    width: 15px !important;           /* Reduce icon size */
-    height: auto;
-}
+    .tw-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+    .tw-head h1 { margin: 0; font-size: 26px; font-weight: 700; color: var(--tw-ink); }
+    .tw-head .small_tag { margin: 4px 0 0; color: var(--tw-muted); font-size: 13px; }
+    .tw-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tw-actions .btn {
+        border-radius: 8px;
+        background: #fff !important;
+        color: var(--tw-ink);
+        font-weight: 600;
+        font-size: 13px;
+        padding: 7px 14px;
+    }
+    .tw-actions .btn:hover { border-color: var(--tw-primary); color: var(--tw-primary); }
 
+    .tw-card {
+        background: #fff;
+        border: 1px solid var(--tw-border);
+        border-radius: var(--tw-radius);
+        padding: 20px 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 1px 2px rgba(27, 36, 55, .04);
+    }
+    .tw-card-title {
+        margin: 0 0 14px;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--tw-ink);
+    }
 
+    .tw-profile { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; }
+    .tw-avatar {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: var(--tw-primary-soft);
+        color: var(--tw-primary);
+        font-weight: 700; font-size: 22px;
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden; flex-shrink: 0;
+    }
+    .tw-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .tw-profile-name { margin: 0; font-size: 20px; font-weight: 700; color: var(--tw-ink); }
+    .tw-profile-sub { color: var(--tw-muted); font-size: 13px; margin-top: 2px; }
+    .tw-meta { display: flex; flex-wrap: wrap; margin-left: auto; }
+    .tw-meta-item { padding: 0 24px; border-left: 1px solid var(--tw-border); }
+    .tw-meta-item span { display: block; font-size: 12px; color: var(--tw-muted); }
+    .tw-meta-item strong { font-size: 14px; color: var(--tw-ink); }
+
+    .tw-layout { display: flex; gap: 18px; align-items: stretch; }
+    .tw-side { width: 250px; flex-shrink: 0; align-self: stretch; }
+
+    .tw-section-title { margin: 0; font-size: 22px; font-weight: 700; color: var(--tw-ink); }
+    .tw-section-sub { margin: 4px 0 18px; color: var(--tw-muted); font-size: 13px; }
+
+    .tw-badge {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px; font-weight: 700;
+        background: #eef0f5; color: var(--tw-muted);
+    }
+    .tw-badge.approved { background: #dcf5e4; color: #1a7a3c; }
+    .tw-badge.pending  { background: #fff3d6; color: #a86b00; }
+    .tw-badge.rejected { background: #fde2e5; color: #b4152f; }
+    .tw-main { flex: 1; min-width: 0; }
+
+    .tw-nav {
+        height: 100%;
+        min-height: calc(100vh - 280px);
+        list-style: none;
+        margin: 0; padding: 10px;
+        background: #fff;
+        border: 1px solid var(--tw-border);
+        border-radius: var(--tw-radius);
+    }
+    .tw-nav li { margin: 0 0 2px; }
+    .tw-nav li a {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 13px; font-weight: 600;
+        color: var(--tw-ink);
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        transition: background .15s, color .15s;
+    }
+    .tw-nav li a span { display: inline-flex; width: 18px; }
+    .tw-nav li a span img { width: 16px; height: auto; }
+    .tw-nav li a .accth { display: none; }
+    .tw-nav li a:hover,
+    .tw-nav li.active a {
+        background: var(--tw-primary-soft);
+        color: var(--tw-primary);
+        border-left-color: var(--tw-primary);
+    }
+    .tw-nav li a:hover .actt,
+    .tw-nav li.active a .actt { display: none; }
+    .tw-nav li a:hover .accth,
+    .tw-nav li.active a .accth { display: inline; }
+
+    .tw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+    .tw-grid .tw-card { margin-bottom: 0; }
+    .tw-grid-wrap { margin-bottom: 18px; }
+    .tw-list { margin: 0; }
+    .tw-row {
+        display: flex;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--tw-border);
+        font-size: 14px;
+    }
+    .tw-row:last-child { border-bottom: 0; }
+    .tw-row dt { width: 40%; font-weight: 600; color: var(--tw-ink); }
+    .tw-row dd { margin: 0; flex: 1; color: #3b4458; word-break: break-word; }
+    .tw-addr { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 28px; }
+    .tw-text { margin: 0; color: #3b4458; line-height: 1.7; font-size: 14px; }
+
+    @media (max-width: 991px) {
+        .tw-layout { flex-direction: column; }
+        .tw-side { width: 100%; }
+        .tw-nav { display: flex; overflow-x: auto; white-space: nowrap; gap: 4px; height: auto; min-height: 0; }
+        .tw-nav li { margin: 0; }
+        .tw-meta { margin-left: 0; width: 100%; }
+        .tw-meta-item:first-child { border-left: 0; padding-left: 0; }
+    }
+    @media (max-width: 575px) {
+        .tw-addr { grid-template-columns: 1fr; }
+        .tw-row { flex-direction: column; }
+        .tw-row dt { width: 100%; margin-bottom: 2px; }
+    }
+
+    .tw-table-card { padding: 8px 18px 18px; }
+    .tw-table-card .table-responsive { border: 0; margin-bottom: 0; }
+    #example { width: 100% !important; border: 0; margin-bottom: 0; }
+    #example thead th {
+        background: #eef1f8;
+        color: var(--tw-ink);
+        font-size: 13px; font-weight: 700;
+        border: 0; border-bottom: 1px solid var(--tw-border);
+        padding: 12px;
+    }
+    #example tbody td {
+        border: 0; border-bottom: 1px solid var(--tw-border);
+        padding: 13px 12px;
+        font-size: 14px; color: #3b4458;
+        vertical-align: middle;
+    }
+    #example.table-striped > tbody > tr:nth-of-type(odd) { background: #fafbfd; }
+    #example tbody tr:hover { background: var(--tw-primary-soft); }
+    .dataTables_wrapper .dataTables_processing {
+        border-radius: 8px; border: 1px solid var(--tw-border);
+        color: var(--tw-ink); font-weight: 600;
+    }
+    .dataTables_wrapper .dataTables_paginate { margin-top: 14px; }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 8px !important; border: 1px solid var(--tw-border) !important;
+        background: #fff !important; color: var(--tw-ink) !important; margin-left: 4px;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: var(--tw-primary-soft) !important;
+        border-color: var(--tw-primary) !important;
+        color: var(--tw-primary) !important;
+    }
+
+    .tw-toolbar {
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 12px;
+        padding: 12px 0 14px;
+    }
+    .tw-count { font-size: 13px; color: var(--tw-muted); }
+    .tw-count strong { color: var(--tw-ink); font-size: 15px; }
+    .tw-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; justify-content: flex-end; }
+    .tw-filters .tw-select {
+        height: 34px; min-width: 130px;
+        padding: 0 28px 0 12px;
+        border: 1px solid var(--tw-border); border-radius: 20px;
+        background-color: #f1f4fb; color: #2a3a78;
+        font-size: 12px; font-weight: 600;
+    }
+    .tw-filters .tw-select:focus { border-color: var(--tw-primary); outline: 0; }
+    .tw-filters .tw-reset {
+        height: 34px; border-radius: 20px;
+        border: 1px solid var(--tw-border); background: #fff;
+        color: var(--tw-ink); font-size: 12px; font-weight: 600; padding: 0 14px;
+    }
+    .tw-filters .tw-reset:hover { border-color: var(--tw-primary); color: var(--tw-primary); }
+    @media (max-width: 575px) {
+        .tw-filters { margin-left: 0; width: 100%; justify-content: flex-start; }
+        .tw-filters .tw-select { flex: 1; min-width: 0; }
+    }
+
+    .tw-status {
+        display: inline-block; padding: 4px 12px;
+        border-radius: 20px; font-size: 12px; font-weight: 700;
+        background: #eef0f5; color: var(--tw-muted); white-space: nowrap;
+    }
+    .tw-st-done    { background: #dcf5e4; color: #1a7a3c; }
+    .tw-st-prog    { background: #e4ecff; color: #2a47a8; }
+    .tw-st-warn    { background: #fff3d6; color: #a86b00; }
+    .tw-st-bad     { background: #fde2e5; color: #b4152f; }
+    .tw-st-neutral { background: #eef0f5; color: #4a5468; }
 </style>
 @endsection
 @section('header')
@@ -49,118 +240,170 @@ Academics
 @include('admin.includes.sidebar')
 @endsection
 @section('content')
-<div class="content">
-    <div class="wraper container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <h1 class="pull-left page-title">Academics<br/><p class="small_tag">You can find information or view tutor profile in this section </p></h1>
-                <ol class="breadcrumb pull-right">
-                    <li> <a href="{{ route('manage.tutors') }}"><i class="fas fa-backward"></i> Back</a></li>
-                    {{-- <li> <a href="{{ route('edit.tutor.academics',$user->id) }}"><i class="fas fa-pen"></i> Edit Academics</a></li> --}}
+@php
+    $activeRoute = 'view.tutor.academics';
+    $fullName = trim(implode(' ', array_filter([@$user->f_name, @$user->m_name, @$user->l_name])));
+    $initials = strtoupper(mb_substr((string) @$user->f_name, 0, 1) . mb_substr((string) @$user->l_name, 0, 1));
 
-                    @if(@$previous_id)
-                    <li> <a href="{{ route('view.tutor.academics',@$previous_id) }}"><i class="fas fa-angle-double-left"></i> Previous</a></li>
-                    @endif
-                    @if(@$next_id)
-                    <li> <a href="{{ route('view.tutor.academics',@$next_id) }}"><i class="fas fa-angle-double-right"></i> Next</a></li>
-                    @endif
-                </ol>
+    $tutorCode = @$user->tutor_id ?: 'TUT' . str_pad((string) @$user->id, 6, '0', STR_PAD_LEFT);
+
+   if ($user->status == 'A' && $user->subscription == 'S' && $user->draft == 'N') {
+        $statusLabel = 'Approved';
+        $statusClass = 'approved';
+    } elseif ($user->status == 'A') {
+        $statusLabel = 'Pending';
+        $statusClass = 'pending';
+    } elseif ($user->status == 'I') {
+        $statusLabel = 'Suspended';
+        $statusClass = 'suspended';
+    } elseif ($user->status == 'R') {
+        $statusLabel = 'Rejected';
+        $statusClass = 'rejected';
+    } else {
+        $statusLabel = '—';
+        $statusClass = '';
+    }
+   
+
+    $subjectsText = collect(@$tutor_subjects)->pluck('name')->filter()->implode(', ');
+
+    $availabilityText = @$user->availability_status ? 'Yes' : 'No';
+
+    $navUrl = function ($name) use ($user) {
+        return \Illuminate\Support\Facades\Route::has($name) ? route($name, $user->id) : 'javascript:void(0);';
+    };
+    $navItems = [
+        ['Overview',          'view.tutor.overview',             'peri.png', 'perih.png',   false],
+        ['Personal Details',  'view.tutor.personal.info.step.1', 'peri.png', 'perih.png',   true],
+        ['Tutorship Plan',    'view.tutor.tutorship.plans',      'gar.png',  'garh.png',    false],
+        ['Academics',         'view.tutor.academics',            'aca.png',  'acah.png',    false],
+        ['Experience',        'view.tutor.experience',           'ex.png',   'exh.png',     false],
+        ['Recognitions',      'view.tutor.recognitions',         'rec.png',  'rech.png',    false],
+        ['Right to Work',     'view.tutor.right.to.work',        'rec.png',  'rech.png',    false],
+        ['Availability',      'view.tutor',                      'rec.png',  'checked.png', false],
+        ['Learning Programs', 'view.tutor.learning.programs',    'aca.png',  'acah.png',    false],
+        ['Public Profile',    'view.tutor.public.profile',       'peri.png', 'perih.png',   false],
+    ];
+@endphp
+<div class="content tw-page">
+    <div class="wraper container-fluid">
+
+        <div class="tw-head">
+            <div>
+                <h1>Tutor Workspace</h1>
+                <p class="small_tag">You can find information or view tutor profile in this section</p>
+            </div>
+            <div class="tw-actions">
+                           <a class="btn" href="{{ route('tutor.public.profile', $user->slug) }}">
+    <i class="fas fa-external-link-alt"></i> View Public Profile
+</a>
             </div>
         </div>
-        <div class="step_tab">
-            <ul>
-                <li class="">
-                    <a href="{{ route('view.tutor.personal.info.step.1',$user->id) }}">
-                    <span><img src="{{ public_asset('admin/assets/images/peri.png') }}" class="actt"><img src="{{ public_asset('admin/assets/images/perih.png') }}" class="accth"></span>
-                    Personal Details
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('view.tutor.tutorship.plans',$user->id) }}">
-                    <span><img src="{{ public_asset('admin/assets/images/gar.png') }}" class="actt"><img src="{{ public_asset('admin/assets/images/garh.png') }}" class="accth"></span>
-                    Tutorship Plan
-                    </a>
-                </li>
-                <li class="active">
-                    <a href="{{ route('view.tutor.academics',$user->id) }}">
-                    <span><img src="{{ public_asset('admin/assets/images/aca.png') }}" class="actt"><img src="{{ public_asset('admin/assets/images/acah.png') }}" class="accth"></span>
-                    Academics
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('view.tutor.experience',$user->id) }}">
-                    <span><img src="{{ public_asset('admin/assets/images/ex.png') }}" class="actt"><img src="{{ public_asset('admin/assets/images/exh.png') }}" class="accth"></span>
-                    Experience </a>
-                </li>
-                <li>
-                    <a href="{{ route('view.tutor.recognitions',$user->id) }}">
-                    <span><img src="{{ public_asset('admin/assets/images/rec.png') }}" class="actt"><img src="{{ public_asset('admin/assets/images/rech.png') }}" class="accth"></span>
-                    Recognitions
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('view.tutor.right.to.work',$user->id) }}">
-                    <span><img src="{{ public_asset('admin/assets/images/rec.png') }}" class="actt"><img src="{{ public_asset('admin/assets/images/rech.png') }}" class="accth"></span>
-                    Right to Work
-                    </a>
-                </li>
-                 <li>
-                    <a href="{{ route('view.tutor',$user->id) }}">
-                    <span><img src="{{ public_asset('admin/assets/images/rec.png') }}" class="actt"><img src="{{ public_asset('admin/assets/images/rech.png') }}" class="accth"></span>
-                    Availability
-                    </a>
-                </li>
-                {{--<li>
-                    <a href="{{ route('view.tutor.advance.page',$user->id) }}">
-                    <span><img src="{{ public_asset('admin/assets/images/rec.png') }}" class="actt"><img src="{{ public_asset('admin/assets/images/rech.png') }}" class="accth"></span>
-                    Advanced
-                    </a>
-                </li> --}}
 
+        @include('admin.includes.message')
 
-                <div class="clearfix"></div>
-            </ul>
+        {{-- Profile summary --}}
+        <div class="tw-card">
+            <div class="tw-profile">
+                <div class="tw-avatar">
+                    @if(@$user->profile_pic)
+                        <img id="img2" src="{{ URL::to('storage/teacher_profile_pic/'.@$user->profile_pic) }}" alt="{{ $fullName }}">
+                    @elseif(@$user->avatar)
+                        <img id="img2" src="{{ @$user->avatar }}" alt="{{ $fullName }}">
+                    @else
+                        {{ $initials ?: '?' }}
+                    @endif
+                </div>
+                <div>
+                    <h2 class="tw-profile-name">{{ $fullName ?: '—' }}</h2>
+                    <div class="tw-profile-sub">
+                        Tutor ID: {{ $tutorCode }}
+                        @if($statusLabel)
+                            <span class="tw-badge {{ $statusClass }}">{{ $statusLabel }}</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="tw-meta">
+                    <div class="tw-meta-item">
+                        <span>Subjects</span>
+                        <strong>{{ $branch ?: '—' }}</strong>
+                    </div>
+                    <div class="tw-meta-item">
+                        <span>State</span>
+                        <strong>{{ @$user->getState->state_name ?: '—' }}</strong>
+                    </div>
+                    <div class="tw-meta-item">
+                        <span>Availability</span>
+                        <strong>{{ $availability }}</strong>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Personal-Information -->
-        <div class="panel panel-default panel-fill">
-            <div class="panel-body rm02 rm04">
-                @include('admin.includes.message')
+
+        <div class="tw-layout">
+
+            <aside class="tw-side">
+                <ul class="tw-nav">
+                    @foreach($navItems as [$label, $routeName, $icon, $iconHover])
+                    <li class="{{ $routeName === $activeRoute ? 'active' : '' }}">
+                        <a href="{{ $navUrl($routeName) }}">
+                            <span><img src="{{ public_asset('admin/assets/images/' . $icon) }}" class="actt"><img src="{{ public_asset('admin/assets/images/' . $iconHover) }}" class="accth"></span>
+                            {{ $label }}
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+            </aside>
+
+            {{-- Main content --}}
+            <section class="tw-main">
+
+                <h2 class="tw-section-title">Academics</h2>
+                <p class="tw-section-sub">Academic qualifications supplied by the tutor. Qualification status indicates completion progress.</p>
+
                 <form id="editTutorAcademic" method="post" @if(Route::is('update.tutor.academics')) action="{{ route('update.tutor.academics',@$tutorAcademicDtls->id) }}" @else action="{{ route('add.tutor.academics',@$user->id) }}" @endif enctype="multipart/form-data">
                     @csrf
-                    <div class="frm_admin">
-                        <div class="row">
-                            {{-- <div class="centerButtons">
+                    <div class="tw-card tw-table-card">
 
-                                <div class="rm05 rightButtons">
-                                <button class="btn btn-primary waves-effect waves-light w-md download" id="download" type="button">Download </button>
+                        <div class="tw-toolbar">
+                            <div class="tw-count">
+                                Total records: <strong id="tw_total">0</strong><span id="tw_filtered"></span>
                             </div>
-                            <div class="clearfix"></div>
-
-                        </div> --}}
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped" id="example">
-                                        <thead>
-                                            <tr>
-                                                <th>Qualification </th>
-                                                <th>Field Of Study</th>
-                                                <th>University Name</th>
-                                                <th>Location</th>
-                                                <th>Status</th>
-                                                <th>As On</th>
-
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="tw-filters">
+                                <select id="col4_filter" class="tw-select tw-filter" data-col="4">
+                                    <option value="">All Statuses</option>
+                                    <option value="C">Completed</option>
+                                    <option value="IP">Enrolled / In-Progress</option>
+                                    <option value="W">Withdrawn</option>
+                                    <option value="NC">Not Completed</option>
+                                    <option value="D">Deferred</option>
+                                    <option value="SA">Statement of Attainment</option>
+                                </select>
+                                <button type="button" id="tw_reset" class="tw-reset">Reset</button>
                             </div>
                         </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="example">
+                                <thead>
+                                    <tr>
+                                        <th>Qualification</th>
+                                        <th>Field of Study</th>
+                                        <th>University / Institution</th>
+                                        <th>Location</th>
+                                        <th>Qualification Status</th>
+                                        <th>As On</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </form>
-            </div>
+
+            </section>
         </div>
     </div>
 </div>
@@ -260,6 +503,9 @@ $(document).ready(function(){
             ],
             "stateLoadParams": function (settings, data) {
                 // $('#col1_filter').val(data.search.grade_name);
+                if (data.columns) {
+                    $.each(data.columns, function (i, col) { col.search.search = ''; });
+                }
             },
             stateSaveParams: function (settings, data) {
                 // data.search.grade_name = $('#col1_filter').val();
@@ -387,41 +633,41 @@ $(document).ready(function(){
             {
                 data: "qualification_status",
                 render: function(data, type, full, meta){
-                    if(full.qualification_status != null){
-                        if(full.qualification_status == 'C'){
-                            return "Completed";
-                        }
-                        if(full.qualification_status == 'IP'){
-                            return "Enrolled / In-Progress";
-                        }
-                        if(full.qualification_status == 'W'){
-                            return "Withdrawn";
-                        }
-                        if(full.qualification_status == 'NC'){
-                            return "Not Completed";
-                        }
-                        if(full.qualification_status == 'D'){
-                            return "Deferred";
-                        }
-                        if(full.qualification_status == 'SA'){
-                            return "Statement of Attainment";
-                        }
-                        // return "";
-                        // return full.qualification_status;
-                    }else{
-                        return "";
-                    }
+                    var statusMap = {
+                        'C':  ['Completed', 'tw-st-done'],
+                        'IP': ['Enrolled / In-Progress', 'tw-st-prog'],
+                        'W':  ['Withdrawn', 'tw-st-neutral'],
+                        'NC': ['Not Completed', 'tw-st-bad'],
+                        'D':  ['Deferred', 'tw-st-warn'],
+                        'SA': ['Statement of Attainment', 'tw-st-neutral']
+                    };
+                    var st = statusMap[full.qualification_status];
+                    return st ? '<span class="tw-status ' + st[1] + '">' + st[0] + '</span>' : "";
                 }
             },
             {
                 data: "effective_date",
                 render: function(data, type, full, meta){
-                    return data;
+                    return data ? data : '—';
                 }
             },
             ]
         };
         var table = dataTableCall(dataTableObj,"example");
+
+        table.on('draw.dt', function(){
+            var info = table.page.info();
+            $('#tw_total').text(info.recordsTotal);
+            $('#tw_filtered').text(info.recordsDisplay !== info.recordsTotal
+                ? ' · ' + info.recordsDisplay + ' matching filter' : '');
+        });
+        $(document).on('change', '.tw-filter', function(){
+            table.column($(this).data('col')).search($(this).val()).draw();
+        });
+        $('#tw_reset').on('click', function(){
+            $('.tw-filter').val('');
+            table.columns().search('').draw();
+        });
         // var table = $('#example').DataTable(
 
         // );

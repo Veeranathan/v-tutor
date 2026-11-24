@@ -1,1377 +1,2862 @@
 @extends('layouts.app')
 @section('title')
-<title>V-Tutor  | Tutor public profile</title>
+<title>V-Tutor | Tutor public profile</title>
 @endsection
-@section('left_part')
-{{-- @include('include.left_part') --}}
-@include('include.header_menu_part')
-<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.jssocials/1.4.0/jssocials.css" />
 
-<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.jssocials/1.4.0/jssocials-theme-flat.css" />
+@section('left_part')
+@include('include.header_menu_part')
+<link href="{{ public_asset('assets/toastr/build/toastr.min.css') }}" rel="stylesheet">
+
 <style>
-    .jqx-scheduler-appointment-resize-indicator {
-        display: none !important;
+    .vt-page {
+        --vt-red: #d0021b;
+        --vt-red-dark: #b00117;
+        --vt-pink: #fdeef0;
+        --vt-pink-2: #fbe3e7;
+        --vt-border: #f0d4d9;
+        --vt-text: #1d1d2b;
+        --vt-muted: #6b6b7b;
+        --vt-blue-chip: #e3ebff;
+        --vt-blue-text: #1c2f8f;
+        --vt-green: #12a150;
+        background: #fff;
+        padding: 50px;
+        color: var(--vt-text);
     }
-  /*  .jqx-scheduler-not-work-time-cell {
-    background: #eee0 !important;
-}*/
-.jqx-scheduler-work-time-cell {
-    background: #EEEEEE !important;
+
+    .vt-page *,
+    .vt-page *::before,
+    .vt-page *::after {
+        box-sizing: border-box;
+    }
+
+    /* Guest Registration Modal */
+
+    #guestRegisterModal {
+        z-index: 99999;
+    }
+
+    #guestRegisterModal .guest-modal-dialog {
+        width: 100%;
+        max-width: 470px;
+        margin: 30px auto;
+    }
+
+    #watchIntroVideo {
+        position: relative;
+        z-index: 9999;
+        pointer-events: auto !important;
+        cursor: pointer;
+    }
+
+    #guestRegisterModal .guest-modal {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .18);
+    }
+
+    /* Header */
+
+    #guestRegisterModal .guest-modal-header {
+        position: relative;
+        padding: 30px 32px 25px;
+        background: linear-gradient(135deg, #fff1f3, #fff);
+        border-bottom: 1px solid #f5dfe2;
+    }
+
+    #guestRegisterModal .guest-header-icon {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #d0021b;
+        color: #fff;
+        border-radius: 15px;
+        font-size: 23px;
+        margin-bottom: 18px;
+    }
+
+    #guestRegisterModal .guest-tag {
+        display: block;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        color: #d0021b;
+        margin-bottom: 8px;
+    }
+
+    #guestRegisterModal .guest-modal-header h3 {
+        font-size: 25px;
+        font-weight: 800;
+        color: #20202b;
+        margin: 0 0 9px;
+    }
+
+    #guestRegisterModal .guest-modal-header p {
+        color: #777784;
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 0;
+        max-width: 350px;
+    }
+
+    #guestRegisterModal .guest-close {
+        position: absolute;
+        right: 20px;
+        top: 18px;
+        width: 34px;
+        height: 34px;
+        border: none;
+        border-radius: 50%;
+        background: #fff;
+        color: #555;
+        font-size: 25px;
+        line-height: 30px;
+        cursor: pointer;
+    }
+
+    #guestRegisterModal .guest-close:hover {
+        background: #d0021b;
+        color: #fff;
+    }
+
+    /* Body */
+
+    #guestRegisterModal .guest-modal-body {
+        padding: 26px 32px 30px;
+    }
+
+    #guestRegisterModal .guest-form-group {
+        margin-bottom: 19px;
+    }
+
+    #guestRegisterModal .guest-form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #292936;
+        margin-bottom: 8px;
+    }
+
+    #guestRegisterModal .guest-form-group label span {
+        color: #d0021b;
+    }
+
+    /* Input */
+
+    #guestRegisterModal .guest-input-wrap {
+        position: relative;
+    }
+
+    #guestRegisterModal .guest-input-wrap>i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #d0021b;
+        font-size: 15px;
+        z-index: 2;
+    }
+
+    #guestRegisterModal .guest-input {
+        height: 48px;
+        width: 100%;
+        border: 1px solid #e6e6ec;
+        border-radius: 10px;
+        padding: 10px 14px 10px 43px;
+        font-size: 14px;
+        color: #292936;
+        background-color: #fafafd;
+        box-shadow: none;
+        transition: .2s;
+    }
+
+    #guestRegisterModal .guest-input:focus {
+        border-color: #d0021b;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(208, 2, 27, .08);
+        outline: none;
+    }
+
+    /* Security note */
+
+    #guestRegisterModal .guest-security {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 13px;
+        background: #f0faf4;
+        border: 1px solid #d7f0e0;
+        border-radius: 9px;
+        color: #27804b;
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    #guestRegisterModal .guest-security i {
+        font-size: 16px;
+    }
+
+    /* Error */
+
+    #guestRegisterModal .guest-error {
+        font-size: 13px;
+    }
+
+    /* Submit button */
+
+    #guestRegisterModal .guest-submit-btn {
+        width: 100%;
+        height: 51px;
+        border: none;
+        border-radius: 11px;
+        background: #d0021b;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+    #guestRegisterModal .guest-submit-btn:hover {
+        background: #ad0016;
+        box-shadow: 0 7px 18px rgba(208, 2, 27, .2);
+    }
+
+    #guestRegisterModal .guest-submit-btn i {
+        transition: transform .2s;
+    }
+
+    #guestRegisterModal .guest-submit-btn:hover i {
+        transform: translateX(4px);
+    }
+
+    /* Mobile */
+
+    @media(max-width: 575px) {
+
+        #guestRegisterModal .guest-modal-dialog {
+            margin: 15px;
+            width: auto;
+        }
+
+        #guestRegisterModal .guest-modal-header {
+            padding: 24px 22px 20px;
+        }
+
+        #guestRegisterModal .guest-modal-header h3 {
+            font-size: 22px;
+        }
+
+        #guestRegisterModal .guest-modal-body {
+            padding: 22px;
+        }
+
+    }
+
+    /* =====================================================================
+       INTRO VIDEO MODAL (new design)
+       ===================================================================== */
+    #introVideoModal {
+        z-index: 99998;
+        background: rgba(24, 6, 10, .55);
+        -webkit-backdrop-filter: blur(7px);
+        backdrop-filter: blur(7px);
+    }
+
+    #introVideoModal .vt-video-dialog {
+        max-width: 720px;
+        width: calc(100% - 30px);
+        margin: 24px auto;
+    }
+
+    /* pop-in animation */
+    #introVideoModal.fade .vt-video-dialog {
+        transform: translateY(30px) scale(.94);
+        opacity: 0;
+        transition: transform .35s cubic-bezier(.2, .9, .3, 1.2), opacity .3s ease;
+    }
+
+    #introVideoModal.show .vt-video-dialog {
+        transform: none;
+        opacity: 1;
+    }
+
+    #introVideoModal .vt-video-modal {
+        position: relative;
+        border: none;
+        border-radius: 26px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 30px 80px rgba(208, 2, 27, .28), 0 10px 30px rgba(0, 0, 0, .25);
+    }
+
+    /* red glow strip on top */
+    #introVideoModal .vt-video-modal::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #d0021b, #ff5a6e, #ef990e, #d0021b);
+        background-size: 200% 100%;
+        animation: vtVideoGlow 4s linear infinite;
+        z-index: 3;
+    }
+
+    @keyframes vtVideoGlow {
+        0% {
+            background-position: 0% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    /* close */
+    #introVideoModal .vt-video-close {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: #fff;
+        color: #444;
+        font-size: 26px;
+        line-height: 36px;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
+        transition: .25s;
+        z-index: 5;
+        padding: 0;
+    }
+
+    #introVideoModal .vt-video-close:hover {
+        background: var(--vt-red, #d0021b);
+        color: #fff;
+        transform: rotate(90deg);
+    }
+
+    /* header */
+    #introVideoModal .vt-video-head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 22px 64px 14px 24px;
+        background: linear-gradient(135deg, #fff1f3 0%, #fff 70%);
+    }
+
+    #introVideoModal .vt-video-avatar {
+        position: relative;
+        flex: 0 0 54px;
+        width: 54px;
+        height: 54px;
+    }
+
+    #introVideoModal .vt-video-avatar img {
+        width: 54px;
+        height: 54px;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 3px solid #fff;
+        box-shadow: 0 5px 14px rgba(208, 2, 27, .25);
+        display: block;
+    }
+
+    #introVideoModal .vt-video-avatar::after {
+        content: "\25B6";
+        position: absolute;
+        right: -8px;
+        bottom: -8px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #d0021b;
+        color: #fff;
+        font-size: 10px;
+        line-height: 26px;
+        text-align: center;
+        box-shadow: 0 3px 8px rgba(208, 2, 27, .4);
+        border: 2px solid #fff;
+    }
+
+    #introVideoModal .vt-video-tag {
+        display: block;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.6px;
+        color: #d0021b;
+        margin-bottom: 4px;
+    }
+
+    #introVideoModal .vt-video-title h4 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 800;
+        color: #20202b;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+
+    #introVideoModal .vt-video-title p {
+        display: none;
+    }
+
+    /* video frame */
+    #introVideoModal .vt-video-body {
+        padding: 4px 24px 6px;
+        background: #fff;
+    }
+
+    #introVideoModal .vt-video-frame {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 18px;
+        background: #12060a;
+        box-shadow: 0 0 0 5px #fdeef0, 0 14px 34px rgba(208, 2, 27, .22);
+    }
+
+    #introVideoModal .vt-video-frame iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /* loader shown behind iframe */
+    #introVideoModal .vt-video-loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 44px;
+        height: 44px;
+        margin: -22px 0 0 -22px;
+        border: 4px solid rgba(255, 255, 255, .2);
+        border-top-color: #ff5a6e;
+        border-radius: 50%;
+        animation: vtVideoSpin .8s linear infinite;
+    }
+
+    @keyframes vtVideoSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* footer */
+    #introVideoModal .vt-video-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 14px 24px 22px;
+    }
+
+    #introVideoModal .vt-video-foot .vt-video-note {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #6b6b7b;
+        font-weight: 500;
+    }
+
+    #introVideoModal .vt-video-foot .vt-video-note i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #12a150;
+        box-shadow: 0 0 0 4px rgba(18, 161, 80, .18);
+        display: inline-block;
+    }
+
+    #introVideoModal .vt-video-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border: 0;
+        border-radius: 12px;
+        background: #d0021b;
+        color: #fff !important;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 10px 20px;
+        text-decoration: none !important;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+    #introVideoModal .vt-video-cta:hover {
+        background: #b00117;
+        box-shadow: 0 8px 20px rgba(208, 2, 27, .28);
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 575px) {
+        #introVideoModal .vt-video-dialog {
+            margin: 15px auto;
+        }
+
+        #introVideoModal .vt-video-modal {
+            border-radius: 20px;
+        }
+
+        #introVideoModal .vt-video-head {
+            padding: 16px 56px 10px 14px;
+            gap: 10px;
+        }
+
+        #introVideoModal .vt-video-avatar,
+        #introVideoModal .vt-video-avatar img {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+        }
+
+        #introVideoModal .vt-video-title h4 {
+            font-size: 16px;
+        }
+
+        #introVideoModal .vt-video-body {
+            padding: 4px 14px 4px;
+        }
+
+        #introVideoModal .vt-video-foot {
+            padding: 14px 16px 20px;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #introVideoModal .vt-video-cta {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    .vt-page ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .vt-page h1,
+    .vt-page h2,
+    .vt-page h3,
+    .vt-page p {
+        color: var(--vt-text);
+    }
+
+    .vt-wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 16px;
+    }
+
+    .vt-ic {
+        flex: 0 0 auto;
+        vertical-align: middle;
+    }
+
+    .vt-gap {
+        margin-top: 24px;
+    }
+
+    .vt-card {
+        background: #fff;
+        border: 1px solid var(--vt-border);
+        border-radius: 18px;
+        padding: 22px 26px;
+        box-shadow: 0 2px 10px rgba(208, 2, 27, .05);
+        height: 100%;
+        position: relative;
+    }
+
+    /* Experience slider */
+    .vt-exp-slider {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .vt-exp-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .vt-experience-item {
+        display: none;
+    }
+
+    .vt-experience-item.active {
+        display: list-item;
+    }
+
+    #vtExpPrev:disabled,
+    #vtExpNext:disabled {
+        opacity: .35;
+        cursor: not-allowed;
+    }
+
+    /* Learning programs slider */
+    .vt-program-slider {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .vt-program-slider .vt-programs {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .vt-program-item {
+        display: none;
+    }
+
+    .vt-program-item.active {
+        display: block;
+    }
+
+    .vt-slider-controls {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 12px;
+    }
+
+    .vt-slider-controls .vt-arrow:disabled {
+        opacity: .35;
+        cursor: not-allowed;
+    }
+
+    .vt-slider-controls .vt-arrow {
+        flex: 0 0 38px;
+    }
+
+    .vt-card.pink {
+        background: linear-gradient(135deg, #fff 0%, var(--vt-pink) 100%);
+    }
+
+    .vt-card h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-size: 22px;
+        font-weight: 800;
+        margin: 0 0 14px;
+        line-height: 1.2;
+    }
+
+    .vt-card h2 .vt-ic {
+        color: var(--vt-red);
+    }
+
+    .vt-card.star h2 .vt-ic {
+        color: #ef990e;
+    }
+
+    .vt-card h3.vt-sub {
+        font-size: 18px;
+        font-weight: 800;
+        margin: 0 0 10px;
+    }
+
+    .vt-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .vt-card-head h2 {
+        margin: 0;
+    }
+
+    .vt-all-link {
+        color: var(--vt-red) !important;
+        font-weight: 700;
+        font-size: 15px;
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .vt-all-link:hover {
+        text-decoration: underline !important;
+    }
+
+    /* ---------- Stars (always horizontal) ---------- */
+    .vt-stars {
+        display: inline-flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center;
+        gap: 2px;
+        white-space: nowrap;
+    }
+
+    .vt-stars img {
+        display: inline-block !important;
+        float: none !important;
+        width: 14px;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .vt-stars.sm img {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* ---------- Hero ---------- */
+    .vt-hero {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        align-items: stretch;
+        background: linear-gradient(135deg, #fff 0%, var(--vt-pink) 100%);
+        border: 1px solid var(--vt-border);
+        border-radius: 22px;
+        padding: 26px;
+    }
+
+    .vt-avatar {
+        position: relative;
+        width: 210px;
+        flex: 0 0 210px;
+    }
+
+    .vt-avatar .vt-photo {
+        width: 210px;
+        height: 210px;
+        object-fit: cover;
+        border-radius: 24px;
+        display: block;
+        border: 6px solid #fff;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
+    }
+
+    .vt-verified {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 12px;
+        background: var(--vt-green);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 20px;
+        padding: 4px 14px;
+        white-space: nowrap;
+    }
+
+    .vt-fav {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+        z-index: 2;
+        opacity: .9;
+    }
+
+    .vt-fav img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .vt-fav.vt-fav-act {
+        background: var(--vt-red);
+        opacity: 1;
+    }
+
+    .vt-fav.vt-fav-act img {
+        filter: brightness(0) invert(1);
+    }
+
+    .vt-info {
+        flex: 1 1 320px;
+        border-right: 2px solid var(--vt-border);
+        border-left: 2px solid var(--vt-border);
+        padding-left: 24px;
+        min-width: 0;
+    }
+
+    .vt-info h1 {
+        font-size: 34px;
+        font-weight: 800;
+        margin: 0 0 8px;
+        word-break: break-word;
+    }
+
+    .vt-rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+
+    .vt-rating .score {
+        font-weight: 700;
+    }
+
+    .vt-rating .count {
+        font-size: 14px;
+    }
+
+    .vt-meta {
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+
+    .vt-meta span+span::before {
+        content: "|";
+        margin: 0 12px;
+        color: #d9c3c7;
+    }
+
+    .vt-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .vt-chip-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid var(--vt-border);
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .05);
+    }
+
+    .vt-chip-box .vt-ic {
+        color: var(--vt-red);
+    }
+
+    .vt-actions {
+        background: var(--vt-pink);
+        border-radius: 18px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .vt-actions {
+        border-left: 1px solid #ddd;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .vt-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 10px;
+        padding: 13px 16px;
+        font-weight: 700;
+        font-size: 16px;
+        text-decoration: none !important;
+        cursor: pointer;
+        border: 2px solid var(--vt-red);
+        transition: .2s;
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    .vt-btn.primary {
+        background: var(--vt-red);
+        color: #fff !important;
+    }
+
+    .vt-btn.primary:hover {
+        background: var(--vt-red-dark);
+    }
+
+    .vt-btn.outline {
+        background: #fff;
+        color: var(--vt-red) !important;
+    }
+
+    .vt-btn.outline:hover {
+        background: var(--vt-pink-2);
+    }
+
+    .vt-btn.ghost {
+        background: #fff;
+        color: #020202 !important;
+        border-color: #e3e3ea;
+    }
+
+    .vt-btn.ghost:hover {
+        background: #f6f6f9;
+    }
+
+    .vt-btn.addDisable,
+    .vt-btn.pointerEventsNone {
+        opacity: .55;
+        pointer-events: none;
+    }
+
+    /* ---------- About + Philosophy ---------- */
+    .vt-philosophy {
+        padding-right: 150px;
+        min-height: 190px;
+    }
+
+    .vt-corner-img {
+        position: absolute;
+        right: 14px;
+        bottom: 10px;
+        width: 130px;
+        height: 130px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+
+    .vt-corner-img img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* ---------- Lists / chips ---------- */
+    .vt-check li {
+        position: relative;
+        padding-left: 28px;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    .vt-check li::before {
+        content: "";
+        position: absolute;
+        left: 2px;
+        top: 4px;
+        width: 7px;
+        height: 12px;
+        border: solid var(--vt-green);
+        border-width: 0 3px 3px 0;
+        transform: rotate(45deg);
+    }
+
+    .vt-check small {
+        display: block;
+        color: var(--vt-muted);
+    }
+
+    .vt-divider {
+        border-top: 1px solid var(--vt-border);
+        margin: 16px 0;
+    }
+
+    .vt-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .vt-pills li {
+        background: #fff;
+        border: 1px solid #e3e3ea;
+        border-radius: 20px;
+        padding: 6px 16px;
+        font-size: 14px;
+    }
+
+    .vt-pills.blue li {
+        background: var(--vt-blue-chip);
+        border-color: var(--vt-blue-chip);
+        color: var(--vt-blue-text);
+        font-weight: 700;
+        padding: 9px 20px;
+    }
+
+    /* ---------- Colored labels (cycled: vt-c1 ... vt-c6) ---------- */
+    .vt-pills.colored li {
+        font-weight: 700;
+        border-width: 1px;
+        border-style: solid;
+        padding: 8px 18px;
+    }
+
+    .vt-c1 {
+        background: #e3ebff !important;
+        border-color: #e3ebff !important;
+        color: #1c2f8f !important;
+    }
+
+    .vt-c2 {
+        background: #e0f6ea !important;
+        border-color: #e0f6ea !important;
+        color: #0e7a3d !important;
+    }
+
+    .vt-c3 {
+        background: #fff1d6 !important;
+        border-color: #fff1d6 !important;
+        color: #a35f00 !important;
+    }
+
+    .vt-c4 {
+        background: #fde3ea !important;
+        border-color: #fde3ea !important;
+        color: #b0123a !important;
+    }
+
+    .vt-c5 {
+        background: #efe4ff !important;
+        border-color: #efe4ff !important;
+        color: #6a2bb8 !important;
+    }
+
+    .vt-c6 {
+        background: #dcf3f7 !important;
+        border-color: #dcf3f7 !important;
+        color: #0b6b7c !important;
+    }
+
+    .vt-program[class*="vt-c"] strong {
+        color: inherit;
+    }
+
+    .vt-program[class*="vt-c"] span {
+        color: inherit;
+        opacity: .8;
+    }
+
+    .vt-split {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .vt-split>div {
+        flex: 1 1 220px;
+    }
+
+    .vt-split>div+div {
+        border-left: 1px solid var(--vt-border);
+        padding-left: 24px;
+    }
+
+    .vt-split h2 {
+        margin-bottom: 14px;
+    }
+
+    /* ---------- Programs ---------- */
+    .vt-programs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .vt-program {
+        background: var(--vt-pink);
+        border-radius: 12px;
+        padding: 8px 10px;
+        text-align: center;
+    }
+
+    .vt-program strong {
+        display: block;
+        font-size: 15px;
+        margin-bottom: 4px;
+        line-height: 1.25;
+    }
+
+    .vt-program span {
+        display: block;
+        font-size: 13px;
+        color: var(--vt-muted);
+    }
+
+    /* ---------- Availability (day cards) ---------- */
+    .vt-avail-card {
+        height: auto;
+    }
+
+    .vt-avail-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .vt-avail-head h2 {
+        margin: 0 0 4px;
+    }
+
+    .vt-avail-sub {
+        margin: 0;
+        font-size: 14px;
+        color: var(--vt-muted);
+    }
+
+    .vt-flex-note {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #e8f7ee;
+        border: 1px solid #c6ebd5;
+        color: #1b5e3a;
+        border-radius: 12px;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        max-width: 380px;
+    }
+
+    .vt-flex-note .vt-ic {
+        color: var(--vt-green);
+    }
+
+    .vt-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 12px;
+    }
+
+    .vt-day {
+        border: 1px solid #e3e8f5;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #f4f7ff;
+    }
+
+    .vt-day-head {
+        background: #e3ebff;
+        color: var(--vt-blue-text);
+        text-align: center;
+        font-weight: 800;
+        font-size: 17px;
+        padding: 10px 6px;
+    }
+
+    .vt-day-head.red {
+        background: var(--vt-red);
+        color: #fff;
+    }
+
+    .vt-day-body {
+        padding: 12px 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .vt-slot {
+        display: block;
+        text-align: center;
+        background: #fde8e4;
+        color: #5a3a36;
+        border-radius: 20px;
+        padding: 7px 6px;
+        font-size: 12.5px;
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    .vt-slot.na {
+        background: #eee;
+        color: #888;
+    }
+
+    /* ---------- Review slider ---------- */
+    .vt-slider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .vt-arrow {
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 0;
+        background: #f1f1f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--vt-text);
+    }
+
+    .vt-arrow:hover {
+        background: var(--vt-pink-2);
+    }
+
+    .vt-slides {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .vt-slide {
+        display: none;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 10px 0;
+    }
+
+    .vt-slide.active {
+        display: flex;
+    }
+
+    .vt-initials {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: var(--vt-blue-chip);
+        color: var(--vt-blue-text);
+        font-weight: 800;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 58px;
+    }
+
+    .vt-slide .head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .vt-slide .name {
+        font-weight: 800;
+    }
+
+    .vt-slide p {
+        margin: 6px 0 0;
+        font-style: italic;
+        word-break: break-word;
+    }
+
+    .vt-slide small {
+        color: var(--vt-muted);
+    }
+
+    .vt-dots {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .vt-dots i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #d8d8e0;
+        cursor: pointer;
+        display: block;
+    }
+
+    .vt-dots i.active {
+        background: var(--vt-red);
+    }
+
+    .vt-no-reviews {
+        text-align: center;
+        padding: 24px 10px;
+        background: #fafafc;
+        border: 1px dashed var(--vt-border);
+        border-radius: 14px;
+    }
+
+    .vt-no-reviews-ic {
+        display: inline-flex;
+        color: #cfcfd8;
+        margin-bottom: 6px;
+    }
+
+    .vt-no-reviews strong {
+        display: block;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .vt-no-reviews p {
+        margin: 4px 0 0;
+        color: var(--vt-muted);
+        font-size: 14px;
+    }
+
+    .vt-sum {
+        color: var(--vt-muted);
+        font-size: 14px;
+        margin: -6px 0 0;
+    }
+
+    /* ---------- CTA ---------- */
+    .vt-cta {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        background: linear-gradient(135deg, #fff 0%, var(--vt-pink) 100%);
+        border: 1px solid var(--vt-border);
+        border-radius: 18px;
+        padding: 26px 32px;
+    }
+
+    .vt-cta .vt-cta-ic {
+        color: var(--vt-red);
+    }
+
+    .vt-cta .vt-cta-text {
+        flex: 1 1 280px;
+        border-left: 1px solid var(--vt-border);
+        padding-left: 24px;
+    }
+
+    .vt-cta h2 {
+        font-size: 30px;
+        font-weight: 800;
+        margin: 0 0 4px;
+    }
+
+    .vt-cta p {
+        margin: 0;
+        color: var(--vt-muted);
+    }
+
+    .vt-cta .vt-btn {
+        min-width: 270px;
+    }
+
+    @media (max-width: 991px) {
+        .vt-info {
+            border-left: 0;
+            padding-left: 0;
+        }
+
+        .vt-actions {
+            flex: 1 1 100%;
+        }
+
+        .vt-split>div+div {
+            border-left: 0;
+            padding-left: 0;
+        }
+
+        .vt-programs {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .vt-days {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (max-width: 575px) {
+        .vt-page {
+            padding-top: 90px;
+        }
+
+        .vt-avatar,
+        .vt-avatar .vt-photo {
+            width: 160px;
+            height: 160px;
+            flex-basis: 160px;
+        }
+
+        .vt-info h1 {
+            font-size: 26px;
+        }
+
+        .vt-hero,
+        .vt-card,
+        .vt-cta {
+            padding: 18px;
+        }
+
+        .vt-philosophy {
+            padding-right: 18px;
+            padding-bottom: 150px;
+        }
+
+        .vt-cta .vt-cta-text {
+            border-left: 0;
+            padding-left: 0;
+        }
+
+        .vt-cta .vt-btn {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .vt-days {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* ---------- Year levels: 4 per row ---------- */
+    .vt-split>div.vt-split-years {
+        flex: 1.4 1 260px;
+    }
+
+    .vt-pills.grid4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .vt-pills.grid4 li {
+        padding: 8px 4px;
+        text-align: center;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    /* ---------- Extra responsive (tablet + mobile) ---------- */
+    @media (min-width: 576px) and (max-width: 1199px) {
+        .vt-days {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (max-width: 991px) {
+        .vt-page {
+            padding: 50px 20px 30px;
+        }
+
+        .vt-hero {
+            padding: 22px;
+            gap: 20px;
+        }
+
+        .vt-info {
+            border-right: 0;
+            flex: 1 1 280px;
+        }
+
+        .vt-actions {
+            flex: 1 1 100%;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-left: 0;
+            border-left: 0;
+            padding-left: 18px;
+        }
+
+        .vt-actions .vt-btn {
+            flex: 1 1 200px;
+        }
+
+        .vt-split>div.vt-split-years {
+            flex: 1 1 260px;
+        }
+
+        .vt-cta {
+            padding: 22px;
+        }
+
+        .vt-cta .vt-cta-text {
+            flex: 1 1 240px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .vt-card h2 {
+            font-size: 20px;
+        }
+
+        .vt-info h1 {
+            font-size: 28px;
+        }
+
+        .vt-philosophy {
+            padding-right: 26px;
+            padding-bottom: 150px;
+        }
+
+        .vt-flex-note {
+            max-width: 100%;
+        }
+
+        .vt-cta h2 {
+            font-size: 24px;
+        }
+    }
+
+    @media (max-width: 575px) {
+        .vt-page {
+            padding: 90px 12px 24px;
+        }
+
+        .vt-wrap {
+            padding: 0;
+        }
+
+        .vt-hero {
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .vt-avatar {
+            margin: 0 auto;
+        }
+
+        .vt-info {
+            flex-basis: 100%;
+            text-align: center;
+        }
+
+        .vt-rating,
+        .vt-chips {
+            justify-content: center;
+        }
+
+        .vt-chip-box {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .vt-actions {
+            padding: 14px;
+            flex-direction: column;
+        }
+
+        .vt-actions .vt-btn {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+
+        .vt-card h2 {
+            font-size: 18px;
+        }
+
+        .vt-split>div {
+            flex-basis: 100%;
+        }
+
+        .vt-split>div+div {
+            border-top: 1px solid var(--vt-border);
+            padding-top: 16px;
+        }
+
+        .vt-pills.grid4 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .vt-programs {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .vt-program-slider,
+        .vt-exp-slider {
+            gap: 4px;
+        }
+
+        .vt-arrow {
+            flex-basis: 32px;
+            width: 32px;
+            height: 32px;
+        }
+
+        .vt-slider {
+            gap: 6px;
+        }
+
+        .vt-initials {
+            width: 44px;
+            height: 44px;
+            flex-basis: 44px;
+            font-size: 16px;
+        }
+
+        .vt-slide {
+            gap: 10px;
+        }
+
+        .vt-avail-head {
+            flex-direction: column;
+        }
+
+        .vt-day-head {
+            font-size: 15px;
+        }
+
+        .vt-cta {
+            text-align: center;
+            justify-content: center;
+        }
+
+        .vt-cta .vt-cta-ic {
+            margin: 0 auto;
+        }
+
+        .vt-cta h2 {
+            font-size: 22px;
+        }
+    }
+</style>
+@endsection
+
+@section('content')
+@php
+/* =====================================================================
+EASY-TO-EDIT DEFAULTS (change these in one place)
+===================================================================== */
+// Message Tutor button link (put your chat / contact route here)
+$messageUrl = '#';
+// "View All" links (default placeholders)
+$allProgramsUrl = '#';
+$allReviewsUrl = '#';
+// Teaching philosophy default text
+$philosophyText = "I focus on building each student's confidence by delivering clear, step-by-step explanations, providing patient and encouraging support, and adapting to their individual learning pace. My goal is to make learning enjoyable, reduce pressure, and help students achieve steady, lasting progress.";
+// Corner image for the philosophy card. Put an image path here, e.g. public_asset('assets/images/philosophy.png')
+// Leave null to show the default plant-and-books drawing.
+$philosophyImage = null;
+
+/* ---------- inline SVG icons (no icon font needed) ---------- */
+$paths = [
+'user' => '
+<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+<circle cx="12" cy="7" r="4" />',
+'pin' => '
+<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+<circle cx="12" cy="10" r="3" />',
+'cap' => '
+<path d="M22 10 12 5 2 10l10 5 10-5z" />
+<path d="M6 12v5c3 3 9 3 12 0v-5" />',
+'users' => '
+<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+<circle cx="9" cy="7" r="4" />
+<path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+<path d="M16 3.13a4 4 0 0 1 0 7.75" />',
+'layers' => '
+<path d="m12 2 10 5-10 5L2 7l10-5z" />
+<path d="m2 17 10 5 10-5" />
+<path d="m2 12 10 5 10-5" />',
+'calendar' => '
+<rect x="3" y="4" width="18" height="18" rx="2" />
+<path d="M16 2v4M8 2v4M3 10h18" />',
+'star' => '
+<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />',
+'arrow' => '
+<path d="M5 12h14M12 5l7 7-7 7" />',
+'left' => '
+<path d="m15 18-6-6 6-6" />',
+'right' => '
+<path d="m9 18 6-6-6-6" />',
+'chat' => '
+<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />',
+'play' => '
+<circle cx="12" cy="12" r="10" />
+<polygon points="10 8 16 12 10 16 10 8" />',
+'leaf' => '
+<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+<path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />',
+'check' => '
+<circle cx="12" cy="12" r="10" />
+<path d="m8 12 3 3 5-6" />',
+];
+$svg = function ($name, $size = 22) use ($paths) {
+return '<svg class="vt-ic" width="' . $size . '" height="' . $size . '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $paths[$name] . '</svg>';
+};
+
+$isUser = @Auth::check() && @Auth::user()->user_type == 'U';
+$plans = $userDetails->getTutorShipPlan;
+$tutorGrades = @$plans->pluck('grade_id')->toArray();
+$myGrade = @Auth::user()->grade;
+$avg = (float) @$userDetails->avg_review;
+$roundedRating = round($avg * 2) / 2;
+
+// Year levels & subjects (existing relations)
+$gradeNames = $plans->pluck('getGrade')->filter()->unique('id')->sortBy('id')->pluck('grade_name');
+$branchNames = $plans->pluck('getBranch')->filter()->unique('id')->sortBy('id')->pluck('branch_name');
+
+// Learning programs: one tile per subject, from the tutor's own plan rows
+$programs = $plans->filter(function ($p) { return $p->getBranch; })
+->groupBy(function ($p) { return $p->getBranch->id; })
+->map(function ($rows) {
+return [
+'name' => $rows->first()->getBranch->branch_name,
+'grades' => $rows->pluck('getGrade')->filter()->unique('id')->sortBy('id')->pluck('grade_name'),
+];
+})->sortBy('name');
+
+$fieldsOfStudy = [];
+foreach ($userDetails->getTutorAcademic ?? [] as $taqv) {
+$fld = $taqv->getFieldStudy->field_of_study ?? null;
+if ($fld) { $fieldsOfStudy[] = $fld; }
+}
+$fieldsOfStudy = array_unique($fieldsOfStudy);
+
+$qualLabels = [
+'1' => 'Doctoral Degree', '2' => 'Postgraduate', '3' => "Master's Degree (Research)",
+'4' => "Master's Degree", '5' => 'Bachelor Honours Degree', '6' => "Bachelor's Degree",
+'7' => 'Associate Degree', '8' => 'Advanced Diploma',
+];
+
+/* ---------- Timezone / state (used in hero chip + availability subtitle) ---------- */
+$timezone = $userDetails->timezone_id;
+$timezoneCity = $timezone
+? str_replace('_', ' ', basename(str_replace('\\', '/', $timezone)))
+: null;
+$stateName = optional($userDetails->getState)->state_name;
+$tutorStateId = $userDetails->state_id;
+$tutorStateName = $stateName ?? 'registered state';
+
+$stateMap = [
+'New South Wales' => 'NSW',
+'Victoria' => 'VIC',
+'Queensland' => 'QLD',
+'South Australia' => 'SA',
+'Western Australia' => 'WA',
+'Tasmania' => 'TAS',
+'Australian Capital Territory' => 'ACT',
+'Northern Territory' => 'NT',
+];
+
+$stateShort = $stateMap[$stateName] ?? $stateName;
+
+/* ---------- Book a session (same rules as original) ---------- */
+if ($isUser) {
+if (@$userDetails->status == 'AA') {
+$book = ['modal' => '#notapproved'];
+} elseif (@$admin_disable_bookings_values->disable_booking == 'Y' || in_array(date('Y-m-d'), $all_disabled_booking_dates)) {
+$book = ['modal' => '#admin_disabled_bookings_popup'];
+} elseif (in_array($myGrade, $tutorGrades)) {
+$book = ['href' => url('studentbook-class?search_tutor_slug_studentclass=' . @$userDetails->slug . '&search_tutor_id_studentclass=' . @$userDetails->id)];
+} else {
+$book = ['modal' => '#not_b_popup'];
+}
+} elseif (!@Auth::check()) {
+$book = ['guest' => 'B'];
+} else {
+$book = ['disabled' => true];
 }
 
-
-
-</style>
-{{-- jayatri for user favourite 12-10-2021  --}}
-<link href="{{ public_asset('assets/toastr/build/toastr.min.css') }}" rel="stylesheet">
-@endsection
-
-    @section('content')
-  {{-- <div class="top_mar"></div> --}}
-
-<!--- profile --->
-
-<section class="profile-section gj_tut_pub_pf_sec">
-    <div class="top-profile">
-        <div class="dark-area"></div>
-        <div class="container">
-            <div class="row">
-                <div class="zin">
-                    <div class="profile_left_panel sticky_left">
-                        <div class="profile-left-info">
-                            {{-- jayatri user favourite --}}
-                            <a href="#" class="heart_cc @if(@Auth::user()->user_type == 'U') @if(@$userDetails->getuserToFavourite) heart_cc_act @endif wish-list saveUsertoFavourite @else pointerEventsNone addDisable @endif" data-saveUsertoFavourite="{{ @$userDetails->id }}"><img src="{{ public_asset('assets/images/wish.png')}}"></a>
-                            {{--  --}}
-                            <div class="profile-top text-center">
-                                <em>
-                                    @if ($userDetails->profile_pic)
-                                      <img
-                                        src="{{ asset('storage/teacher_profile_pic/' . $userDetails->profile_pic) }}"
-                                        alt="profile_img"
-                                        style="width: 100%; height: 100%;"
-                                    >
-                                    @else
-                                        <img src="{{ public_asset('assets/images/blank1.png') }}" alt="profile_img"
-                                            style="width: 100%" class="selected_avatar_upd">
-                                    @endif
-
-                                </em>
-
-                                <h2>{{@$userDetails->f_name." ".@$userDetails->l_name }}</h2>
-                                <ul class="profile-rating">
-
-                                     @if($userDetails->avg_review>=0 && $userDetails->avg_review<=0.24)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-                                    @if($userDetails->avg_review>=0.25 && $userDetails->avg_review<=0.74)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/halfstar.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-
-                                     @if($userDetails->avg_review>=0.75 && $userDetails->avg_review<=1.24)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-
-
-                                    @if($userDetails->avg_review>=1.25 && $userDetails->avg_review<=1.74)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/halfstar.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-
-
-                                     @if($userDetails->avg_review>=1.75 && $userDetails->avg_review<=2.24)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-
-
-
-                                     @if($userDetails->avg_review>=2.25 && $userDetails->avg_review<=2.74)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/halfstar.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-
-
-
-                                    @if($userDetails->avg_review>=2.75 && $userDetails->avg_review<=3.24)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-
-
-
-                                    @if($userDetails->avg_review>=3.25 && $userDetails->avg_review<=3.74)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/halfstar.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-
-
-
-                                    @if($userDetails->avg_review>=3.75 && $userDetails->avg_review<=4.24)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star1.png')}}" alt=""></a></li>
-                                    @endif
-
-
-
-
-
-                                      @if($userDetails->avg_review>=4.25 && $userDetails->avg_review<=4.74)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/halfstar.png')}}" alt=""></a></li>
-                                    @endif
-
-
-
-                                      @if($userDetails->avg_review>=4.75 && $userDetails->avg_review<=5)
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    <li><a href="#"><img src="{{ public_asset('assets/images/star.png')}}" alt=""></a></li>
-                                    @endif
-
-            {{--
-                                    <li><img src="{{ public_asset('assets/images/star1.png')}}"></li>
-                                    <li><img src="{{ public_asset('assets/images/star.png')}}"></li>
-                                    <li><img src="{{ public_asset('assets/images/star.png')}}"></li>
-                                    <li><img src="{{ public_asset('assets/images/star.png')}}"></li>
-                                    <li><img src="{{ public_asset('assets/images/star.png')}}"></li> --}}
-                                    <li><p>{{@$userDetails->avg_review}} <span>({{@$userDetails->total_no_of_reviews}} Reviews)</span></p></li>
-                                </ul>
-
-                                <!-- {{-- <p class="addr"><span><img src="{{ public_asset('assets/images/map.png')}}"></span> {{@$userDetails->city}} , {{@$userDetails->getState->state_name}} , Australia</p> --}} -->
-                                <!-- {{-- <p class="addr"><span><img src="{{ public_asset('assets/images/map.png')}}"></span>{{ @$userDetails->city }} , {{ @$userDetails->getState->state_name }}; --}} -->
-                                <p class="addr"><span><img src="{{ public_asset('assets/images/map.png')}}"></span> {{ @$userDetails->getState->state_name }}</p>
-
-
-                               {{--  @php
-                                $exp=DB::table('teacher_experience')->where('teacher_id',$id)->where('status','A')->sum('year_of_exp');
-
-                                @endphp --}}
-                                @php
-                                    $totalSessions = \App\Models\StudentClassBooking::where(['tutor_id' => @$userDetails->id])
-                                        ->whereIn('booking_status', ['B', 'CM', 'C'])
-                                        ->count();
-                                @endphp
-
-                                {{-- <p class="exp">
-                                    <span>
-                                        @if (@$totalSessions <= 1)
-                                            {{ @$totalSessions }} session
-                                        @else
-                                            {{ @$totalSessions }} sessions
-                                        @endif
-                                    </span>
-                                </p> --}}
-
-                                {{-- <p class="exp">
-                                    Tutoring experience  -
-                                    <span> {{@$userDetails->total_experience}}</span>
-                                </p> --}}
-
-                                @if (isset($userDetails->getTutorAcademic) && count($userDetails->getTutorAcademic) != 0)
-                                    <ul class="gj_tpp_qual_sec">
-                                        @php
-                                            $aca_fs = [];
-
-                                            foreach ($userDetails->getTutorAcademic ?? [] as $taqv) {
-                                                $fld_sty = $taqv->getFieldStudy->field_of_study ?? null;
-                                                if ($fld_sty) {
-                                                    $aca_fs[] = $fld_sty;
-                                                }
-                                            }
-
-                                            $aca_fs = array_unique($aca_fs);
-                                        @endphp
-
-                                        @if (!empty($aca_fs))
-                                            <li>{{ implode(', ', $aca_fs) }}</li>
-                                        @endif
-                                    </ul>
-                                @endif
-                            </div>
-
-                            <div class="border-shadow"></div>
-                            <div class="profile-bottom">
-                                <!--p><span><img src="{{ public_asset('assets/images/edu.png')}}"></span> {{-- B.A. English --}} {{$qualifications}}</p-->
-
-                                <!--p><span><img src="{{ public_asset('assets/images/world.png')}}"></span> Speaks :  {{@$languages}}</p-->
-
-                                @if(@$hourly_rate->hourly_rate)
-                                <h6>Sessions from {{-- A --}}${{@$hourly_rate->hourly_rate}} </h6>
-                                @else
-                                <h6>Sessions from {{-- A --}}$0 </h6>
-                                @endif
-                                @php
-                                $getTutorGrades = @$userDetails->getTutorShipPlan->pluck('grade_id')->toArray();
-                                $mGrade = @Auth::user()->grade;
-                                @endphp
-
-                                <div class="pub_btns {{ @$userDetails->status }}">
-
-                                    @if(@Auth::user()->user_type == 'U')
-
-                                        @if(@$userDetails->status == 'AA')
-                                        <li><a class="open_popup_g" data-toggle="modal" data-target="#notapproved" href="javascript:void(0);">Book a session</a></li>
-                                        @else
-                                        @if(@$admin_disable_bookings_values->disable_booking == 'Y')
-                                            <a class="open_popup_g" data-toggle="modal" data-target="#admin_disabled_bookings_popup" href="javascript:void(0);">Book a session</a>
-                                        @elseif(in_array(date('Y-m-d'),$all_disabled_booking_dates))
-                                        <li><a class="open_popup_g" data-toggle="modal" data-target="#admin_disabled_bookings_popup" href="javascript:void(0);">Book a session</a></li>
-                                        @else
-                                                @if(@Auth::check())
-                                                    @if(@$userDetails->status == 'AA')
-                                                    <li><a class="open_popup_g" data-toggle="modal" data-target="#notapproved" href="javascript:void(0);">Book a session</a></li>
-                                                    @else
-                                                    @php
-                                                    $getTutorGrades = @$userDetails->getTutorShipPlan->pluck('grade_id')->toArray();
-                                                    $mGrade = @Auth::user()->grade;
-                                                    @endphp
-
-                                                        @if(in_array($mGrade,$getTutorGrades))
-
-                                                            <li><a  href="{{ url('studentbook-class?search_tutor_slug_studentclass='.@$userDetails->slug.'&search_tutor_id_studentclass='.@$userDetails->id) }}" >Book a session</a></li>
-                                                        @else
-                                                           <li><a class="open_popup_g" data-toggle="modal" data-target="#not_b_popup" href="javascript:void(0);">Book  a session</a></li>
-
-                                                        @endif
-
-                                                    @endif
-                                                @else
-                                                    @if(@$userDetails->status == 'AA')
-                                                    <li><a class="open_popup_g" data-toggle="modal" data-target="#notapproved" href="javascript:void(0);">Book a session</a></li>
-                                                    @else
-                                                    <li><a @if(!@Auth::check()) href="javascript:void(0);" data-id="{{ @$userDetails->id }}" data-toggle="modal" data-target="#log_modal{{ @$userDetails->id }}" class="save_input_data_on_click" data-type="B"   @else href="{{ url('studentbook-class?search_tutor_slug_studentclass='.@$userDetails->slug.'&search_tutor_id_studentclass='.@$userDetails->id) }}" @endif>Book a session 1</a></li>
-                                                    @endif
-                                                @endif
-                                        @endif
-                                        @endif
-                                    @else
-                                        {{-- <a href="javascript:void(0);" class="pointerEventsNone addDisable">Book a session</a> --}}
-                                    @endif
-                                    @if(@Auth::user()->user_type == 'U')
-                                            @php
-                                            @$countRev=DB::table('reviews')->where('student_id',@Auth::user()->id)->where('tutor_id',@$userDetails->id)->count();
-
-                                            @endphp
-                                            @if(!@Auth::check())
-                                                <a  data-toggle="modal" data-target="#log_modal{{ @$userDetails->id }}" class="save_input_data_on_click" data-id="{{ @$userDetails->id }}" data-type="PR"  href="javascript::void(0);">Post a review </a>
-                                            @elseif(in_array(@$userDetails->id,$getBookedTutors))
-                                                        <a
-                                                        @if(!@Auth::check()) data-toggle="modal" data-target="#log_modal{{ @$userDetails->id }}" class="save_input_data_on_click" data-id="{{ @$userDetails->id }}" data-type="PR"  href="javascript::void(0);"
-                                                        @else
-                                                        @if(@$countRev>0) data-toggle="modal" data-target="#alreadyRev" class="save_input_data_on_click" href="javascript::void(0);"
-                                                        @else
-                                                        href="{{route('student.my.review',@$userDetails->slug)}}"
-                                                        @endif
-                                                        @endif>Post a review </a>
-                                            @else
-                                                @if(@Auth::user()->timezone_id == @$userDetails->timezone_id && @Auth::user()->state == @$userDetails->state)
-                                                    @if(in_array($mGrade,$getTutorGrades))
-                                                        <a @if(!@Auth::check()) data-toggle="modal" data-target="#log_modal{{ @$userDetails->id }}" class="save_input_data_on_click" data-id="{{ @$userDetails->id }}" data-type="PR"  href="javascript::void(0);" @else @if(@$countRev>0) data-toggle="modal" data-target="#alreadyRev" class="save_input_data_on_click" href="javascript::void(0);"  @else
-                                                    href="{{route('student.my.review',@$userDetails->slug)}}" @endif @endif>Post a review </a>
-                                                    @elseif(in_array(@$userDetails->id,$getBookedTutors))
-                                                        <a
-                                                        @if(!@Auth::check()) data-toggle="modal" data-target="#log_modal{{ @$userDetails->id }}" class="save_input_data_on_click" data-id="{{ @$userDetails->id }}" data-type="PR"  href="javascript::void(0);"
-                                                        @else
-                                                        @if(@$countRev>0) data-toggle="modal" data-target="#alreadyRev" class="save_input_data_on_click" href="javascript::void(0);"
-                                                        @else
-                                                        href="{{route('student.my.review',@$userDetails->slug)}}"
-                                                        @endif
-                                                        @endif>Post a review </a>
-                                                    @else
-
-                                                        @if(@Auth::user()->timezone_id != @$userDetails->timezone_id)
-                                                        <a class="open_popup_g" data-toggle="modal" data-target="#not_p_popupTimeZone" href="javascript:void(0);">Post a review </a></li>
-                                                        @elseif(@Auth::user()->state != @$userDetails->state)
-                                                        <a class="open_popup_g" data-toggle="modal" data-target="#not_p_popupState" href="javascript:void(0);">Post a review</a></li>
-                                                        @else
-                                                        <a class="open_popup_g" data-toggle="modal" data-target="#not_p_popup" href="javascript:void(0);">Post a review</a></li>
-                                                        @endif
-                                                    @endif
-                                                @else
-
-                                                        @if(@Auth::user()->timezone_id != @$userDetails->timezone_id)
-                                                        <a class="open_popup_g" data-toggle="modal" data-target="#not_p_popupTimeZone" href="javascript:void(0);">Post a review</a></li>
-                                                        @elseif(@Auth::user()->state != @$userDetails->state)
-                                                        <a class="open_popup_g" data-toggle="modal" data-target="#not_p_popupState" href="javascript:void(0);">Post a review</a></li>
-                                                        @else
-                                                        <a class="open_popup_g" data-toggle="modal" data-target="#not_p_popup" href="javascript:void(0);">Post a review</a></li>
-                                                        @endif
-
-                                                @endif
-                                            @endif
-
-                                    @else
-                                    {{-- <a href="javascript:void(0);" class="pointerEventsNone addDisable">Post a Review</a> --}}
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="share-info">
-                                <div class="d-flex gj_soc_icn_div">
-                                    <a href="https://www.facebook.com/v.tutor.fb" target="_blank" class="social-icon"> <img src="{{ public_asset('assets/images/landing_tutor/facebook.svg')}}" alt="facebook"></a>
-
-                                    <a href="https://twitter.com/my_vtutor" target="_blank" class="social-icon"><img src="{{ public_asset('assets/images/landing_tutor/twitter.svg')}}" alt="twitter"></a>
-
-                                    <a href="https://www.instagram.com/v.tutor.insta/" target="_blank" class="social-icon"><img src="{{ public_asset('assets/images/landing_tutor/instagram.svg')}}" alt="instagram"></a>
-
-                                    <a href="https://www.pinterest.com.au/myvtutor/" target="_blank" class="social-icon"><img src="{{ public_asset('assets/images/landing_tutor/pinterest.svg')}}" alt="pinterest"></a>
-
-                                    <a href="https://www.youtube.com/channel/UC_9nRFCiM9FfQZKCSndW2jw" class="social-icon"><img src="{{ public_asset('assets/images/landing_tutor/youtube.svg')}}" alt="youtube"></a>
-                                </div>
-
-                                <div class="social_iic01" style="display: none">
-                                    <div class="gj_sh_inf_div">
-                                        <img src="{{ public_asset('assets/images/share.png')}}" alt="">
-                                        <strong>Share</strong>
-                                    </div>
-                                        {{--  <a href="#"><img src="{{ public_asset('assets/images/sc1.png')}}" alt=""></a>
-                                            <a href="#"><img src="{{ public_asset('assets/images/sc2.png')}}" alt=""></a>
-                                            <a href="#"><img src="{{ public_asset('assets/images/sc3.png')}}" alt=""></a>
-                                            <a href="#"><img src="{{ public_asset('assets/images/sc4.png')}}" alt=""></a>
-                                            --}}
-                                        {{--  {{url('/')}}/tutor-public-profile/{{$userDetails->slug}} --}}
-                                    <div id="share"></div>
-
-                                </div>
-                            </div>
-                        </div>
+/* ---------- Message tutor ---------- */
+$message = @Auth::check() ? ['href' => $messageUrl] : ['guest' => 'M'];
+
+/* ---------- Intro video (existing field) ---------- */
+$intro = @$userDetails->video_short_url ? ['modal' => '#introVideoModal'] : ['disabled' => true];
+
+/* ---------- button renderer ---------- */
+$btn = function ($cfg, $label, $cls, $icon) use ($svg, $userDetails) {
+$inner = $svg($icon, 20) . ' <span>' . e($label) . '</span>';
+if (isset($cfg['href'])) {
+return '<a class="vt-btn ' . $cls . '" href="' . e($cfg['href']) . '">' . $inner . '</a>';
+}
+if (isset($cfg['modal'])) {
+return '<a class="vt-btn ' . $cls . ' open_popup_g" data-toggle="modal" data-target="' . $cfg['modal'] . '" href="javascript:void(0);">' . $inner . '</a>';
+}
+if (isset($cfg['guest'])) {
+return '<a class="vt-btn ' . $cls . ' save_input_data_on_click" data-id="' . $userDetails->id . '" data-toggle="modal" data-target="#log_modal' . $userDetails->id . '" data-type="' . $cfg['guest'] . '" href="javascript:void(0);">' . $inner . '</a>';
+}
+return '<a class="vt-btn ' . $cls . ' pointerEventsNone addDisable" href="javascript:void(0);">' . $inner . '</a>';
+};
+
+$dayNames = [1 => 'Mon', 2 => 'Tue', 3 => 'Wed', 4 => 'Thu', 5 => 'Fri', 6 => 'Sat', 7 => 'Sun'];
+$slotsByDay = $t_my_av_show->groupBy('day');
+$redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
+@endphp
+
+<section class="vt-page gj_tut_pub_pf_sec">
+    <div class="vt-wrap">
+
+        {{-- ================= HERO ================= --}}
+        <div class="vt-hero">
+            <div class="vt-avatar">
+                @auth
+                <a href="#" class="vt-fav @if(@$userDetails->getuserToFavourite) vt-fav-act @endif saveUsertoFavourite"
+                    data-saveUsertoFavourite="{{ @$userDetails->id }}">
+                    <img src="{{ public_asset('assets/images/wish.png') }}" alt="favourite">
+                </a>
+                @endauth
+                @if ($userDetails->profile_pic)
+                <img class="vt-photo" src="{{ asset('storage/teacher_profile_pic/' . $userDetails->profile_pic) }}" alt="profile_img">
+                @else
+                <img class="vt-photo selected_avatar_upd" src="{{ public_asset('assets/images/blank1.png') }}" alt="profile_img">
+                @endif
+                @if(@$userDetails->status != 'AA')
+                <span class="vt-verified">&#10004; Verified Tutor</span>
+                @endif
+            </div>
+
+            <div class="vt-info">
+                <h1>{{ @$userDetails->f_name . ' ' . @$userDetails->l_name }}</h1>
+
+                <div class="vt-rating">
+                    <span class="vt-stars">
+                        @for ($i = 1; $i <= 5; $i++)
+                            @if ($roundedRating>= $i)
+                            <img src="{{ public_asset('assets/images/star.png') }}" alt="">
+                            @elseif ($roundedRating == $i - 0.5)
+                            <img src="{{ public_asset('assets/images/halfstar.png') }}" alt="">
+                            @else
+                            <img src="{{ public_asset('assets/images/star1.png') }}" alt="">
+                            @endif
+                            @endfor
+                    </span>
+                    <span class="score">{{ @$userDetails->avg_review }}</span>
+                    <span class="count">({{ @$userDetails->total_no_of_reviews }} reviews)</span>
+                </div>
+
+                <div class="vt-meta">
+                    @if(!empty($fieldsOfStudy))<span>{{ implode(', ', $fieldsOfStudy) }}</span>@endif
+                    @if(@$userDetails->total_experience)<span>{{ $userDetails->total_experience }} of tutoring experience</span>@endif
+                </div>
+
+                <div class="vt-chips">
+                    @if($timezoneCity || $stateShort)
+                    <div class="vt-chip-box">
+                        {!! $svg('pin', 20) !!}
+                        {{ $timezoneCity }}{{ $timezoneCity && $stateShort ? ', ' : '' }}{{ $stateShort }}
                     </div>
+                    @endif
+                    @if($branchNames->isNotEmpty())
+                    <div class="vt-chip-box">{!! $svg('cap', 20) !!} {{ $branchNames->implode(', ') }}</div>
+                    @endif
+                    @if($gradeNames->isNotEmpty())
+                    <div class="vt-chip-box">{!! $svg('users', 20) !!} {{ $gradeNames->first() }}@if($gradeNames->count() > 1) – {{ $gradeNames->last() }}@endif</div>
+                    @endif
+                </div>
+            </div>
 
-                    <div class="profile_right_panel">
-                        <div class="profile_body">
-                            <div class="skill">
-                                <h2 class="profile-heading">Tutoring Plan</h2>
-                                @if ($userDetails->getTutorShipPlan->pluck('getGrade')->filter()->isNotEmpty())
-                                    <strong class="gj_tpp_hd">Grade:</strong>
-                                    <ul class="skill_tutor">
-                                        @foreach (
-                                            $userDetails->getTutorShipPlan
-                                                ->pluck('getGrade')
-                                                ->filter()
-                                                ->unique('id')
-                                                ->sortBy('id')
-                                                ->pluck('grade_name')
-                                            as $grade
-                                        )
-                                            <li>{{ $grade }}</li>
-                                        @endforeach
-                                    </ul>
-                                @endif
+            <!-- Guest Registration Modal -->
+            <div class="modal fade" id="guestRegisterModal" tabindex="-1"
+                role="dialog" aria-labelledby="guestRegisterModalLabel">
 
-                                @if ($userDetails->getTutorShipPlan->pluck('getBranch')->filter()->isNotEmpty())
-                                    <strong class="gj_tpp_hd">Subject:</strong>
-                                    <ul class="skill_tutor">
-                                        @foreach (
-                                            $userDetails->getTutorShipPlan
-                                                ->pluck('getBranch')
-                                                ->filter()
-                                                ->unique('id')
-                                                ->sortBy('id')
-                                                ->pluck('branch_name')
-                                            as $branch
-                                        )
-                                            <li>{{ $branch }}</li>
-                                        @endforeach
-                                    </ul>
-                                @endif
+                <div class="modal-dialog modal-dialog-centered guest-modal-dialog"
+                    role="document">
 
-                                <ul class="skill_tutor">
-                                    {{-- @if(count(@$subject)>0)
-                                    @foreach(@$subject as $val)
-                                    <li>{{$val->subject}}</li>
-                                    @endforeach
-                                    @else
-                                    <li>No data</li>
+                    <div class="modal-content guest-modal">
 
-                                    @endif --}}
-
-                                    {{-- @if ($userDetails->getTutorShipPlan && $userDetails->getTutorShipPlan->isNotEmpty())
-                                        <p>
-                                        <strong>Grade:</strong>
-                                        {{
-                                            $userDetails->getTutorShipPlan
-                                            ->pluck('getGrade')
-                                            ->filter()
-                                            ->unique('id')
-                                            ->sortBy('id')
-                                            ->pluck('grade_name')
-                                            ->implode(', ')
-                                        }}
-                                        </p>
-
-                                        <p>
-                                        <strong>Subject :</strong>
-                                        {{
-                                            $userDetails->getTutorShipPlan
-                                            ->pluck('getBranch')
-                                            ->filter()
-                                            ->unique('id')
-                                            ->sortBy('id')
-                                            ->pluck('branch_name')
-                                            ->implode(', ')
-                                        }}
-                                        </p>
-                                    @else
-                                        <p>No data</p>
-                                    @endif --}}
-                                    <div class="clearfix"></div>
-                                </ul>
-                            </div>
-                         {{--    <div class="skill">
-                                <h2 class="profile-heading">Meet your Tutor</h2>
-                                <ul class="skill_tutor">
+                        <!-- Header -->
+                        <div class="guest-modal-header">
 
 
-                                    <li>Computer Science</li>
-                                    <li>Economics</li>
-                                    <li>Accounting</li>
-                                    <li>Business</li>
-                                    <li>Macroeconomics</li>
-                                    <div class="clearfix"></div>
-                                </ul>
-                            </div> --}}
+                            <button type="button" class="guest-close"
+                                data-dismiss="modal" aria-label="Close">
+                                &times;
+                            </button>
 
-                            <div class="about-pro">
-                                <h2 class="profile-heading">About me</h2>
-                                <p>{{ @$userDetails->about_me }}</p>
-                            </div>
+                            <span class="guest-tag">YOUR LEARNING JOURNEY STARTS HERE</span>
+
+                            <h3 id="guestRegisterModalLabel">
+                                Book a Trial Session
+                            </h3>
+
+                            <p>
+                                Let's find the right learning experience for you.
+                                Just share a few details to get started.
+                            </p>
+                            <div id="state_error" class="text-danger" style="display:none;"></div>
+
                         </div>
 
+                        <!-- Body -->
+                        <div class="modal-body guest-modal-body">
 
-                       {{-- video --}}
-                        @if(@$userDetails->profile_video || @$userDetails->video_short_url)
-                            <div class="profile_body">
-                                <iframe  src="https://www.youtube.com/embed/{{@$userDetails->video_short_url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                        @endif
+                            <form id="guestRegisterForm">
 
-                       <!--- <div class="profile_body">
-                            <h2 class="profile-heading">My Academic Qualification</h2>
-                            <div >
-                              <h2 class="mb-4">Full Calendar</h2>
-                              <div class="card">
-                                <div class="card-body p-0">
-                                  <div id="calendar"></div>
-                                </div>
-                              </div>
-                            </div>
+                                @csrf
 
-                        </div> --->
+                                <input type="hidden" name="tutor_slug"
+                                    value="{{ $userDetails->slug }}">
 
-                        <div class="profile_body">
-                            <div class="academic">
-                                <h2 class="profile-heading">Academics</h2>
-                                <div class="row gj_acd_rw">
-                                    @if(count(@$userDetails->getTutorAcademic)>0)
-                                        @foreach(@$userDetails->getTutorAcademic as $val)
-                                            <div class="col-ld-6 col-md-6 col-sm-6 col-12">
-                                                <div class="aca_qua gj_aca_qua">
-                                                    <img src="{{ public_asset('assets/images/academic.png')}}">
-                                                    <div class="academic-details">
-                                                        <h3>{{@$val->getUniversity->university_name}} </h3>
-                                                        <h4>{{@$val->getFieldStudy->field_of_study}}
-                                                            @if(@$val->qualification=="1")
-                                                            ( Doctoral Degree )
-                                                            @elseif(@$val->qualification=="2")
-                                                            ( Postgraduate )
+                                <input type="hidden" name="tutor_id"
+                                    value="{{ $userDetails->id }}">
+                                <div class="row">
 
-                                                            @elseif(@$val->qualification=="3")
-                                                            ( Master's Degree (Research) )
-
-                                                            @elseif(@$val->qualification=="4")
-                                                            ( Master's Degree )
-
-                                                            @elseif(@$val->qualification=="5")
-                                                            ( Bachelor Honours Degree )
-
-                                                            @elseif(@$val->qualification=="6")
-                                                            ( Bachelor’s Degree )
-
-                                                            @elseif(@$val->qualification=="7")
-                                                            ( Associate Degree )
-
-                                                            @elseif(@$val->qualification=="8")
-                                                            ( Advanced Diploma )
-
-                                                            @else
-                                                            ( Diploma )
-
-                                                            @endif
-                                                        </h4>
-                                                        <h5>{{(isset($val->effective_date) && $val->effective_date) ? date('d-m-Y', strtotime($val->effective_date)) : ''}}</h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div class="col-ld-12 col-md-12 col-sm-12 col-12">
-                                            <div class="aca_qua col-md-12">
-                                                <div class="academic-details">
-                                                    <h5>No data</h5>
-                                                </div>
+                                    <!-- First Name -->
+                                    <div class="col-sm-6">
+                                        <div class="guest-form-group">
+                                            <label>First Name <span>*</span></label>
+                                            <div class="guest-input-wrap">
+                                                <i class="fa fa-user"></i>
+                                                <input type="text" name="f_name"
+                                                    class="form-control guest-input"
+                                                    placeholder="First name"
+                                                    minlength="3" required>
                                             </div>
                                         </div>
-                                    @endif
-                                </div>
-
-                                {{-- <div class="aca_qua mbr-0">
-                                    <img src="{{ public_asset('assets/images/academic.png')}}">
-                                    <div class="academic-details">
-                                        <h3>University of Manitoba </h3>
-                                        <h4>Master degree, Pure Math (Functional Analysis)</h4>
-                                        <h5>2012 - 2014</h5>
                                     </div>
-                                </div> --}}
-                            </div>
-                        </div>
 
-                        <div class="profile_body">
-                            <div class="academic">
-                                <h2 class="profile-heading">Experience</h2>
-
-                                <div class="row gj_acd_rw">
-                                    @if(count(@$userDetails->getTutorExperience) > 0)
-                                        @foreach(@$userDetails->getTutorExperience as $val)
-                                            <div class="col-ld-6 col-md-6 col-sm-6 col-12">
-                                                <div class="aca_qua gj_aca_qua">
-                                                    <img src="{{ public_asset('assets/images/work.png')}}">
-                                                    <div class="academic-details">
-                                                        <h3>{{@$val->organization}} </h3>
-                                                        <h4>{{@$val->job_title}}</h4>
-                                                        <h5>{{@$val->from_year}} - {{@$val->to_year}}</h5>
-                                                        <p>{{@$val->description}}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div class="col-ld-12 col-md-12 col-sm-12 col-12">
-                                            <div class="aca_qua">
-                                                <div class="academic-details">
-                                                    <h5>No data</h5>
-                                                </div>
+                                    <!-- Email -->
+                                    <div class="col-sm-6">
+                                        <div class="guest-form-group">
+                                            <label>Email Address <span>*</span></label>
+                                            <div class="guest-input-wrap">
+                                                <i class="fa fa-envelope"></i>
+                                                <input type="email" name="email"
+                                                    class="form-control guest-input"
+                                                    placeholder="Email address"
+                                                    required>
                                             </div>
                                         </div>
-                                    @endif
-                                </div>
-
-                                {{-- <div class="aca_qua mbr-0">
-                                    <img src="{{ public_asset('assets/images/work.png')}}">
-                                    <div class="academic-details">
-                                        <h3>University of New Brunswick </h3>
-                                        <h4>Teaching assistant</h4>
-                                        <h5>September 2009 - July 2010</h5>
-                                        <p>Lorem ipsum dolor is amet, consectetur adipiscing eiusmod incididunt labor aibore et dolore magna aliqua.labor consectetur is adipiscing eiusmod tempor incididunt ut labore et dolore magna aliqua eiusmod.</p>
                                     </div>
-                                </div> --}}
-                            </div>
-                        </div>
 
-                        <div class="profile_body">
-                            <div class="academic">
-                                <h2 class="profile-heading">Recognitions</h2>
-
-                                <div class="row gj_acd_rw">
-                                    @if(count(@$userDetails->getTutorRecognision)>0)
-                                        @foreach(@$userDetails->getTutorRecognision as $val)
-                                            <div class="col-ld-12 col-md-12 col-sm-12 col-12">
-                                                <div class="aca_qua gj_aca_qua">
-                                                    <img src="{{ public_asset('assets/images/recoc.png')}}">
-                                                    <div class="academic-details">
-                                                        <h3>{{$val->recg_title}}</h3>
-                                                        <h4>{{$val->organization}}</h4>
-                                                        <h5>{{$val->year_of_recg}}</h5>
-                                                        <p>{{$val->description}}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        <div class="col-ld-12 col-md-12 col-sm-12 col-12">
-                                            <div class="aca_qua">
-                                                <div class="academic-details">
-                                                    <h5>No data</h5>
-                                                </div>
+                                    <!-- Year Level -->
+                                    <div class="col-sm-6">
+                                        <div class="guest-form-group">
+                                            <label>Year Level <span>*</span></label>
+                                            <div class="guest-input-wrap">
+                                                <i class="fa fa-graduation-cap"></i>
+                                                <select name="grade"
+                                                    class="form-control guest-input" required>
+                                                    <option value="">Select year level</option>
+                                                    @foreach($allGrades as $grade)
+                                                    <option value="{{ $grade->id }}">
+                                                        {{ $grade->grade_name }}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-
-
-                        {{-- <div class="profile_body">
-                            <div class="academic">
-                                <h2 class="profile-heading">Tutorship plan</h2>
-                                @if(count(@$userDetails->getTutorShipPlan)>0)
-                                @php
-                                $plan=[];
-                                @endphp
-
-                                @foreach(@$userDetails->getTutorShipPlan as $val)
-                                @php
-                                if(!in_array($val->getGrade->grade_name, $plan)){
-                                         array_push($plan, $val->getGrade->grade_name);
-                                    }
-
-                                @endphp
-                                @endforeach
-
-                                @foreach($plan as $val)
-
-                                <div class="aca_qua">
-                                    <img src="{{ public_asset('assets/images/recoc.png')}}">
-                                    <div class="academic-details">
-                                        <h3>{{$val->getGrade->grade_name}}</h3>
-                                        <h4>{{$val->getSubject->subject}}</h4>
-                                        <h5>{{@$val->year_of_recg}}</h5>
-                                        <p>{{$val}}</p>
-                                        @foreach(@$userDetails->getTutorShipPlan as $val2)
-                                        @if($val2->getGrade->grade_name==$val)
-
-                                           <h4>{{$val2->getSubject->subject}} ( ${{@$val2->hourly_rate}}/h )</h4>
-
-                                        @endif
-                                        @endforeach
-                                    </div>
-                                </div>
-                                @endforeach
-                                @else
-                                <div class="aca_qua">
-                                <div class="academic-details">
-                               <h5>No data</h5>
-                           </div>
-                            </div>
-
-                                @endif
-
-                            </div>
-                        </div> --}}
-
-
-
-                        <div class="profile_body">
-                            <div class="academic">
-                                <h2 class="profile-heading">Tutoring Schedule</h2>
-                                <div class="skill">
-
-                                <ul class="skill_tutor">
-                                    @php
-                                        $order = [1 => 'Monday', 2 => 'Tuesday', 3 => 'Wednesday', 4 => 'Thursday', 5 => 'Friday', 6 => 'Saturday', 7 => 'Sunday'];
-
-                                        $slotsByDay = $t_my_av_show
-                                            ->groupBy('day')
-                                            ->sortBy(function($slots, $day) use ($order) {
-                                                return array_search($day, array_keys($order));
-                                            });
-                                    @endphp
-
-                                    @if ($slotsByDay->isNotEmpty())
-                                    <table style="border-collapse: collapse; width: auto;">
-                                        <tbody>
-                                        @foreach ($slotsByDay as $day => $slots)
-                                            <tr>
-                                                <td style="padding: 4px 10px; font-weight:600; text-align:right;">
-                                                    {{ $order[$day] ?? 'Day '.$day }}
-                                                </td>
-                                                <td style="padding: 4px 10px;">
-                                                    {{-- {{
-                                                    $slots
-                                                        ->map(function($t) {
-                                                        return date('h:i a', strtotime($t->from_time))
-                                                                . ' – ' . date('h:i a', strtotime($t->to_time));
-                                                        })
-                                                        ->implode(', ')
-                                                    }} --}}
-
-                                                    @if ($slots->isNotEmpty())
-                                                        <ul class="gj_tutppf_slots">
-                                                            @foreach ($slots as $t)
-                                                                <li>
-                                                                    {{ date('h:i a', strtotime($t->from_time)) }} – {{ date('h:i a', strtotime($t->to_time)) }}
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                    @endif
-
-
-                                    <div class="clearfix"></div>
-                                </ul>
-                            </div>
-                                </div>
-
-                                <!--div class="my-calander">
-                                    <p>Check schedule to book a session</p>
-                                    <div class="calander-box">
-                                        <ul>
-                                            <li>
-                                                <em class="c1"></em>
-                                                <span>Booked</span>
-                                            </li>
-
-                                            <li>
-                                                <em class="c2"></em>
-                                                <span>Available</span>
-                                            </li>
-
-                                           {{--  <li>
-                                                <em class="c3"></em>
-                                                <span>abcd</span>
-                                            </li> --}}
-                                        </ul>
                                     </div>
 
-                                </div>
+                                    <!-- State -->
+                                    <div class="col-sm-6">
+                                        <div class="guest-form-group">
+                                            <label>State <span>*</span></label>
+                                            <div class="guest-input-wrap">
+                                                <i class="fa fa-map-marker"></i>
+                                                <select name="parent_state" id="guest_parent_state"
+                                                    class="form-control guest-input" required>
 
-                                <div id="scheduler">
+                                                    <option value="">Select state</option>
 
-                                </div>
+                                                    @foreach($allStates as $state)
+                                                    <option value="{{ $state->id }}"
+                                                        data-timezone="{{ $state->time_zone }}">
+                                                        {{ $state->state_name }}
+                                                    </option>
+                                                    @endforeach
 
-                            </div-->
-                        </div>
+                                                </select>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        <div class="profile_body">
-                            <div class="academic">
-                                <div class="test-heading">
-                                    <h2 class="profile-heading">Ratings, Reviews & Feedback</h2>
-                                    <div class="rating-overview">
-                                        <span><img src="{{ public_asset('assets/images/white-star.png')}}"> {{@$userDetails->avg_review}}</span>
-                                        <p>{{@$userDetails->total_no_of_reviews}} review(s)</p>
-                                    </div>
-                                </div>
-
-
-                                     {{-- review part start --}}
-                                    @if(count($reviews)>0)
-                                        @foreach($reviews as $key=> $val)
-                                            @if($key==0 || $key==1  )
-                                                <div class="testi-details">
-                                                    <div class="testimonail-user-sec">
-                                                        <p><span><img src="{{ public_asset('assets/images/by.png')}}"></span> By : {{@$val->student->f_name}} {{@$val->student->l_name}}</p>
-                                                    @for($i=0;$i<=(@$val->ratting-1);$i++)
-
-                                                        <a href="#url"><img src="{{ public_asset('assets/images/star.png')}}"></a>
-
-                                                    @endfor
-                                                    {{-- blank --}}
-                                                        @for($i=0;$i<(5-@$val->ratting);$i++)
-
-                                                        <a href="#url"><img src="{{ public_asset('assets/images/star1.png')}}"></a>
-
-                                                    @endfor
-                                                    </div>
-                                                    <div class="testimonail-heading-part">
-                                                        <h3>Excellent Teacher</h3>
-                                                        <p>{{date('d/M/y', strtotime(@$val->created_at))}} , {{date('h:i A', strtotime(@$val->created_at))}} </p>
-                                                    </div>
-                                                    <p style="word-break: break-all;">{{@$val->message}}</p>
-                                                </div>
-                                            @endif
-                                        @endforeach
-
-
-                                        <div class="more-text5" style="display: none;">
-                                            @foreach($reviews as $key=> $val)
-                                                @if($key==0 || $key==1 )
-                                                @else
-                                                    <div class="testi-details">
-                                                        <div class="testimonail-user-sec">
-                                                            <p><span><img src="{{ public_asset('assets/images/by.png')}}"></span> By : {{@$val->student->f_name}} {{@$val->student->l_name}}</p>
-                                                        @for($i=0;$i<=(@$val->ratting-1);$i++)
-
-                                                            <a href="#url"><img src="{{ public_asset('assets/images/star.png')}}"></a>
-
-                                                        @endfor
-                                                        {{-- blank --}}
-                                                            @for($i=0;$i<(5-@$val->ratting);$i++)
-
-                                                            <a href="#url"><img src="{{ public_asset('assets/images/star1.png')}}"></a>
-
-                                                        @endfor
-                                                        </div>
-                                                        <div class="testimonail-heading-part">
-                                                            <h3>Excellent Teacher</h3>
-                                                            <p>{{date('d/M/y', strtotime(@$val->created_at))}} , {{date('h:i A', strtotime(@$val->created_at))}} </p>
-                                                        </div>
-                                                        <p>{{@$val->message}}</p>
-                                                    </div>
-                                                @endif
-                                            @endforeach
+                                                <input type="hidden" name="timezone_id" id="guest_timezone_id">
+                                            </div>
                                         </div>
-                                {{-- if more than 3 data then show this --}}
-                                 @if(count($reviews)>2)
-                                <a class="moreless-button5 allread">Load More +</a>
-                                @endif
-                                @else
+                                    </div>
 
-                                <div class="aca_qua">
-                                <div class="academic-details">
-                               <h5>No data</h5>
-                           </div>
-                            </div>
+                                </div>
 
-                                @endif
+                                <div id="guestRegisterError"
+                                    class="text-danger guest-error"></div>
 
 
-                                 {{-- review part end --}}
+                                <button type="submit"
+                                    class="guest-submit-btn"
+                                    id="guestRegisterSubmit">
+                                    <span>Continue to Booking</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </button>
 
-                            </div>
+                            </form>
+
                         </div>
+
 
                     </div>
                 </div>
             </div>
+
+            <div class="vt-actions">
+                {!! $btn($message, 'Message Tutor', 'primary', 'chat') !!}
+
+                @if(Auth::check())
+                <a href="{{ url('studentbook-class?search_tutor_slug_studentclass=' . $userDetails->slug . '&search_tutor_id_studentclass=' . $userDetails->id) }}"
+                    class="vt-btn primary">
+                    <i class="fa fa-calendar"></i>
+                    <span>Book a Trial Session</span>
+                </a>
+                @else
+                <button type="button"
+                    class="vt-btn primary"
+                    data-toggle="modal"
+                    data-target="#guestRegisterModal">
+                    <i class="fa fa-calendar"></i>
+                    <span>Book a Trial Session</span>
+                </button>
+                @endif
+
+                @if(!empty($tutorVideo))
+                <button type="button"
+                    class="vt-btn ghost js-watch-intro"
+                    id="watchIntroVideo"
+                    data-video="{{ $tutorVideo }}">
+                    {!! $svg('play', 20) !!}
+                    <span>Watch Intro Video (1 min)</span>
+                </button>
+                @else
+                <button type="button"
+                    class="vt-btn ghost pointerEventsNone addDisable"
+                    disabled>
+                    {!! $svg('play', 20) !!}
+                    <span>Watch Intro Video (1 min)</span>
+                </button>
+                @endif
+            </div>
         </div>
+
+        {{-- ================= ABOUT + TEACHING PHILOSOPHY ================= --}}
+        <div class="row vt-gap">
+            <div class="col-lg-6 mb-4">
+                <div class="vt-card pink">
+                    <h2>{!! $svg('user') !!} About Me</h2>
+                    <p class="mb-0">{{ @$userDetails->about_me ?: 'No data' }}</p>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="vt-card vt-philosophy">
+                    <h2>{!! $svg('leaf') !!} My Teaching Philosophy</h2>
+                    <p class="mb-0">{{ $philosophyText }}</p>
+
+                    {{-- corner image slot --}}
+                    <div class="vt-corner-img">
+                        @if($philosophyImage)
+                        <img src="{{ $philosophyImage }}" alt="Teaching philosophy">
+                        @else
+                        <svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+                            <rect x="12" y="92" width="96" height="14" rx="3" fill="#1c9bd8" />
+                            <rect x="18" y="78" width="84" height="14" rx="3" fill="#f5a623" />
+                            <rect x="24" y="64" width="72" height="14" rx="3" fill="#d0021b" />
+                            <path d="M48 64h24l-3 -22H51z" fill="#f4f1ee" stroke="#d9d2cb" />
+                            <path d="M60 42C52 30 44 28 38 30c2 8 10 14 22 12z" fill="#2fa84f" />
+                            <path d="M60 42c8-16 18-18 26-14-2 10-12 16-26 14z" fill="#12a150" />
+                            <path d="M60 42c-2-12 0-22 4-30 6 8 6 20-4 30z" fill="#37b866" />
+                        </svg>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- ================= QUALIFICATIONS / SUBJECTS / PROGRAMS ================= --}}
+        <div class="row">
+            <div class="col-lg-5 mb-4">
+                <div class="vt-card">
+                    <h2>{!! $svg('cap') !!} Qualifications &amp; Experience</h2>
+
+                    <h3 class="vt-sub">Qualifications</h3>
+                    @if(count(@$userDetails->getTutorAcademic) > 0)
+                    <ul class="vt-check">
+                        @foreach(@$userDetails->getTutorAcademic as $val)
+                        <li>
+                            {{ @$val->getFieldStudy->field_of_study }}
+                            ({{ $qualLabels[@$val->qualification] ?? 'Diploma' }})
+                            <small>
+                                {{ @$val->getUniversity->university_name }}
+                                @if(isset($val->effective_date) && $val->effective_date) · {{ date('d-m-Y', strtotime($val->effective_date)) }} @endif
+                            </small>
+                        </li>
+                        @endforeach
+                    </ul>
+                    @else
+                    <p class="text-muted">No data</p>
+                    @endif
+
+                    <div class="vt-divider"></div>
+
+
+                    <h3 class="vt-sub">Experience</h3>
+
+                    @if(@$userDetails->total_experience || count(@$userDetails->getTutorExperience) > 0)
+
+                    @if(@$userDetails->total_experience)
+                    <p class="mb-2">
+                        <strong>{{ $userDetails->total_experience }}</strong> of tutoring experience
+                    </p>
+                    @endif
+
+                    @if(count(@$userDetails->getTutorExperience) > 0)
+
+                    <div class="vt-exp-slider">
+
+                        <button type="button" class="vt-arrow" id="vtExpPrev" aria-label="Previous experience">
+                            {!! $svg('left', 18) !!}
+                        </button>
+
+                        <div class="vt-exp-content">
+                            <ul class="vt-check mb-0" id="vtExperienceList">
+
+                                @foreach($userDetails->getTutorExperience as $key => $val)
+
+                                <li class="vt-experience-item">
+                                    {{ @$val->job_title }} – {{ @$val->organization }}
+
+                                    <small>
+                                        {{ @$val->from_year }} - {{ @$val->to_year }}
+                                    </small>
+
+                                    @if(@$val->description)
+                                    <small>{{ $val->description }}</small>
+                                    @endif
+
+                                </li>
+
+                                @endforeach
+
+                            </ul>
+                        </div>
+
+                        <button type="button" class="vt-arrow" id="vtExpNext" aria-label="Next experience">
+                            {!! $svg('right', 18) !!}
+                        </button>
+
+                    </div>
+                    @if(count($userDetails->getTutorExperience) > 3)
+                    <div class="vt-dots" id="vtExpDots">
+                        @for($i = 0; $i < ceil(count($userDetails->getTutorExperience) / 3); $i++)
+                            <i class="{{ $i == 0 ? 'active' : '' }}"
+                                data-page="{{ $i }}"></i>
+                            @endfor
+                    </div>
+                    @endif
+                    @endif
+
+                    @else
+
+                    <p class="text-muted">No data</p>
+
+                    @endif
+                </div>
+            </div>
+
+            <div class="col-lg-7 mb-4">
+                <div class="vt-card mb-4" style="height:auto;">
+                    <div class="vt-split">
+                        <div>
+                            <h2>{!! $svg('layers') !!} Subjects</h2>
+                            @if($branchNames->isNotEmpty())
+                            <ul class="vt-pills colored">
+                                @foreach($branchNames as $branch)
+                                <li class="vt-c{{ (($loop->index + 2) % 6) + 1 }}">{{ $branch }}</li>
+                                @endforeach
+                            </ul>
+                            @else
+                            <p class="text-muted">No data</p>
+                            @endif
+                        </div>
+                        <div class="vt-split-years">
+                            <h2>{!! $svg('users') !!} Year Levels</h2>
+                            @if($gradeNames->isNotEmpty())
+                            <ul class="vt-pills colored grid4">
+                                @foreach($gradeNames as $grade)
+                                <li class="vt-c{{ ($loop->index % 6) + 1 }}">{{ $grade }}</li>
+                                @endforeach
+                            </ul>
+                            @else
+                            <p class="text-muted">No data</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Managed Learning Programs --}}
+                <div class="vt-card" style="height:auto;">
+
+                    <div class="vt-card-head">
+                        <h2>{!! $svg('layers') !!} Managed Learning Programs</h2>
+                    </div>
+
+                    @if(isset($learningPrograms) && $learningPrograms->isNotEmpty())
+
+                    <div class="vt-program-slider">
+
+                        <button type="button" class="vt-arrow" id="vtProgramPrev" aria-label="Previous programs">
+                            {!! $svg('left', 18) !!}
+                        </button>
+
+                        <div class="vt-programs" id="vtProgramList">
+
+                            @foreach($learningPrograms as $program)
+
+                            <div class="vt-program vt-program-item vt-c{{ ($loop->index % 6) + 1 }}">
+
+                                <strong>{{ $program['name'] }}</strong>
+
+                                @if($program['grades']->isNotEmpty())
+                                <span>
+                                    {{ $program['grades']->implode(', ') }}
+                                </span>
+                                @endif
+
+                            </div>
+
+                            @endforeach
+
+                        </div>
+
+                        <button type="button" class="vt-arrow" id="vtProgramNext" aria-label="Next programs">
+                            {!! $svg('right', 18) !!}
+                        </button>
+
+                    </div>
+                    @if($learningPrograms->count() > 8)
+                    <div class="vt-dots" id="vtProgramDots">
+                        @for($i = 0; $i < ceil($learningPrograms->count() / 8); $i++)
+                            <i class="{{ $i == 0 ? 'active' : '' }}"
+                                data-page="{{ $i }}"></i>
+                            @endfor
+                    </div>
+                    @endif
+                    @else
+
+                    <p class="text-muted mb-0">No learning programs available</p>
+
+                    @endif
+
+                </div>
+            </div>
+        </div>
+
+        {{-- ================= AVAILABILITY (full width, day cards) ================= --}}
+        <div class="vt-card vt-avail-card mb-4">
+            <div class="vt-avail-head">
+                <div>
+                    <h2>{!! $svg('calendar') !!} Availability</h2>
+                    <p class="vt-avail-sub">My weekly availability for online tutoring sessions ({{ $timezoneCity ?: 'local time' }})</p>
+                </div>
+                <div class="vt-flex-note">
+                    {!! $svg('check', 20) !!}
+                    <span>Flexible times available - please message me to discuss other options if needed.</span>
+                </div>
+            </div>
+
+            <div class="vt-days">
+                @foreach($dayNames as $num => $label)
+                <div class="vt-day">
+                    <div class="vt-day-head {{ in_array($num, $redDays) ? 'red' : '' }}">{{ $label }}</div>
+                    <div class="vt-day-body">
+                        @if(isset($slotsByDay[$num]) && $slotsByDay[$num]->isNotEmpty())
+                        @foreach($slotsByDay[$num] as $t)
+                        <span class="vt-slot">{{ date('g:i a', strtotime($t->from_time)) }} – {{ date('g:i a', strtotime($t->to_time)) }}</span>
+                        @endforeach
+                        @else
+                        <span class="vt-slot na">Not available</span>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- ================= REVIEWS (existing design, now below availability) ================= --}}
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="vt-card star">
+                    <div class="vt-card-head">
+                        <h2><span style="color:#ef990e; display:inline-flex;">{!! str_replace('fill="none"', 'fill="currentColor"', $svg('star', 24)) !!}</span> What Parents Say</h2>
+                        <a class="vt-all-link" href="{{ $allReviewsUrl }}">View All Reviews {!! $svg('arrow', 16) !!}</a>
+                    </div>
+
+                    @if(count($reviews) > 0)
+                    <div class="vt-slider">
+                        @if(count($reviews) > 1)
+                        <button type="button" class="vt-arrow" id="vtPrev" aria-label="Previous review">{!! $svg('left', 18) !!}</button>
+                        @endif
+                        <div class="vt-slides">
+                            @foreach($reviews as $key => $val)
+                            <div class="vt-slide {{ $key == 0 ? 'active' : '' }}">
+                                <div class="vt-initials">{{ strtoupper(substr(@$val->student->f_name, 0, 1) . substr(@$val->student->l_name, 0, 1)) }}</div>
+                                <div>
+                                    <div class="head">
+                                        <span class="name">{{ @$val->student->f_name }} {{ @$val->student->l_name }}</span>
+                                        <span class="vt-stars sm">
+                                            @for($i = 0; $i < (int) @$val->ratting; $i++)<img src="{{ public_asset('assets/images/star.png') }}" alt="">@endfor
+                                                @for($i = 0; $i < (5 - (int) @$val->ratting); $i++)<img src="{{ public_asset('assets/images/star1.png') }}" alt="">@endfor
+                                        </span>
+                                    </div>
+                                    <p>“{{ @$val->message }}”</p>
+                                    <small>{{ date('d/M/y, h:i A', strtotime(@$val->created_at)) }}</small>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                        @if(count($reviews) > 1)
+                        <button type="button" class="vt-arrow" id="vtNext" aria-label="Next review">{!! $svg('right', 18) !!}</button>
+                        @endif
+                    </div>
+                    @if(count($reviews) > 1)
+                    <div class="vt-dots vt-review-dots">
+                        @foreach($reviews as $key => $val)<i class="{{ $key == 0 ? 'active' : '' }}" data-i="{{ $key }}"></i>@endforeach
+                    </div>
+                    @endif
+                    @else
+                    <div class="vt-no-reviews">
+                        <span class="vt-no-reviews-ic">{!! $svg('star', 34) !!}</span>
+                        <strong>No reviews yet</strong>
+                        <p>Reviews from parents will appear here once they are available.</p>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        {{-- ================= CTA ================= --}}
+        <div class="vt-cta">
+            <div class="vt-cta-ic">{!! $svg('layers', 64) !!}</div>
+            <div class="vt-cta-text">
+                <h2>Ready to get started?</h2>
+                <p>Book a trial session with {{ @$userDetails->f_name }} and see how personalised support can make a difference.</p>
+            </div>
+            {!! $btn($book, 'Book a Trial Session', 'primary', 'calendar') !!}
+        </div>
+
     </div>
 </section>
+@endsection
 
-    @endsection
-    @section('footer')
-    <div class="gj_tut_ppf_footer_area">
-        @include('include.footer')
-        <div class="modal " id="not_b_popup">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title ">Message</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div class="">
-                            <div class=" ">
-                                <div class="meass-popup">
-                                    <ul class="">
-                                        <li class="">
-                                            You cannot book a session outside your grade
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal " id="notapproved">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title ">Message</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div class="">
-                            <div class=" ">
-                                <div class="meass-popup">
-                                    <ul class="">
-                                        <li class="">
-                                            This V-Tutor is currently unavailable. Please try another tutor
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal " id="not_b_popupState">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title ">Message</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div class="">
-                            <div class=" ">
-                                <div class="meass-popup">
-                                    <ul class="">
-                                        <li class="">
-                                            You cannot book this tutor since they are outside your State / Timezone. Try to book tutors within your State / Timezone.
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal " id="not_b_popupTimeZone">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title ">Message</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div class="">
-                            <div class=" ">
-                                <div class="meass-popup">
-                                    <ul class="">
-                                        <li class="">
-                                            You cannot book this tutor since they are outside your State / Timezone. Try to book tutors within your State / Timezone.
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal " id="admin_disabled_bookings_popup">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title bb_disabled_booking_u">Message</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <div class="">
-                            <div class=" ">
-                                <div class="meass-popup">
-                                    <ul class="">
-                                        <li class="">
-                                            You cannot make bookings at this time. Please contact support
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="alreadyRev" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content revmodal">
-                    <!-- Modal Header -->
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <button type="button" class="close" data-dismiss="modal">×</button>
-                        <div class="modal_button">
-                            <img src="{{ public_asset('assets/images/review_given.png') }}" width="100px">
-                            <center><h2>You have already reviewed this tutor.</h2></center>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal " id="not_p_popupState">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title ">Message</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div class="">
-                        <div class=" ">
-                            <div class="meass-popup">
-                                <ul class="">
-                                    <li class="">
-                                        You cannot post a review outside your state
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        </div>
-        <div class="modal " id="not_b_popupTimeZone">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title ">Message</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <div class="">
-                        <div class=" ">
-                            <div class="meass-popup">
-                                <ul class="">
-                                    <li class="">
-                                        Sorry, this tutor appear to be outside your time zone. You cannot book a class outside your time zone!
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        </div>
-        <div class="modal " id="not_p_popupTimeZone">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title ">Message</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <!-- Modal body -->
+@section('footer')
+<div class="gj_tut_ppf_footer_area">
+    @include('include.footer')
 
-                    </form>
+    @php
+    $simpleModals = [
+    'not_b_popup' => 'You cannot book a session outside your grade',
+    'notapproved' => 'This V-Tutor is currently unavailable. Please try another tutor',
+    'admin_disabled_bookings_popup' => 'You cannot make bookings at this time. Please contact support',
+    ];
+    @endphp
+
+    @foreach($simpleModals as $id => $msg)
+    <div class="modal" id="{{ $id }}">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Message</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="meass-popup">
+                        <ul>
+                            <li>{{ $msg }}</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
     </div>
-    @endsection
-    @section('script')
-    @include('include.script')
-     <script src="https://jqwidgets.com/public/jqwidgets/jqx-all.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://jqwidgets.com/public/jqwidgets/styles/jqx.base.css">
+    @endforeach
 
-     <script type="text/javascript">
-        $(document).ready(function () {
+    {{-- ================= INTRO VIDEO MODAL (new design) ================= --}}
+    @if(!empty($tutorVideo))
+    <div class="modal fade"
+        id="introVideoModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="introVideoModalLabel"
+        aria-hidden="true">
 
-           var d = new Date();
-           var n = d.getDay();
-          //console.log(n);//5=friday
+        <div class="modal-dialog modal-dialog-centered vt-video-dialog" role="document">
 
-// var date = new Date();
-// var k=date. setDate(date. getDate() + 7);
-// console. log(date);
+            <div class="modal-content vt-video-modal">
 
+                <button type="button"
+                    class="vt-video-close"
+                    data-dismiss="modal"
+                    aria-label="Close">&times;</button>
 
-   var appointments = new Array();
+                {{-- Header: tutor photo + name --}}
+                <div class="vt-video-head">
+                    <div class="vt-video-avatar">
+                        @if ($userDetails->profile_pic)
+                        <img src="{{ asset('storage/teacher_profile_pic/' . $userDetails->profile_pic) }}" alt="{{ @$userDetails->f_name }}">
+                        @else
+                        <img src="{{ public_asset('assets/images/blank1.png') }}" alt="{{ @$userDetails->f_name }}">
+                        @endif
+                    </div>
+                    <div class="vt-video-title">
+                        <span class="vt-video-tag">MEET YOUR TUTOR</span>
+                        <h4 id="introVideoModalLabel">{{ @$userDetails->f_name . ' ' . @$userDetails->l_name }}</h4>
+                        <p>A quick 1-minute introduction</p>
+                    </div>
+                </div>
 
+                {{-- Video --}}
+                <div class="vt-video-body">
+                    <div class="vt-video-frame">
+                        <span class="vt-video-loader"></span>
+                        <iframe
+                            id="introVideoFrame"
+                            src=""
+                            title="Tutor intro video"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            
+                </div>
 
+            </div>
 
+        </div>
 
+    </div>
+    @endif
+</div>
+@endsection
 
-   /*booked days*/
-@if(@$booked)
-@foreach($booked as $key=> $val)
-//console.log({{(int)($val['year'])}}, {{(int)($val['month'])}},{{(int)($val['day'])}} , {{(int)($val['from_hour'])}}, {{(int)($val['from_min'])}}, 0);
-var appointmentbooked{{$key}} = {
-    id: "id2",
-    description: "",
-    location: "",
-    subject: "Booked",
-    calendar: "Room 1",
-
-     start: new Date({{(int)($val['year'])}}, {{(int)($val['month'])-1}},{{(int)($val['day'])}} , {{(int)($val['from_hour'])}}, {{(int)($val['from_min'])}}, 0),
-    end: new Date({{(int)($val['year'])}}, {{(int)($val['month'])-1}},{{(int)($val['day'])}} , {{(int)($val['to_hour'])}}, {{(int)(@$val['to_min'])}}, 0),
-    background:"#b8110b"
-}
-appointments.push(appointmentbooked{{$key}});
-
-@endforeach
-@endif
-
-
-
-
-   /*available days*/
-@if(@$notbook)
-@foreach(@$notbook as $key=> $val)
-//console.log({{(int)($val['year'])}}, {{(int)($val['month'])}},{{(int)($val['day'])}} , {{(int)($val['from_hour'])}}, {{(int)($val['from_min'])}}, 0);
-var appointmentaval{{$key}} = {
-    id: "id2",
-    description: "",
-    location: "",
-    subject: "Available",
-    calendar: "Room 1",
-
-     start: new Date({{(int)($val['year'])}}, {{(int)($val['month'])-1}},{{(int)($val['day'])}} , {{(int)($val['from_hour'])}}, {{(int)($val['from_min'])}}, 0),
-    end: new Date({{(int)($val['year'])}}, {{(int)($val['month'])-1}},{{(int)($val['day'])}} , {{(int)($val['to_hour'])}}, {{(int)(@$val['to_min'])}}, 0),
-    background:"#7db343"
-}
-appointments.push(appointmentaval{{$key}});
-
-@endforeach
-@endif
-
-
-
-
-
-
-
-
-
-
-   /*booked days*/
-
-{{--
-@foreach($booked as $key=> $val)
-//console.log({{(int)($val['year'])}}, {{(int)($val['month'])}},{{(int)($val['day'])}} , {{(int)($val['from_hour'])}}, {{(int)($val['from_min'])}}, 0);
-var appointment{{$key}} = {
-    id: "id2",
-    description: "",
-    location: "",
-    subject: "Booked",
-    calendar: "Room 2",
-
-     start: new Date({{(int)($val['year'])}}, {{(int)($val['month'])-1}},{{(int)($val['day'])}} , {{(int)($val['from_hour'])}}, {{(int)($val['from_min'])}}, 0),
-    end: new Date({{(int)($val['year'])}}, {{(int)($val['month'])-1}},{{(int)($val['day'])}} , {{(int)($val['to_hour'])}}, {{(int)(@$val['to_min'])}}, 0),
-    background:"#b8110b"
-}
-appointments.push(appointment{{$key}});
-
-@endforeach
---}}
-
-
-
-
-
-
-
-
-
-
-
-// prepare the data
- var source =
-            {
-                dataType: "array",
-                dataFields: [
-                    { name: 'id', type: 'string' },
-                    { name: 'description', type: 'string' },
-                    { name: 'location', type: 'string' },
-                    { name: 'subject', type: 'string' },
-                    { name: 'calendar', type: 'string' },
-                    { name: 'start', type: 'date' },
-                    { name: 'end', type: 'date' },
-                    { name: 'background', type: 'string' }
-                ],
-                id: 'id',
-                localData: appointments
-            };
-         var adapter = new $.jqx.dataAdapter(source);
-            $("#scheduler").jqxScheduler({
-                 date: new $.jqx.date({{date('Y')}}, {{date('m')}}, {{date('d')}}),
-                width: 650,
-                height: 400,
-                source: adapter,
-                editDialog: false,
-                view: 'weekView',
-                showLegend: true,
-                dayNameFormat: "abbr",
-                ready: function () {
-                    $("#scheduler").jqxScheduler('ensureAppointmentVisible', 'id1');
-                },
-                resources:
-                {
-                    colorScheme: "scheme05",
-                    dataField: "calendar",
-                    //orientation: "vertical",
-                    source: new $.jqx.dataAdapter(source)
-                },
-                appointmentDataFields:
-                {
-                    from: "start",
-                    to: "end",
-                    id: "id",
-                    description: "description",
-                    location: "place",
-                    subject: "subject",
-                    resourceId: "calendar",
-                    background: 'background'
-                },
-                appointmentsMinHeight: 20,
-                views:
-
-    [
-        // { type: "weekView", showWeekends: true, timeRuler: { hidden: false, timeZones: [{ id: "UTC", text: "UTC" }, { id: "Pacific Standard Time", text: "PST" }] } },
-        // { type: "weekView", showWeekends: true, timeRuler: { scale: "quarterHour" }  },
-        { type: "weekView", showWeekends: true, timeRuler: { scaleStartHour: 2, scaleEndHour: 20,formatString: "hh tt" }  },
-        // 'dayView',
-        // 'weekView',
-        // 'monthView'
-    ]
-
-            });
-        });
-    </script>
-{{-- jayatri 12-10-2021 favourite ajax call --}}
+@section('script')
+@include('include.script')
 <script src="{{ public_asset('assets/toastr/build/toastr.min.js') }}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    $(document).on("click",".saveUsertoFavourite",function(e){
-
-            // alert("sfjhahs");
-
-            var favourite_user_id = $(this).attr("data-saveUsertoFavourite"),
-
-            obj = $(this),
-
-            reqData = {
-
-                'jsonrpc' : '2.0',
-
-                '_token'  : '{{csrf_token()}}',
-
-                'data'    : {
-
-                    'favourite_user_id'    : favourite_user_id
-
+    // Favourite tutor
+    $(document).on("click", ".saveUsertoFavourite", function(e) {
+        e.preventDefault();
+        var obj = $(this);
+        var reqData = {
+            'jsonrpc': '2.0',
+            '_token': '{{ csrf_token() }}',
+            'data': {
+                'favourite_user_id': obj.attr("data-saveUsertoFavourite")
+            }
+        };
+        $.ajax({
+            url: "{{ route('save.user.to.favourite') }}",
+            dataType: 'json',
+            data: reqData,
+            type: 'post',
+            success: function(resp) {
+                if (resp.result.status == 'Added') {
+                    obj.addClass("vt-fav-act");
+                } else {
+                    obj.removeClass("vt-fav-act");
                 }
+                toastr.success(resp.result.message);
+            },
+            error: function() {
+                toastr.error("Please refresh the page!");
+            }
+        });
+    });
 
-            };
-
-            // alert(favourite_user_id);
 
 
+    $(document).ready(function() {
+
+        $('#guestRegisterModal').on('show.bs.modal', function() {
+
+            $('#guest_tutor_id').val("{{ $userDetails->id }}");
+
+            $('#guest_tutor_slug').val("{{ $userDetails->slug }}");
+
+        });
+
+    });
+
+    // ---------- Watch Intro Video ----------
+    $(document).on('click', '#watchIntroVideo', function(e) {
+
+        e.preventDefault();
+
+        var videoUrl = $(this).attr('data-video');
+
+        if (!videoUrl) {
+            console.error('Intro video URL not found');
+            return;
+        }
+
+        videoUrl = videoUrl.trim();
+
+        var match = videoUrl.match(
+            /(?:youtube\.com\/(?:watch\?.*v=|embed\/|shorts\/)|youtu\.be\/)([^&?\/]+)/
+        );
+
+        if (!match) {
+            console.error('Invalid YouTube video URL:', videoUrl);
+            return;
+        }
+
+        var videoId = match[1];
+
+        // rel=0 -> no unrelated suggestions, modestbranding -> cleaner player
+        var embedUrl = 'https://www.youtube.com/embed/' +
+            videoId + '?autoplay=1&rel=0&modestbranding=1';
+
+        $('#introVideoFrame').attr('src', embedUrl);
+
+        $('#introVideoModal').modal('show');
+
+    });
+
+    // Stop video when modal closes
+    $('#introVideoModal').on('hidden.bs.modal', function() {
+
+        $('#introVideoFrame').attr('src', '');
+
+    });
+
+    // "Book a Trial Session" inside the video modal (guest users):
+    // close the video first, then open the guest registration modal
+    $(document).on('click', '.js-video-book', function() {
+
+        $('#introVideoModal').one('hidden.bs.modal', function() {
+            $('#guestRegisterModal').modal('show');
+        });
+
+        $('#introVideoModal').modal('hide');
+
+    });
 
 
+    $(document).ready(function() {
 
-                $.ajax({
+        // Set tutor details when modal opens
+        $('#guestRegisterModal').on('show.bs.modal', function() {
 
-                    url:"{{ route('save.user.to.favourite') }}",
+            $('#guest_tutor_id').val("{{ $userDetails->id }}");
+            $('#guest_tutor_slug').val("{{ $userDetails->slug }}");
 
-                    dataType: 'json',
+        });
 
-                    data: reqData,
+        // Get timezone based on selected state
+        $('#guest_parent_state').on('change', function() {
 
-                    type: 'post',
+            var timezone = $(this).find(':selected').data('timezone') || '';
 
-                    success:function(resp){
+            $('#guest_timezone_id').val(timezone);
 
-                        if(resp.result.status == 'Added'){
+        });
+        // Guest Registration Form Submit
+        $('#guestRegisterForm').on('submit', function(e) {
 
-                            obj.addClass("heart_cc_act");
+            e.preventDefault();
 
-                        }else{
+            var studentStateName = $('#guest_parent_state')
+                .find('option:selected')
+                .text()
+                .trim();
 
-                            obj.removeClass("heart_cc_act");
+            if (
+                !$('#guest_parent_state').val() ||
+                studentStateName.toLowerCase() !== tutorStateName.trim().toLowerCase()
+            ) {
+                $('#guest_parent_state').trigger('change');
+                return false;
+            }
 
-                        }
+            // Continue with your existing AJAX code
+            var form = $(this);
+            var btn = $('#guestRegisterSubmit');
 
-                        toastr.success(resp.result.message);
+            // Clear previous errors
+            $('#guestRegisterError').html('');
 
-                    },
+            // Serialize form data
+            var formData = form.serialize();
 
-                    error:function(){
+            // Pass default last name (controller requires it)
+            formData += '&l_name=N%2FA';
 
-                        toastr.error("Please refresh the page!");
+            // Disable button
+            btn.prop('disabled', true);
+            btn.find('span').text('Please wait...');
+
+            $.ajax({
+
+                url: "{{ route('student.guest.register') }}",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+
+                success: function(response) {
+
+                    if (response.success) {
+
+                        $('#guestRegisterModal').modal('hide');
+
+                        let tutorSlug = $('#guestRegisterForm')
+                            .find('input[name="tutor_slug"]').val();
+
+                        let tutorId = $('#guestRegisterForm')
+                            .find('input[name="tutor_id"]').val();
+
+                        window.location.href =
+                            "{{ url('studentbook-class') }}" +
+                            "?search_tutor_slug_studentclass=" + encodeURIComponent(tutorSlug) +
+                            "&search_tutor_id_studentclass=" + encodeURIComponent(tutorId);
+
+                    } else {
 
                     }
 
-                });
+                },
 
+                error: function(xhr) {
 
+                    var response = xhr.responseJSON;
+                    var errorHtml = '';
+
+                    if (response && response.errors) {
+
+                        $.each(response.errors, function(key, value) {
+                            errorHtml += '<div>' + value[0] + '</div>';
+                        });
+
+                    } else if (response && response.message) {
+
+                        errorHtml = response.message;
+
+                    } else {
+
+                        errorHtml = 'Something went wrong. Please try again.';
+
+                    }
+
+                    $('#guestRegisterError').html(errorHtml);
+
+                },
+
+                complete: function() {
+
+                    btn.prop('disabled', false);
+                    btn.find('span').text('Continue to Booking');
+
+                }
+
+            });
 
         });
+
+    });
+    var tutorStateName = @json($tutorStateName);
+
+    $('#guest_parent_state').on('change', function() {
+
+        var studentStateName = $(this).find('option:selected').text().trim();
+
+        var selectedTimezone = $(this).find(':selected').data('timezone');
+        $('#guest_timezone_id').val(selectedTimezone);
+
+        var isSameState =
+            studentStateName.toLowerCase() === tutorStateName.trim().toLowerCase();
+
+        if (!isSameState) {
+            $('#state_error')
+                .text('Sorry! This tutor is available only in ' + tutorStateName)
+                .show();
+
+            $('#guestRegisterSubmit').prop('disabled', true);
+        } else {
+            $('#state_error').hide().text('');
+            $('#guestRegisterSubmit').prop('disabled', false);
+        }
+    });
+
+    // Reviews slider (dots scoped to the reviews card only)
+    (function() {
+        var slides = $('.vt-slide'),
+            dots = $('.vt-review-dots i'),
+            cur = 0;
+        if (slides.length < 2) {
+            return;
+        }
+
+        function show(i) {
+            cur = (i + slides.length) % slides.length;
+            slides.removeClass('active').eq(cur).addClass('active');
+            dots.removeClass('active').eq(cur).addClass('active');
+        }
+        $('#vtPrev').on('click', function() {
+            show(cur - 1);
+        });
+        $('#vtNext').on('click', function() {
+            show(cur + 1);
+        });
+        dots.on('click', function() {
+            show(parseInt($(this).data('i'), 10));
+        });
+    })();
+
+    /* LEARNING PROGRAMS SLIDER WITH DOTS */
+    (function() {
+
+        var items = $('#vtProgramList .vt-program-item');
+
+        var prev = $('#vtProgramPrev');
+        var next = $('#vtProgramNext');
+        var dotsContainer = $('#vtProgramDots');
+
+        var currentPage = 0;
+        var perPage = 8;
+
+        if (!items.length) return;
+
+        function showPrograms(page) {
+
+            var grid = document.getElementById('vtProgramList');
+
+            var columns = window.getComputedStyle(grid)
+                .getPropertyValue('grid-template-columns')
+                .split(' ').filter(Boolean).length;
+
+            perPage = columns * 2;
+
+            var totalPages = Math.ceil(items.length / perPage);
+
+            currentPage = Math.max(0, Math.min(page, totalPages - 1));
+
+            items.removeClass('active');
+
+            items.slice(
+                currentPage * perPage,
+                (currentPage + 1) * perPage
+            ).addClass('active');
+
+            dotsContainer.empty();
+
+            for (var i = 0; i < totalPages; i++) {
+
+                dotsContainer.append(
+                    $('<i>', {
+                        'data-page': i,
+                        'class': i === currentPage ? 'active' : ''
+                    })
+                );
+
+            }
+
+            prev.prop('disabled', currentPage === 0);
+            next.prop('disabled', currentPage === totalPages - 1);
+
+            prev.toggle(totalPages > 1);
+            next.toggle(totalPages > 1);
+            dotsContainer.toggle(totalPages > 1);
+        }
+
+        prev.on('click', function() {
+            showPrograms(currentPage - 1);
+        });
+
+        next.on('click', function() {
+            showPrograms(currentPage + 1);
+        });
+
+        dotsContainer.on('click', 'i', function() {
+            showPrograms(parseInt($(this).attr('data-page'), 10));
+        });
+
+        showPrograms(0);
+
+        var resizeTimer;
+
+        $(window).on('resize', function() {
+
+            clearTimeout(resizeTimer);
+
+            resizeTimer = setTimeout(function() {
+                showPrograms(currentPage);
+            }, 150);
+
+        });
+
+    })();
+
+    /* EXPERIENCE SLIDER - 3 RECORDS PER PAGE */
+    (function() {
+
+        var items = $('.vt-experience-item');
+        var currentPage = 0;
+        var perPage = 3;
+
+        var prev = $('#vtExpPrev');
+        var next = $('#vtExpNext');
+        var dotsContainer = $('#vtExpDots');
+
+        if (!items.length) return;
+
+        var totalPages = Math.ceil(items.length / perPage);
+
+        function showExperience(page) {
+
+            currentPage = Math.max(0, Math.min(page, totalPages - 1));
+
+            // Hide all experience records
+            items.removeClass('active');
+
+            // Display only 3 records
+            items.slice(
+                currentPage * perPage,
+                (currentPage + 1) * perPage
+            ).addClass('active');
+
+            // Update dots
+            dotsContainer.find('i')
+                .removeClass('active')
+                .eq(currentPage)
+                .addClass('active');
+
+            // Arrow states
+            prev.prop('disabled', currentPage === 0);
+            next.prop('disabled', currentPage === totalPages - 1);
+
+            // Show arrows only when more than 3 records exist
+            prev.toggle(items.length > perPage);
+            next.toggle(items.length > perPage);
+
+            dotsContainer.toggle(items.length > perPage);
+        }
+
+        prev.on('click', function() {
+            showExperience(currentPage - 1);
+        });
+
+        next.on('click', function() {
+            showExperience(currentPage + 1);
+        });
+
+        dotsContainer.on('click', 'i', function() {
+            showExperience(parseInt($(this).attr('data-page'), 10));
+        });
+
+        showExperience(0);
+
+    })();
 </script>
-
-
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.jssocials/1.4.0/jssocials.min.js"></script>
-
-<script>
-        $("#share").jsSocials({
-          url:"{{url('/')}}/tutor-public-profile/{{$userDetails->slug}}",
-              showLabel: false,
-    showCount: false,
-
-
-            shares: [{
-        share: "facebook",
-        logo: "{{ public_asset('assets/images/sc1.png')}}"
-        // logo: "{{url('/')}}/assets/images/sc1.png"
-    }, {
-        share: "twitter",
-        logo: "{{ public_asset('assets/images/sc2.png')}}"
-    },
-    /* {
-        share: "googleplus",
-        logo: "{{ public_asset('assets/images/sc3.png')}}"
-    }, */
-    {
-        share: "linkedin",
-        logo: "{{ public_asset('assets/images/sc4.png')}}"
-    }]
-        });
-    </script>
-    @endsection
+@endsection

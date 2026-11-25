@@ -989,25 +989,10 @@ $navItems = [
 
             var videoUrl = $.trim($('#profile_video').val());
 
-            if (skill === '') {
 
-                notify(false, 'Please enter Skill Tag.');
+            if (caps.length > 600) {
 
-                return false;
-
-            }
-
-            if (caps === '') {
-
-                notify(false, 'Please enter Capability Statement.');
-
-                return false;
-
-            }
-
-            if (caps.length > 2000) {
-
-                notify(false, 'Capability Statement maximum is 2000 characters.');
+                notify(false, 'Capability Statement maximum is 600 characters.');
 
                 return false;
 
@@ -1034,27 +1019,57 @@ $navItems = [
 
         }
 
+        
+        function saveSkillTag() {
 
-        $('#saveSkillTag').on('click', function() {
+            var skill = $.trim($skill.val());
 
-            savePublicProfile(function() {
+            if (skill === '') {
+                notify(false, 'Please enter Skill Tag.');
+                return;
+            }
 
+            post(cfg.save, {
+                tutor_id: cfg.tutor,
+                skills: skill
+            }, function() {
                 $skill.prop('readonly', true);
-
             });
+        }
 
-        });
 
+        function saveCapability() {
 
-        $('#saveCapability').on('click', function() {
+            var caps = $.trim($capability.val());
 
-            savePublicProfile(function() {
+            if (caps === '') {
+                notify(false, 'Please enter Capability Statement.');
+                return;
+            }
 
+            if (caps.length > 600) {
+                notify(false, 'Capability Statement maximum is 600 characters.');
+                return;
+            }
+
+            post(cfg.save, {
+                tutor_id: cfg.tutor,
+                capabilities: caps
+            }, function() {
                 $capability.prop('readonly', true);
+            });
+        }
 
+
+       
+            $('#saveSkillTag').on('click', function() {
+                saveSkillTag();
             });
 
-        });
+
+            $('#saveCapability').on('click', function() {
+                saveCapability();
+            });
 
         $('#saveVideo').on('click', function() {
 

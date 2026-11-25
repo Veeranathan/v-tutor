@@ -315,6 +315,44 @@ Achievements
         font-size: 14px;
     }
 
+        #recognitionsTable {
+            width: 100% !important;
+            table-layout: fixed;
+        }
+
+        #recognitionsTable th:nth-child(1),
+        #recognitionsTable td:nth-child(1) {
+            width: 17%;
+            overflow-wrap: break-word;
+        }
+
+        #recognitionsTable th:nth-child(2),
+        #recognitionsTable td:nth-child(2) {
+            width: 12%;
+            overflow-wrap: break-word;
+        }
+
+        #recognitionsTable th:nth-child(3),
+        #recognitionsTable td:nth-child(3) {
+            width: 16%;
+            overflow-wrap: break-word;
+        }
+
+        #recognitionsTable th:nth-child(4),
+        #recognitionsTable td:nth-child(4) {
+            width: 8%;
+            white-space: nowrap;
+        }
+
+        #recognitionsTable th:nth-child(5),
+        #recognitionsTable td:nth-child(5) {
+            width: 47%;
+            white-space: normal !important;
+            overflow-wrap: break-word;
+            word-break: normal;
+            line-height: 1.6;
+            text-align: justify !important;
+        }
     @media (max-width: 991px) {
         .tw-layout {
             flex-direction: column;
@@ -810,6 +848,8 @@ Achievements
         }
 
         var dataTableObj = {
+
+            autoWidth: false,
 
             columnDefs: [
                 {

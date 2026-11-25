@@ -619,7 +619,7 @@ table.dataTable tbody td {
                     id="edit_skill_tag"
                     name="skills"
                     class="form-control"
-                    maxlength="80">
+                    maxlength="80" required>
 
                 <p class="td-hint">
                     A short description of this tutor's specialisation.
@@ -639,7 +639,7 @@ table.dataTable tbody td {
                     name="capabilities"
                     class="form-control"
                     rows="8"
-                    maxlength="600"></textarea>
+                    maxlength="600" required></textarea>
 
                   <p class="td-hint">
                     Describe who this tutor is, their relevant expertise, and how they help students.

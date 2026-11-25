@@ -2281,23 +2281,23 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                         </button>
 
                         <div class="vt-programs" id="vtProgramList">
+                     @foreach($learningPrograms as $program)
 
-                            @foreach($learningPrograms as $program)
+                    <a href="{{ route('program.detail', $program['slug']) }}?{{ http_build_query([
+                        'year' => $program['grade_ids']->first(),
+                        'state' => \Illuminate\Support\Str::slug($tutorState->state_name ?? '')
+                       ]) }}"
+                    class="vt-program vt-program-item vt-c{{ ($loop->index % 6) + 1 }}">
 
-                            <div class="vt-program vt-program-item vt-c{{ ($loop->index % 6) + 1 }}">
+                        <strong>{{ $program['name'] }}</strong>
 
-                                <strong>{{ $program['name'] }}</strong>
+                        @if($program['grades']->isNotEmpty())
+                            <span>{{ $program['grades']->implode(', ') }}</span>
+                        @endif
 
-                                @if($program['grades']->isNotEmpty())
-                                <span>
-                                    {{ $program['grades']->implode(', ') }}
-                                </span>
-                                @endif
+                    </a>
 
-                            </div>
-
-                            @endforeach
-
+                @endforeach
                         </div>
 
                         <button type="button" class="vt-arrow" id="vtProgramNext" aria-label="Next programs">

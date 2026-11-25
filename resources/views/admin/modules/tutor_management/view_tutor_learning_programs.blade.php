@@ -558,7 +558,21 @@ $navItems = [
 ];
 
 
-$programs = collect(@$learning_programs);
+$programs = collect(@$learning_programs)
+    ->unique(function ($program) {
+
+        $name = strtolower(trim(data_get($program, 'name', '')));
+
+        $name = str_replace('fractions', 'fraction', $name);
+
+        $name = preg_replace('/[^a-z0-9]/', '', $name);
+
+        $year = strtolower(trim(data_get($program, 'year_levels', '')));
+
+        return $name . '|' . $year;
+    })
+    ->values();
+
 $programTypes = $programs->pluck('type')->filter()->unique()->values();
 @endphp
 <div class="content tw-page">

@@ -70,6 +70,28 @@ class TutorShipPlanController extends Controller
         $columnSortOrder = $request->order[0]['dir'];
         $tutorshipplan = TutorShipPlan::with(['getGrade','getBranch','getSubject'])->where(['teacher_id'=>$id,'status'=>'A']);
         
+        $grade = $request->input('columns.0.search.value');
+        $branch = $request->input('columns.1.search.value');
+        $subject = $request->input('columns.2.search.value');
+
+        if (!empty($grade)) {
+            $tutorshipplan->whereHas('getGrade', function ($q) use ($grade) {
+                $q->where('grade_name', $grade);
+            });
+        }
+
+        if (!empty($branch)) {
+            $tutorshipplan->whereHas('getBranch', function ($q) use ($branch) {
+                $q->where('branch_name', $branch);
+            });
+        }
+
+        if (!empty($subject)) {
+            $tutorshipplan->whereHas('getSubject', function ($q) use ($subject) {
+                $q->where('subject', $subject);
+            });
+        }
+
         $ps =  $tutorshipplan->count();
         $pp = $tutorshipplan;
         $pp = $pp->count();
@@ -158,7 +180,7 @@ class TutorShipPlanController extends Controller
                 $tutorshipplan = $tutorshipplan->orderBy('id','desc');
             }
             $tutorshipplan = $tutorshipplan->skip($request->start)->take($request->length)->get();
-        }
+        }       
         // $tutorshipplan = $tutorshipplan->orderBy('id','desc')->skip($request->start)->take($request->length)->get();
         $data['aaData'] = $tutorshipplan;
         $data["draw"] = intval($request->draw);
@@ -193,6 +215,11 @@ class TutorShipPlanController extends Controller
         $columnIndex = $request->order[0]['column'];
         $columnSortOrder = $request->order[0]['dir'];
         $users = TutorAcademic::with(['getFieldStudy','getUniversity'])->whereIn('status',['A','I'])->where('teacher_id',$id);
+       $qualification_status = $request->input('columns.4.search.value');
+
+        if (!empty($qualification_status)) {
+            $users->where('qualification_status', $qualification_status);
+        }
         $ps =  $users->count();
         $pp = $users;
         $pp = $pp->count();

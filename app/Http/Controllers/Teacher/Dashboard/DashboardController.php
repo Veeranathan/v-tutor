@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Teacher\Dashboard;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\AcademicProgram;
 use Auth;
 use App\Models\User;
 use App\Models\State;
@@ -28,8 +29,7 @@ use App\Models\BookingToReviews;
 use App\Models\AdminDisableBookingDates;
 use App\Models\AdminDisableBookings;
 use App\Models\Payments;
-
-
+use App\Models\TutorSkillsCapability;
 
 class DashboardController extends Controller
 {
@@ -451,11 +451,79 @@ class DashboardController extends Controller
 
     //     $sat=MyAvailability::where('teacher_id',(int)$data['userDetails']->id)->where('day',6)->get();
     //     $data['availability_sat']=$sat;
-      
+
+            $tutorPlans = TutorshipPlan::where('teacher_id', $data['userDetails']->id)
+                ->where('status', 'A')
+                ->get(['grade_id', 'branch_id']);
+
+            $learningPrograms = collect();
+
+            if ($tutorPlans->isNotEmpty()) {
+
+                $learningPrograms = AcademicProgram::where('status', 1)
+                    ->where(function ($query) use ($tutorPlans) {
+
+                        foreach ($tutorPlans as $plan) {
+
+                            $query->orWhere(function ($subQuery) use ($plan) {
+
+                                $subQuery->where('grade_id', $plan->grade_id)
+                                    ->where('branch_id', $plan->branch_id);
+
+                            });
+
+                        }
+
+                    })
+                    ->with('grade')
+                    ->get()
+                    ->groupBy(function ($program) {
+                        return strtolower(trim($program->name));
+                    })
+                    ->map(function ($programs) {
+
+                        $first = $programs->first();
+
+                        return [
+                            'name' => $first->name,
+
+                            'grades' => $programs
+                                ->pluck('grade.grade_name')
+                                ->filter()
+                                ->unique()
+                                ->values(),
+                        ];
+
+                    })
+                    ->values();
+            }
+
+            $data['learningPrograms'] = $learningPrograms;
+            $tutorGradeIds = TutorshipPlan::where('teacher_id', $data['userDetails']->id)
+                ->where('status', 'A')
+                ->pluck('grade_id')
+                ->unique()
+                ->toArray();
+
+            $data['allGrades'] = Grade::where('status', 'A')
+                ->whereIn('id', $tutorGradeIds)
+                ->get();
+
+            $data['allStates'] = State::all();
+            $data['tutorState'] = State::where(
+                'id',
+                $data['userDetails']->state_id
+            )->first();
+
           $data['t_my_av_show'] = MyAvailability::where(['teacher_id'=>$data['userDetails']->id,'status'=>'A'])->get();
 
            $data['reviews'] = ReviewModel::where('tutor_id',$data['userDetails']->id)->get();
            //dd($data['reviews']);
+
+           $data['tutorVideo'] = TutorSkillsCapability::where(
+                'tutor_id',
+                $data['userDetails']->id
+            )->value('video_url');
 
         return view('teacher.modules.public_profile.teacher_public_profile')->with($data);
     }else{

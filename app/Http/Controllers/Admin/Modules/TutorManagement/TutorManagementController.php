@@ -63,6 +63,21 @@ class TutorManagementController extends Controller
             $data['tutor_to_lan']=LangToTutor::with('languageName')->where('tutor_id',$id)->get();
             $data['total_lan']=LangToTutor::where('tutor_id',$id)->count();
             $data['states'] = State::get();
+                $data['branch'] = Branch::select('branch_name')
+                ->whereIn('branches.id', function ($q) use ($id) {
+                    $q->select('branch_id')
+                        ->from('tutorship_plan')
+                        ->where('teacher_id', $id)
+                        ->where('status', 'A');
+                })
+                ->orderBy('branch_name', 'asc')
+                ->pluck('branch_name')
+                ->unique()
+                ->implode(', ');
+    
+                $data['availability'] = $data['user']->getMyAvailability()
+                    ->where('status', 'A')
+                    ->exists() ? 'Yes' : 'No';
 
                 if(@$data['user']){
                     return view('admin.modules.tutor_management.view_tutor_personal_info')->with($data);
@@ -77,6 +92,190 @@ class TutorManagementController extends Controller
             return redirect()->back();
         }
     }
+     
+public function viewTutorPublicProfile($id, Request $request)
+{
+    try {
+
+        $data['user'] = User::with([
+            'getTimezone',
+            'getState'
+        ])->where('id', $id)->first();
+
+        if (!$data['user']) {
+
+            session()->flash(
+                "error",
+                "Tutor is not found associated with id : " . $id
+            );
+
+            return redirect()->back();
+        }
+
+        $data['branch'] = Branch::select('branch_name')
+            ->whereIn('branches.id', function ($q) use ($id) {
+
+                $q->select('branch_id')
+                    ->from('tutorship_plan')
+                    ->where('teacher_id', $id)
+                    ->where('status', 'A');
+
+            })
+            ->orderBy('branch_name', 'asc')
+            ->pluck('branch_name')
+            ->unique()
+            ->implode(', ');
+
+        $data['availability'] = $data['user']
+            ->getMyAvailability()
+            ->where('status', 'A')
+            ->exists() ? 'Yes' : 'No';
+
+        $record = TutorSkillsCapability::where('tutor_id', $id)->first();
+
+        $data['skill_tag'] = $record->skills ?? '';
+
+        $data['capability_statement'] = $record->capabilities ?? '';
+        $data['video_url'] = $record->video_url ?? '';
+
+        return view(
+            'admin.modules.tutor_management.view_tutor_public_profile'
+        )->with($data);
+
+    } catch (\Exception $e) {
+
+        \Log::error(
+            'Public Profile Error: ' . $e->getMessage()
+        );
+
+        session()->flash("error", $e->getMessage());
+
+        return redirect()->back();
+    }
+}
+ public function viewTutorOverView($id, Request $request){
+    try{
+        $data['user'] = User::with(['getTimezone','getState'])->where('id',$id)->first();
+
+        if(!@$data['user']){
+            session()->flash("error","Tutor is not found associated with id : ".$id);
+            return redirect()->back();
+        }
+
+        $data['branch'] = Branch::select('branch_name')
+            ->whereIn('branches.id', function ($q) use ($id) {
+                $q->select('branch_id')
+                    ->from('tutorship_plan')
+                    ->where('teacher_id', $id)
+                    ->where('status', 'A');
+            })
+            ->orderBy('branch_name', 'asc')
+            ->pluck('branch_name')
+            ->unique()
+            ->implode(', ');
+
+        $plans = TutorshipPlan::with(['getGrade', 'getSubject'])
+            ->where('teacher_id', $id)
+            ->where('status', 'A')
+            ->get();
+
+        $data['subjects'] = $plans->pluck('getSubject.subject')->filter()->unique()->sort()->implode(', ');
+        $learningPrograms = collect();
+
+        if ($plans->isNotEmpty()) {
+
+            $learningPrograms = AcademicProgram::where('status', 1)
+                ->where(function ($query) use ($plans) {
+
+                    foreach ($plans as $plan) {
+
+                        $query->orWhere(function ($subQuery) use ($plan) {
+
+                            $subQuery->where('grade_id', $plan->grade_id)
+                                ->where('branch_id', $plan->branch_id);
+
+                        });
+
+                    }
+
+                })
+                ->with('grade')
+                ->get()
+                ->groupBy(function ($program) {
+                    return strtolower(trim($program->name));
+                })
+                ->map(function ($programs) {
+
+                    $first = $programs->first();
+
+                    return [
+                        'name' => $first->name,
+
+                        'grades' => $programs
+                            ->pluck('grade.grade_name')
+                            ->filter()
+                            ->unique()
+                            ->values(),
+                    ];
+
+                })
+                ->values();
+        }
+
+$data['learningPrograms'] = $learningPrograms;
+        $gradeNames = $plans->pluck('getGrade.grade_name')->filter()->unique()->values();
+        $gradeNums  = $gradeNames->map(function ($g) {
+            return preg_match('/^Year\s*(\d+)$/i', trim($g), $m) ? (int) $m[1] : null;
+        });
+        $gradeNames = $plans->pluck('getGrade.grade_name')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $data['year_levels'] = $gradeNames->implode(', ');
+
+        $slots = $data['user']->getMyAvailability()->where('status', 'A')->get();
+        $data['availability'] = $slots->isNotEmpty() ? 'Yes' : 'No';
+
+        $dayNames = [1 => 'Mon', 2 => 'Tue', 3 => 'Wed', 4 => 'Thu', 5 => 'Fri', 6 => 'Sat', 7 => 'Sun'];
+        $days     = $slots->pluck('day')->map(function ($d) { return (int) $d; })->unique()->sort()->values();
+
+        if ($days->isEmpty()) {
+            $data['availability_summary'] = 'Not available';
+        } else {
+            $isRun = $days->count() === ($days->last() - $days->first() + 1);   // e.g. Mon, Tue, Wed ... no gaps
+            $range = $days->count() === 1
+                ? $dayNames[$days->first()]
+                : ($isRun
+                    ? $dayNames[$days->first()] . '–' . $dayNames[$days->last()]
+                    : $days->map(function ($d) use ($dayNames) { return $dayNames[$d]; })->implode(', '));
+
+            $hasMultiple = $slots->groupBy('day')->contains(function ($g) { return $g->count() > 1; });
+            $data['availability_summary'] = $range . ($hasMultiple ? ' · multiple slots' : '');
+        }
+
+            $data['tutor_wwcc'] = [];
+
+            $exist_taf = TutorApplicationFormsModel::selectRaw('MIN(id) as id')
+                ->where('status', '!=', 2)
+                ->groupBy('tutor_id')
+                ->pluck('id')
+                ->toArray();
+
+                if (count($exist_taf) != 0) {
+                    $data['tutor_wwcc'] = TutorWWCCModel::where('tutor_id', $id)
+                        ->whereIn('tutor_app_id', $exist_taf)
+                        ->orderBy('id', 'asc')
+                        ->get();
+                }
+                        return view('admin.modules.tutor_management.view_tutor_overview')->with($data);
+                }  catch(\Exception $e){
+                    \Log::error($e->getMessage());
+                        session()->flash("error",$e->getMessage());
+                        return redirect()->back();
+                    }
+                }
+
     public function viewTutorAdvancePage($id,Request $request){
         try{
             $data['user'] = User::with(['getTimezone','getState','getNationality'])->where('id',$id)->first();
@@ -138,6 +337,22 @@ class TutorManagementController extends Controller
             $data['next_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','>',$id)->min('id');
             $data['previous_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','<',$id)->max('id');
             $data['states'] = State::get();
+            $data['branch'] = Branch::select('branch_name')
+                ->whereIn('branches.id', function ($q) use ($id) {
+                    $q->select('branch_id')
+                        ->from('tutorship_plan')
+                        ->where('teacher_id', $id)
+                        ->where('status', 'A');
+                })
+                ->orderBy('branch_name', 'asc')
+                ->pluck('branch_name')
+                ->unique()
+                ->implode(', ');
+              $data['availability'] = $data['user']->getMyAvailability()
+                    ->where('status', 'A')
+                    ->exists() ? 'Yes' : 'No';
+                
+
             if(@$data['user']){
                 return view('admin.modules.tutor_management.view_tutorship_plans')->with($data);
             }else{
@@ -156,6 +371,21 @@ class TutorManagementController extends Controller
             $data['next_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','>',$id)->min('id');
             $data['previous_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','<',$id)->max('id');
             $data['states'] = State::get();
+                      $data['branch'] = Branch::select('branch_name')
+                ->whereIn('branches.id', function ($q) use ($id) {
+                    $q->select('branch_id')
+                        ->from('tutorship_plan')
+                        ->where('teacher_id', $id)
+                        ->where('status', 'A');
+                })
+                ->orderBy('branch_name', 'asc')
+                ->pluck('branch_name')
+                ->unique()
+                ->implode(', ');
+              $data['availability'] = $data['user']->getMyAvailability()
+                    ->where('status', 'A')
+                    ->exists() ? 'Yes' : 'No';
+
             if(@$data['user']){
                 return view('admin.modules.tutor_management.view_tutor_experience')->with($data);
             }else{
@@ -174,6 +404,21 @@ class TutorManagementController extends Controller
             $data['next_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','>',$id)->min('id');
             $data['previous_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','<',$id)->max('id');
             $data['states'] = State::get();
+                      $data['branch'] = Branch::select('branch_name')
+                ->whereIn('branches.id', function ($q) use ($id) {
+                    $q->select('branch_id')
+                        ->from('tutorship_plan')
+                        ->where('teacher_id', $id)
+                        ->where('status', 'A');
+                })
+                ->orderBy('branch_name', 'asc')
+                ->pluck('branch_name')
+                ->unique()
+                ->implode(', ');
+              $data['availability'] = $data['user']->getMyAvailability()
+                    ->where('status', 'A')
+                    ->exists() ? 'Yes' : 'No';
+
             if(@$data['user']){
                 return view('admin.modules.tutor_management.view_tutor_recognitions')->with($data);
             }else{
@@ -191,6 +436,20 @@ class TutorManagementController extends Controller
             $data['user'] = User::where('id',$id)->first();
             $data['next_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','>',$id)->min('id');
             $data['previous_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','<',$id)->max('id');
+                      $data['branch'] = Branch::select('branch_name')
+                ->whereIn('branches.id', function ($q) use ($id) {
+                    $q->select('branch_id')
+                        ->from('tutorship_plan')
+                        ->where('teacher_id', $id)
+                        ->where('status', 'A');
+                })
+                ->orderBy('branch_name', 'asc')
+                ->pluck('branch_name')
+                ->unique()
+                ->implode(', ');
+              $data['availability'] = $data['user']->getMyAvailability()
+                    ->where('status', 'A')
+                    ->exists() ? 'Yes' : 'No';
 
             if(@$data['user']){
                 $data['tutor_wwcc'] = [];
@@ -220,6 +479,21 @@ class TutorManagementController extends Controller
             $data['next_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','>',$id)->min('id');
             $data['previous_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','<',$id)->max('id');
             $data['states'] = State::get();
+                      $data['branch'] = Branch::select('branch_name')
+                ->whereIn('branches.id', function ($q) use ($id) {
+                    $q->select('branch_id')
+                        ->from('tutorship_plan')
+                        ->where('teacher_id', $id)
+                        ->where('status', 'A');
+                })
+                ->orderBy('branch_name', 'asc')
+                ->pluck('branch_name')
+                ->unique()
+                ->implode(', ');
+              $data['availability'] = $data['user']->getMyAvailability()
+                    ->where('status', 'A')
+                    ->exists() ? 'Yes' : 'No';
+
             if(@$data['user']){
                 return view('admin.modules.tutor_management.view_tutor_academic')->with($data);
             }else{
@@ -430,6 +704,11 @@ if ($request->columns[6]['search']['value'] !== null && $request->columns[6]['se
 if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['search']['value'] !== '') {
     $users = $users->where('free_trial', $request->columns[7]['search']['value']);
 }
+if ($request->columns[11]['search']['value'] !== null &&
+    $request->columns[11]['search']['value'] !== '') {
+
+    $users->where('state', $request->columns[11]['search']['value']);
+}
         $ps =  $users->count();
         $pp = $users;
         $pp = $pp->count();
@@ -499,6 +778,7 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
                 $users = $users->orderBy('id','desc');
             }
         }
+        
         $users = $users->with('status_change_user')->orderBy('id','desc')->skip($request->start)->take($request->length)->get();
        $users->transform(function ($value) {
 
@@ -866,6 +1146,9 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
             // }
             // $data['users']= $data['users']->paginate(10);
             // $data['key'] = @$request->all();
+              $data['states'] = State::orderBy('state_name', 'ASC')
+               ->get(['id', 'state_name']);
+    
             return view('admin.modules.tutor_management.manage_tutors')->with($data);
         }catch(\Exception $e){
             \Log::error($e->getMessage());
@@ -1264,27 +1547,117 @@ if ($request->columns[7]['search']['value'] !== null && $request->columns[7]['se
         ]);
     }
 
-  public function saveAndShow(Request $request)
+  
+public function saveAndShow(Request $request)
 {
     $request->validate([
         'tutor_id' => 'required|exists:users,id',
-        'skills' => 'required|string|max:80',
-        'capabilities' => 'required|string|max:2000',
+        'skills' => 'nullable|string|max:80',
+        'capabilities' => 'nullable|string|max:2000',
+        'profile_video' => 'nullable|url',
     ]);
-        $user = User::where('id', $request->tutor_id)->firstOrFail();
 
-        $data = $user->tutorSkillsCapability()->updateOrCreate(
-            ['tutor_id' => $user->id],
-            [
-                'skills' => $request->skills,
-                'capabilities' => $request->capabilities,
-            ]
-        );
+    $user = User::findOrFail($request->tutor_id);
+
+    $record = TutorSkillsCapability::where(
+        'tutor_id',
+        $user->id
+    )->first();
+
+    if (!$record) {
+        $record = new TutorSkillsCapability();
+
+        $record->tutor_id = $user->id;
+        $record->skills = '';
+        $record->capabilities = '';
+        $record->video_url = '';
+    }
+
+    if ($request->has('skills')) {
+        $record->skills = $request->input('skills', '');
+    }
+
+    if ($request->has('capabilities')) {
+        $record->capabilities = $request->input('capabilities', '');
+    }
+
+    if ($request->has('profile_video')) {
+        $record->video_url = $request->input('profile_video', '');
+    }
+
+    $record->save();
 
     return response()->json([
         'success' => true,
-        'data' => $data
+        'message' => 'Public profile saved successfully.',
+        'data' => $record
     ]);
+}
+
+public function viewTutorLearningPrograms($id)
+{
+    $user = User::with(['getState'])->findOrFail($id);
+
+    $tutorshipPlans = TutorshipPlan::where('teacher_id', $id)
+        ->where('status', 'A')
+        ->get();
+
+    $gradeIds = $tutorshipPlans->pluck('grade_id')->unique()->filter();
+
+    $gradeNames = Grade::whereIn('id', $gradeIds)
+        ->pluck('grade_name', 'id');
+
+    $branchIds = $tutorshipPlans->pluck('branch_id')->unique()->filter();
+
+    $branchNames = Branch::whereIn('id', $branchIds)
+        ->pluck('branch_name', 'id');
+
+    $learning_programs = collect();
+
+    foreach ($tutorshipPlans as $plan) {
+
+        $programs = AcademicProgram::where('status', 1)
+            ->where('grade_id', $plan->grade_id)
+            ->where('branch_id', $plan->branch_id)
+            ->get();
+
+        foreach ($programs as $program) {
+
+            $learning_programs->push((object) [
+                'id' => $program->id,
+                'name' => $program->name,
+                'type' => $program->program_type,
+                'subject' => $branchNames[$program->branch_id] ?? '',
+                'year_levels' => $gradeNames[$program->grade_id] ?? '',
+                'status' => 'Approved',
+                'grade_id' => $program->grade_id,
+                'branch_id' => $program->branch_id,
+            ]);
+        }
+    }
+
+$learning_programs = $learning_programs
+    ->unique(function ($program) {
+        return $program->grade_id . '-' . $program->branch_id . '-' . $program->name;
+    })
+    ->values();
+    $available_programs = AcademicProgram::where('status', 1)
+        ->whereNotIn('id', $learning_programs->pluck('id'))
+        ->orderBy('name')
+        ->get();
+
+    $tutor_subjects = $branchIds->map(function ($branchId) use ($branchNames) {
+        return (object) [
+            'name' => $branchNames[$branchId] ?? ''
+        ];
+    });
+
+    return view('admin.modules.tutor_management.view_tutor_learning_programs', compact(
+        'user',
+        'learning_programs',
+        'available_programs',
+        'tutor_subjects'
+    ));
 }
 public function manageTutorShipPlans($id,Request $request){
         try{
@@ -1349,6 +1722,20 @@ public function manageTutorShipPlans($id,Request $request){
         $data['user'] = $user = User::with(['getState'])->where('id',$id)->first();
         $data['next_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','>',$id)->min('id');
         $data['previous_id'] = User::whereIn('status',['I','A','U','AA'])->where('id','<',$id)->max('id');
+                  $data['branch'] = Branch::select('branch_name')
+                ->whereIn('branches.id', function ($q) use ($id) {
+                    $q->select('branch_id')
+                        ->from('tutorship_plan')
+                        ->where('teacher_id', $id)
+                        ->where('status', 'A');
+                })
+                ->orderBy('branch_name', 'asc')
+                ->pluck('branch_name')
+                ->unique()
+                ->implode(', ');
+              $data['availability'] = $data['user']->getMyAvailability()
+                    ->where('status', 'A')
+                    ->exists() ? 'Yes' : 'No';
 
         if (@$data['user']) {
 

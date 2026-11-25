@@ -10,7 +10,7 @@ class TutorSkillsCapability extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tutor_id','skills','capabilities'
+        'tutor_id','skills','capabilities','video_url'
     ];
 
     public function tutor()

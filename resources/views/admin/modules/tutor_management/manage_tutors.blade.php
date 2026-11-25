@@ -1167,31 +1167,12 @@ Tutor Management
                     '<a target="_self" href="{{ url('admin/view-tutor-overview').'/' }}' + full.id + '" class="tm-manage action" data-key="' + full.id + '" id="action' + full.id + '">' +
                     '<i class="fa fa-pencil"></i> Manage</a>' +
                     '</div>';
-                        // var a = '<div class="tm-actions">' +
-                        //         '<a href="javascript:void(0);" class="tm-manage action" data-key="' + full.id + '" id="action' + full.id + '"><i class="fa fa-pencil"></i> Manage</a>' +
-                        //         '<div class="show-actions" id="show-action' + full.id + '" style="display:none;"><ul>';
-
-                        // a += '<li><a target="_self" href="{{ url('admin/view-tutor-personal-info').'/' }}' + full.id + '">View</a></li>';
-                        // a += '<li class="tm-toggle-row"><span>Featured</span>' + (full.featured_button || '') + '</li>';
-                        // a += '<li class="tm-toggle-row"><span>Free Trial</span>' + (full.free_trial_button || '') + '</li>';
-
-                        // if (full.status == 'A') {
-                        //     if (full.subscription == 'S' && full.draft == 'N') {
-                        //         a += '<li><a class="status_change_suspend" data-id="' + full.id + '" href="javascript:void(0);">Suspend</a></li>';
-                        //     } else {
-                        //         a += '<li><a class="status_change_approved" data-id="' + full.id + '" href="javascript:void(0);">Approve</a></li>';
-                        //         a += '<li><a class="status_change_reject" data-id="' + full.id + '" href="javascript:void(0);">Reject</a></li>';
-                        //     }
-                        // }
-                        // if (full.status == 'I') {
-                        //     a += '<li><a class="status_change_approved" data-id="' + full.id + '" href="javascript:void(0);">Approve</a></li>';
-                        // }
-
+                        
                         a += '</ul></div></div>';
                         return a;
                     }
                 },
-                { // 11 State (hidden, used only for the State filter)
+                { 
                     data: "state",
                     visible: false,
                     orderable: false,

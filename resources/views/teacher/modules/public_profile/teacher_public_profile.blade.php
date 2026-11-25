@@ -2410,7 +2410,21 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                 <h2>Ready to get started?</h2>
                 <p>Book a trial session with {{ @$userDetails->f_name }} and see how personalised support can make a difference.</p>
             </div>
-            {!! $btn($book, 'Book a Trial Session', 'primary', 'calendar') !!}
+             @if(Auth::check())
+                <a href="{{ url('studentbook-class?search_tutor_slug_studentclass=' . $userDetails->slug . '&search_tutor_id_studentclass=' . $userDetails->id) }}"
+                    class="vt-btn primary">
+                    <i class="fa fa-calendar"></i>
+                    <span>Book a Trial Session</span>
+                </a>
+                @else
+                <button type="button"
+                    class="vt-btn primary"
+                    data-toggle="modal"
+                    data-target="#guestRegisterModal">
+                    <i class="fa fa-calendar"></i>
+                    <span>Book a Trial Session</span>
+                </button>
+                @endif
         </div>
 
     </div>

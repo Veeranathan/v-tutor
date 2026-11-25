@@ -1338,6 +1338,125 @@
     .vt-cta .vt-btn {
         min-width: 270px;
     }
+@media (max-width: 575px) {
+
+    #guestRegisterModal {
+        padding: 10px !important;
+    }
+
+    #guestRegisterModal .guest-modal-dialog {
+        width: calc(100% - 20px);
+        max-width: 360px;
+        margin: 15px auto;
+    }
+
+    #guestRegisterModal .guest-modal {
+        border-radius: 14px;
+    }
+
+    .text-danger{
+        font-size: 10px;
+        line-height: normal;
+    }
+    #guestRegisterModal .guest-modal-header {
+        padding: 10px 18px 13px;
+    }
+
+    #guestRegisterModal .guest-close {
+        width: 28px;
+        height: 28px;
+        right: 12px;
+        top: 12px;
+        font-size: 21px;
+        line-height: 26px;
+    }
+
+    #guestRegisterModal .guest-tag {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    #guestRegisterModal .guest-modal-header h3 {
+        font-size: 19px;
+        margin-bottom: 5px;
+    }
+
+    #guestRegisterModal .guest-modal-header p {
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    #guestRegisterModal .guest-modal-body {
+        padding: 15px 18px 18px;
+    }
+
+    #guestRegisterModal .guest-form-group {
+        margin-bottom: 11px;
+    }
+
+    #guestRegisterModal .guest-form-group label {
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+
+    #guestRegisterModal .guest-input {
+        height: 40px;
+        font-size: 12px;
+        padding: 8px 10px 8px 36px;
+    }
+
+    #guestRegisterModal .guest-input-wrap > i {
+        left: 12px;
+        font-size: 12px;
+    }
+
+    #guestRegisterModal .guest-submit-btn {
+        height: 43px;
+        font-size: 13px;
+    }
+
+    #guestRegisterModal .guest-error {
+        font-size: 11px;
+    }
+
+    #guestRegisterModal .row {
+        margin-left: -6px;
+        margin-right: -6px;
+    }
+
+    #guestRegisterModal .row > [class*="col-"] {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+
+/* Very small mobile screens */
+@media (max-width: 360px) {
+
+    #guestRegisterModal .guest-modal-dialog {
+        max-width: 320px;
+    }
+
+    #guestRegisterModal .guest-modal-header {
+        padding: 15px 14px 11px;
+    }
+
+    #guestRegisterModal .guest-modal-body {
+        padding: 12px 14px 15px;
+    }
+
+    #guestRegisterModal .guest-modal-header h3 {
+        font-size: 17px;
+    }
+
+    #guestRegisterModal .guest-modal-header p {
+        font-size: 11px;
+    }
+
+    #guestRegisterModal .guest-input {
+        height: 38px;
+    }
+}
 
     @media (max-width: 991px) {
         .vt-info {
@@ -1364,6 +1483,9 @@
     }
 
     @media (max-width: 575px) {
+        .vt-verified{
+            bottom:1px;
+        }
         .vt-page {
             padding-top: 90px;
         }

@@ -154,7 +154,7 @@ public function viewTutorPublicProfile($id, Request $request)
     }
 }
  public function viewTutorOverView($id, Request $request){
-    try{
+   try{
         $data['user'] = User::with(['getTimezone','getState'])->where('id',$id)->first();
 
         if(!@$data['user']){
@@ -180,54 +180,75 @@ public function viewTutorPublicProfile($id, Request $request)
             ->get();
 
         $data['subjects'] = $plans->pluck('getSubject.subject')->filter()->unique()->sort()->implode(', ');
+
+        $tutorState = trim($data['user']->getState->state_name ?? '');
+
+        $gradeIds = $plans->pluck('grade_id')
+            ->unique()
+            ->filter();
+
+        $gradeNames = Grade::whereIn('id', $gradeIds)
+            ->pluck('grade_name', 'id');
+
+        $branchIds = $plans->pluck('branch_id')
+            ->unique()
+            ->filter();
+
+        $branchNames = Branch::whereIn('id', $branchIds)
+            ->pluck('branch_name', 'id');
+
         $learningPrograms = collect();
 
-        if ($plans->isNotEmpty()) {
+        foreach ($plans as $plan) {
 
-            $learningPrograms = AcademicProgram::where('status', 1)
-                ->where(function ($query) use ($plans) {
+            $programs = AcademicProgram::where('status', 1)
+                ->where('grade_id', $plan->grade_id)
+                ->where('branch_id', $plan->branch_id)
+                ->whereRaw(
+                    'LOWER(TRIM(state)) = ?',
+                    [strtolower($tutorState)]
+                )
+                ->get();
 
-                    foreach ($plans as $plan) {
+            foreach ($programs as $program) {
 
-                        $query->orWhere(function ($subQuery) use ($plan) {
+                $learningPrograms->push((object) [
 
-                            $subQuery->where('grade_id', $plan->grade_id)
-                                ->where('branch_id', $plan->branch_id);
+                    'id' => $program->id,
 
-                        });
+                    'name' => $program->name,
 
-                    }
+                    'type' => $program->program_type,
 
-                })
-                ->with('grade')
-                ->get()
-                ->groupBy(function ($program) {
-                    return strtolower(trim($program->name));
-                })
-                ->map(function ($programs) {
+                    'subject' => $branchNames[$program->branch_id] ?? '',
 
-                    $first = $programs->first();
+                    'year_levels' => $gradeNames[$program->grade_id] ?? '',
 
-                    return [
-                        'name' => $first->name,
+                    'grade_id' => $program->grade_id,
 
-                        'grades' => $programs
-                            ->pluck('grade.grade_name')
-                            ->filter()
-                            ->unique()
-                            ->values(),
-                    ];
+                    'branch_id' => $program->branch_id,
 
-                })
-                ->values();
+                    'state' => $program->state,
+
+                ]);
+            }
         }
+        $learningPrograms = $learningPrograms
+            ->unique(function ($program) {
 
-$data['learningPrograms'] = $learningPrograms;
-        $gradeNames = $plans->pluck('getGrade.grade_name')->filter()->unique()->values();
-        $gradeNums  = $gradeNames->map(function ($g) {
-            return preg_match('/^Year\s*(\d+)$/i', trim($g), $m) ? (int) $m[1] : null;
-        });
-        $gradeNames = $plans->pluck('getGrade.grade_name')
+                $name = strtolower(trim($program->name));
+
+                $name = str_replace('fractions', 'fraction', $name);
+
+                $name = preg_replace('/[^a-z0-9]/', '', $name);
+
+                return $name . '-' . $program->grade_id . '-' . $program->branch_id;
+
+            })
+            ->values();
+        $data['learningPrograms'] = $learningPrograms;
+        $data['learningProgramsCount'] = $learningPrograms->count();
+     $gradeNames = $plans->pluck('getGrade.grade_name')
             ->filter()
             ->unique()
             ->values();
@@ -243,8 +264,8 @@ $data['learningPrograms'] = $learningPrograms;
         if ($days->isEmpty()) {
             $data['availability_summary'] = 'Not available';
         } else {
-            $isRun = $days->count() === ($days->last() - $days->first() + 1);   // e.g. Mon, Tue, Wed ... no gaps
-            $range = $days->count() === 1
+            $isRun = $days->count() === ($days->last() - $days->first() + 1); 
+             $range = $days->count() === 1
                 ? $dayNames[$days->first()]
                 : ($isRun
                     ? $dayNames[$days->first()] . '–' . $dayNames[$days->last()]
@@ -254,27 +275,27 @@ $data['learningPrograms'] = $learningPrograms;
             $data['availability_summary'] = $range . ($hasMultiple ? ' · multiple slots' : '');
         }
 
-            $data['tutor_wwcc'] = [];
+        $data['tutor_wwcc'] = [];
 
-            $exist_taf = TutorApplicationFormsModel::selectRaw('MIN(id) as id')
-                ->where('status', '!=', 2)
-                ->groupBy('tutor_id')
-                ->pluck('id')
-                ->toArray();
+        $exist_taf = TutorApplicationFormsModel::selectRaw('MIN(id) as id')
+            ->where('status', '!=', 2)
+            ->groupBy('tutor_id')
+            ->pluck('id')
+            ->toArray();
 
-                if (count($exist_taf) != 0) {
-                    $data['tutor_wwcc'] = TutorWWCCModel::where('tutor_id', $id)
-                        ->whereIn('tutor_app_id', $exist_taf)
-                        ->orderBy('id', 'asc')
-                        ->get();
-                }
-                        return view('admin.modules.tutor_management.view_tutor_overview')->with($data);
-                }  catch(\Exception $e){
-                    \Log::error($e->getMessage());
-                        session()->flash("error",$e->getMessage());
-                        return redirect()->back();
-                    }
-                }
+        if (count($exist_taf) != 0) {
+            $data['tutor_wwcc'] = TutorWWCCModel::where('tutor_id', $id)
+                ->whereIn('tutor_app_id', $exist_taf)
+                ->orderBy('id', 'asc')
+                ->get();
+        }
+          return view('admin.modules.tutor_management.view_tutor_overview')->with($data);
+    }  catch(\Exception $e){
+        \Log::error($e->getMessage());
+        session()->flash("error",$e->getMessage());
+        return redirect()->back();
+    }
+}
 
     public function viewTutorAdvancePage($id,Request $request){
         try{
@@ -1598,6 +1619,8 @@ public function viewTutorLearningPrograms($id)
 {
     $user = User::with(['getState'])->findOrFail($id);
 
+    $tutorState = trim($user->getState->state_name ?? '');
+
     $tutorshipPlans = TutorshipPlan::where('teacher_id', $id)
         ->where('status', 'A')
         ->get();
@@ -1619,6 +1642,7 @@ public function viewTutorLearningPrograms($id)
         $programs = AcademicProgram::where('status', 1)
             ->where('grade_id', $plan->grade_id)
             ->where('branch_id', $plan->branch_id)
+            ->whereRaw('LOWER(TRIM(state)) = ?', [strtolower($tutorState)])
             ->get();
 
         foreach ($programs as $program) {
@@ -1632,15 +1656,25 @@ public function viewTutorLearningPrograms($id)
                 'status' => 'Approved',
                 'grade_id' => $program->grade_id,
                 'branch_id' => $program->branch_id,
+                'state' => $program->state,
             ]);
         }
     }
 
-$learning_programs = $learning_programs
-    ->unique(function ($program) {
-        return $program->grade_id . '-' . $program->branch_id . '-' . $program->name;
-    })
-    ->values();
+    // Remove duplicate programs for same year and branch
+    $learning_programs = $learning_programs
+        ->unique(function ($program) {
+
+            $name = strtolower(trim($program->name));
+
+            $name = str_replace('fractions', 'fraction', $name);
+
+            $name = preg_replace('/[^a-z0-9]/', '', $name);
+
+            return $name . '-' . $program->grade_id . '-' . $program->branch_id;
+        })
+        ->values();
+
     $available_programs = AcademicProgram::where('status', 1)
         ->whereNotIn('id', $learning_programs->pluck('id'))
         ->orderBy('name')
@@ -1656,7 +1690,8 @@ $learning_programs = $learning_programs
         'user',
         'learning_programs',
         'available_programs',
-        'tutor_subjects'
+        'tutor_subjects',
+        'tutorshipPlans'
     ));
 }
 public function manageTutorShipPlans($id,Request $request){

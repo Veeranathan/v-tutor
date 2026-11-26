@@ -642,7 +642,7 @@ Tutor Overview
                         <span class="tw-ov-label">Learning Programs</span>
 
                         <strong class="tw-ov-big">
-                            {{ $learningPrograms->count() }} Managed Learning programs
+                                {{ $learningProgramsCount ?? 0 }} Managed Learning Programs
                         </strong>
                     </div>
 

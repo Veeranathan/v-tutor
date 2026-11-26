@@ -299,9 +299,6 @@ class DashboardController extends Controller
             //  @$data['av']= $av;
 
 
-
-
-
        //subjects get
         $subjects=TutorshipPlan::where('teacher_id',$data['userDetails']->id)->where('status','A')->get();
         $unique=[];
@@ -451,69 +448,83 @@ class DashboardController extends Controller
 
     //     $sat=MyAvailability::where('teacher_id',(int)$data['userDetails']->id)->where('day',6)->get();
     //     $data['availability_sat']=$sat;
+        $tutorState = State::where(
+            'id',
+            $data['userDetails']->state
+        )->value('state_name');
 
-            $tutorPlans = TutorshipPlan::where('teacher_id', $data['userDetails']->id)
-                ->where('status', 'A')
-                ->get(['grade_id', 'branch_id']);
+$tutorPlans = TutorshipPlan::where('teacher_id', $data['userDetails']->id)
+    ->where('status', 'A')
+    ->get(['grade_id', 'branch_id']);
 
-            $learningPrograms = collect();
+$learningPrograms = collect();
 
-            if ($tutorPlans->isNotEmpty()) {
+if ($tutorPlans->isNotEmpty()) {
 
-                $learningPrograms = AcademicProgram::where('status', 1)
-                    ->where(function ($query) use ($tutorPlans) {
+    $learningPrograms = AcademicProgram::where('status', 1)
+        ->where('state', $tutorState)
+        ->where(function ($query) use ($tutorPlans) {
 
-                        foreach ($tutorPlans as $plan) {
+            foreach ($tutorPlans as $plan) {
 
-                            $query->orWhere(function ($subQuery) use ($plan) {
+                $query->orWhere(function ($subQuery) use ($plan) {
 
-                                $subQuery->where('grade_id', $plan->grade_id)
-                                    ->where('branch_id', $plan->branch_id);
+                    $subQuery->where('grade_id', $plan->grade_id)
+                        ->where('branch_id', $plan->branch_id);
 
-                            });
+                });
 
-                        }
+                }
 
-                    })
-                    ->with('grade')
-                    ->get()
-                    ->groupBy(function ($program) {
-                        return strtolower(trim($program->name));
-                    })
-                    ->map(function ($programs) {
+        })
+        ->with('grade')
+        ->get()
+        ->groupBy(function ($program) {
 
-                        $first = $programs->first();
+            return strtolower(trim($program->name))
+                . '_' . $program->grade_id;
 
-                        return [
-                            'name' => $first->name,
+        })
+        ->map(function ($programs) {
 
-                            'grades' => $programs
-                                ->pluck('grade.grade_name')
-                                ->filter()
-                                ->unique()
-                                ->values(),
-                        ];
+            $first = $programs->first();
 
-                    })
-                    ->values();
-            }
+            return [
+                'name' => $first->name,
+                'slug' => $first->slug,
 
-            $data['learningPrograms'] = $learningPrograms;
-            $tutorGradeIds = TutorshipPlan::where('teacher_id', $data['userDetails']->id)
-                ->where('status', 'A')
-                ->pluck('grade_id')
-                ->unique()
-                ->toArray();
+                'grades' => $programs->pluck('grade.grade_name')
+                    ->filter()
+                    ->unique()
+                    ->values(),
 
-            $data['allGrades'] = Grade::where('status', 'A')
-                ->whereIn('id', $tutorGradeIds)
-                ->get();
+                'grade_ids' => $programs->pluck('grade_id')
+                    ->unique()
+                    ->values(),
+            ];
 
-            $data['allStates'] = State::all();
-            $data['tutorState'] = State::where(
-                'id',
-                $data['userDetails']->state_id
-            )->first();
+        })
+        ->values();
+}
+
+$data['learningPrograms'] = $learningPrograms;
+$tutorGradeIds = TutorshipPlan::where('teacher_id', $data['userDetails']->id)
+    ->where('status', 'A')
+    ->pluck('grade_id')
+    ->unique()
+    ->toArray();
+
+$data['allGrades'] = Grade::where('status', 'A')
+    ->whereIn('id', $tutorGradeIds)
+    ->get();
+
+$data['allStates'] = State::all();
+
+$data['tutorState'] = State::where(
+    'id',
+    $data['userDetails']->state
+)->first();
+
 
           $data['t_my_av_show'] = MyAvailability::where(['teacher_id'=>$data['userDetails']->id,'status'=>'A'])->get();
 

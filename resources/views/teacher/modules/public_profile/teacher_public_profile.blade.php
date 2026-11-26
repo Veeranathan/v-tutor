@@ -857,7 +857,6 @@
     }
 
     .vt-actions {
-        border-left: 1px solid #ddd;
         padding-left: 20px;
         margin-left: 20px;
     }
@@ -2408,7 +2407,7 @@ $redDays = [2, 4, 6]; // Tue, Thu, Sat get the red header
                     <a href="{{ route('program.detail', $program['slug']) }}?{{ http_build_query([
                         'year' => $program['grade_ids']->first(),
                         'state' => \Illuminate\Support\Str::slug($tutorState->state_name ?? '')
-                       ]) }}"
+                       ]) }}"target="_blank"   rel="noopener noreferrer"
                     class="vt-program vt-program-item vt-c{{ ($loop->index % 6) + 1 }}">
 
                         <strong>{{ $program['name'] }}</strong>

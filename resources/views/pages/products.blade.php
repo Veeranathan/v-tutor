@@ -1,24 +1,24 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 
 @php
 $type = request()->route('type');
 
 $seo = [
-    'learning' => [
-        'title' => 'Online Learning Programs (Year 1–12) | Maths, English, Science',
-        'description' => 'Explore structured online learning programs for Year 1 to Year 12 in Maths, English and Science across Australia. Find the right program by year and state.',
-        'keywords' => 'online tutoring Australia, online tutors Australia, online tutors, online learning programs Australia, maths english science tutoring, year 1 to 12 programs, academic learning programs'
-    ],
-    'oc' => [
-        'title' => 'OC Preparation Programs (Opportunity Class) Australia',
-        'description' => 'Prepare for Opportunity Class (OC) exams with structured tutoring programs. Improve reasoning, maths and English skills with expert tutors.',
-        'keywords' => 'online tutoring Australia, online tutors Australia, online tutors, OC preparation Australia, opportunity class tutoring, OC exam coaching, academic learning programs, oc programs'
-    ],
-    'naplan' => [
-        'title' => 'NAPLAN Preparation Programs | Year 3, 5, 7, 9',
-        'description' => 'Boost NAPLAN scores with targeted preparation programs in reading, writing and numeracy. Designed for Australian students.',
-        'keywords' => 'online tutoring Australia, online tutors Australia, online tutors, NAPLAN preparation, NAPLAN tutoring Australia, year 3 5 7 9 NAPLAN,academic learning programs, naplan programs'
-    ]
+'learning' => [
+  'title' => 'Online Learning Programs (Year 1–12) | Maths, English, Science',
+'description' => 'Explore structured online learning programs for Year 1 to Year 12 in Maths, English and Science across Australia. Find the right program by year and state.',
+'keywords' => 'online tutoring Australia, online tutors Australia, online tutors, online learning programs Australia, maths english science tutoring, year 1 to 12 programs, academic learning programs'
+],
+'oc' => [
+'title' => 'OC Preparation Programs (Opportunity Class) Australia',
+'description' => 'Prepare for Opportunity Class (OC) exams with structured tutoring programs. Improve reasoning, maths and English skills with expert tutors.',
+'keywords' => 'online tutoring Australia, online tutors Australia, online tutors, OC preparation Australia, opportunity class tutoring, OC exam coaching, academic learning programs, oc programs'
+],
+'naplan' => [
+'title' => 'NAPLAN Preparation Programs | Year 3, 5, 7, 9',
+'description' => 'Boost NAPLAN scores with targeted preparation programs in reading, writing and numeracy. Designed for Australian students.',
+'keywords' => 'online tutoring Australia, online tutors Australia, online tutors, NAPLAN preparation, NAPLAN tutoring Australia, year 3 5 7 9 NAPLAN,academic learning programs, naplan programs'
+]
 ];
 
 $currentSeo = $seo[$type] ?? $seo['learning'];
@@ -37,407 +37,394 @@ $currentSeo = $seo[$type] ?? $seo['learning'];
 @section('content')
 @php
 $type = request()->route('type');
-
 $title = 'Learning Programs';
-
 if ($type == 'oc') {
-    $title = 'Opportunity Class Programs';
+$title = 'Opportunity Class Programs';
 } elseif ($type == 'naplan') {
-    $title = 'Naplan Programs';
+$title = 'Naplan Programs';
 }
-@endphp
-<!-- ================= HERO (Modern Card Header) ================= -->
-@include('include.page_hero', [
-    'title' => $title,
-    'showBreadcrumb' => true
-])
 
-<!-- ================= END HERO ================= -->
-
-<!-- ================= FILTER SECTION ================= -->
-<section class="program-filter-section py-1">
-  <div class="container">
-
-    <div class="filter-card">
-
-
-      <!-- YEAR SELECTION -->
-      <!-- ================= YEAR SELECTION ================= -->
-    <div class="year-filter-wrapper mt-2">
-
-    <div class="year-header">
-
-       <h2 class="section-title text-center mb-0">
-        Find Learning Programs By <span class="section-heading">Year</span>
-      </h2>
-
-        <!-- Desktop Button -->
-        <button id="moreFiltersBtn" class="btn filter-main-btn desktop-only">
-            More Filters <i class="bi bi-funnel"></i>
-        </button>
-
-    </div>
-
-    <!-- Year Grid -->
-    <div class="year-grid mt-4">
-        @foreach($grades as $grade)
-        <button class="year-btn" data-slug="{{ $grade->slug }}" data-id="{{ $grade->id }}">
-          {{ $grade->grade_name }}
-        </button>
-        @endforeach
-    </div>
-
-    <!-- ================= STATE SELECTION ================= -->
-<div class="state-filter-wrapper mt-4">
-
-    <h2 class="section-title text-center mb-2"><span class="section-heading">State</span></h2>
-
-    <div class="state-grid mt-3">
-        @php
-        $states = [
-            'New South Wales' => 'NSW',
-            'Victoria' => 'VIC',
-            'Queensland' => 'QLD',
-           /* 'South Australia' => 'SA',
-            'Western Australia' => 'WA',
-            'Tasmania' => 'TAS',
-            'Australian Capital Territory' => 'ACT',
-            'Northern Territory' => 'NT',
-             */
-        ];
-        @endphp
-
-        @foreach($states as $full => $short)
-            <button class="state-btn" data-name="{{ $full }}">
-                {{ $short }}
-            </button>
-        @endforeach
-    </div>
-
-</div>
-
-    <!-- Mobile Button -->
-    <div class="mobile-only text-center mt-3">
-        <button id="moreFiltersBtnMobile" class="btn filter-main-btn w-100">
-             More Filters <i class="bi bi-funnel"></i>
-        </button>
-    </div>
-
-    <!-- POPUP PANEL (Single Shared Panel) -->
-  <div id="moreFiltersPanel" class="more-filters-panel card-popover">
-
-    <!-- Close Button -->
-    <button type="button" id="closeFiltersPanel" class="close-filter-btn">
-        &times;
-    </button>
-
-    <!-- Subject -->
-    <div class="filter-item">
-        <label for="subject">Subject</label>
-        <select id="subject">
-        <option value="">Select Subject</option>
-          @php
-                $allowedBranches = ['Maths', 'Science', 'English'];
-          @endphp
-
-        @foreach($branches->whereIn('branch_name', $allowedBranches) as $branch)
-        <option value="{{ $branch->id }}">
-            {{ $branch->branch_name }}
-        </option>
-        @endforeach
-        </select>
-    </div>
-
-    <!-- Year -->
-    <div class="filter-item">
-        <label for="yearFilter">Year</label>
-        <select id="yearFilter">
-        <option value="">Select Year</option>
-          @foreach($grades as $grade)
-        <option value="{{ $grade->id }}">
-          {{ $grade->grade_name }}
-        </option>
-        @endforeach
-      </select>
-    </div>
-
-    <!-- State -->
-    <div class="filter-item">
-        <label for="state">State</label>
-        <select id="state">
-            <option value="">Any State</option>
-            <option value="New South Wales">New South Wales</option>
-            <option value="Victoria">Victoria</option>
-            <option value="Queensland">Queensland</option>
-            <!-- <option value="South Australia">South Australia</option>
-            <option value="Western Australia">Western Australia</option>
-            <option value="Tasmania">Tasmania</option>
-            <option value="Australian Capital Territory">Australian Capital Territory</option>
-            <option value="Northern Territory">Northern Territory</option>  -->
-      </select>
-    </div>
-
-    <!-- Curriculum -->
-    <div class="filter-item">
-        <label for="curriculum">Curriculum</label>
-        <select id="curriculum">
-          <option value="">Select Curriculum</option>
-          <option value="NESA Curriculum">NESA Curriculum</option>
-          <option value="VCAA curriculum">VCAA curriculum</option>
-          <option value="QCAA Curriculum">QCAA Curriculum</option>
-          <option value="SACE Curriculum">SACE Curriculum</option>
-          <option value="WACE Curriculum">WACE Curriculum</option>
-          <option value="BSSS Curriculum">BSSS Curriculum</option>
-          <option value="TASC Curriculum">TASC Curriculum</option>
-          <option value="NTBS Curriculum">NTBS Curriculum</option>
-        </select>
-    </div>
-
-    <!-- Actions -->
-    <div class="filter-actions mt-2">
-        <button id="clearFilters" class="btn btn-outline-program filter-actions-button">
-            Clear All
-        </button>
-
-        <button id="applyFilters" class="btn btn-add-cart filter-actions-button">
-            Apply Filters
-        </button>
-    </div>
-    <div id="filterError" class="filter-error"></div>
-
-  </div>
-
-  </div>
-       
-    <!-- ================= INFO MESSAGE ================= -->
-    <div id="infoBox" class="info-box">
-      <div class="row align-items-center justify-content-center text-center text-md-start">
-<!-- 
-        Image Left
-        <div class="col-md-4  mb-4 mb-md-0">
-          <img src="{{ public_asset('assets/images/academic-program-view.png') }}" 
-            class="info-img img-fluid">
-        </div> -->
-
-        <!-- Text Right -->
-        <!-- <div class="col-md-6">
-          <h2 class="section-title">
-         Explore Our Learning Programs designed for Real <span class="section-heading">Academic Progress</span>  
-          </h2>
-          <p class="text-muted mb-0">
-            Choose your child's year and state above to view available programs
-          </p>
-        </div> -->
-
-      </div>
-    </div>
-   <div id="activeFiltersWrapper" class="mb-3" style="display:none;">
-        <div id="activeFilters"></div>
-    <div id="programCount" class="program-count"></div>
-</div>
-    <div class="mt-4" id="programResults" style="display:none;">
-    </div>
-     
-    <div class="mt-4" id="prePopulatedData">
-
-@php
 $order = ['Maths', 'English', 'Science'];
 
-$subjectImages = [
-    'Maths' => 'assets/images/english-programs.png',
-    'English' => 'assets/images/maths-programs.png',
-    'Science' => 'assets/images/science-programs.png',
+$allowedBranches = ['Maths', 'English', 'Science', 'Languages', 'Technologies', 'Creative Arts', 'HSIE'];
+$subjectIcons = [
+'Maths' => 'bi-calculator', 'English' => 'bi-journal-text', 'Science' => 'bi-radioactive',
+'Languages' => 'bi-globe2', 'Technologies' => 'bi-cpu', 'Creative Arts' => 'bi-palette', 'HSIE' => 'bi-people',
+];
+$subjectList = $branches->whereIn('branch_name', $allowedBranches);
+
+$yearLabel = fn($g) => preg_match('/\d+/', $g->grade_name, $m) ? $m[0] : $g->grade_name;
+
+$programTypes = [
+['code' => 'MLP', 'class' => 'mlp', 'name' => 'Micro Learning Program', 'desc' => 'Targeted support for specific concepts or skills.'],
+['code' => 'CTP', 'class' => 'ctp', 'name' => 'Core Training Program', 'desc' => 'Structured learning across a broader set of skills.'],
+['code' => 'ICP', 'class' => 'icp', 'name' => 'Intensive Crash Program', 'desc' => 'Focused support within a shorter learning period.'],
+['code' => 'FTP', 'class' => 'ftp', 'name' => 'Foundation Training Program', 'desc' => 'Longer-term support to strengthen foundational learning.'],
 ];
 @endphp
 
-@foreach($order as $subjectName)
+<div class="lp-page">
+  <section class="lp-hero">
+    <div class="container programs-wrap">
+      <div class="row align-items-center">
+        <div class="col-lg-6 py-4 py-lg-5">
+          <h1 class="lp-title">{{ $title }}</h1>
+          <p class="lp-subtitle">
+            Explore structured learning programs designed to address your child's learning needs,
+            strengthen essential skills and build confidence.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-@if(isset($prePopulatedData[$subjectName]) && count($prePopulatedData[$subjectName]['programs']) > 0)
+  <section class="pb-3">
+    <div class="container programs-wrap">
 
-@php 
-$data = $prePopulatedData[$subjectName]; 
-@endphp
+      <div class="lp-card lp-search mb-3">
+        <i class="bi bi-search"></i>
+        <input type="search" id="programSearch" class="form-control"
+          placeholder="Search programs by name, topic or skill (e.g. fractions, essay writing, algebra)..."
+          autocomplete="off">
+      </div>
 
-
-<!-- SUBJECT BANNER -->
-<div class="subject-banner mb-10">
-    <img src="{{ public_asset($subjectImages[$subjectName] ?? 'assets/images/banner-default.jpg') }}"
-        alt="{{ $subjectName }}"
-        class="subject-banner-img">
-
-    <div class="banner-overlay"></div>
-
-    <h3 class="banner-title">{{ $subjectName }}</h3>
-</div>
-
-
-<!-- SUBJECT CAROUSEL -->
-<div class="owl-carousel owl-theme subject-carousel mb-5"
-     id="carousel-{{ strtolower($subjectName) }}">
-
-    @foreach($data['programs'] as $programName => $programItems)
-
-    @php
-        $firstProgram = $programItems->first();
-    @endphp
-
-    <div class="item mt-2">
-
-        <div class="program-pre-card">
-
-            <div class="program-meta-top">
-                {{ $subjectName }} Program
-             </div>
-
-            <h5 class="program-title">
-                {{ $programName }}
-            </h5>
-            <p class="program-desc">
-                {{ \Illuminate\Support\Str::limit($firstProgram->description, 160) }}
-            </p>
-
-            @php
-                $programType = $firstProgram->program_type ?? '';
-            @endphp
-
-            @if(in_array($programType, ['Core Training Program', 'Foundation Training Program']))
-                <p class="guarantee-text">✔ 30-Day Skill Progress Guarantee</p>
-            @elseif($programType == 'Intensive Crash Program')
-                <p class="guarantee-text">✔ Exam-Focused Practice</p>
-            @endif
-            
-            {{-- Sessions --}}
-            <div class="session-box">
-                <span class="session-number">
-                    {{ $firstProgram->number_of_sessions }}
-                </span>
-                    <span class="session-label">Sessions</span>
-            </div>
-
-            {{-- Tags --}}
-                <div class="program-tags">
-
-                    @php
-                        $stateShortMap = [
-                        'New South Wales' => 'NSW',
-                        'Victoria' => 'VIC',
-                        'Queensland' => 'QLD',
-                        'South Australia' => 'SA',
-                        'Western Australia' => 'WA',
-                        'Tasmania' => 'TAS',
-                        'Australian Capital Territory' => 'ACT',
-                        'Northern Territory' => 'NT',
-                    ];
-                    @endphp
-
-                    @php
-                        $allGrades = $programItems->pluck('grade.grade_name')->unique()->join(', ');
-                        $allStates = $programItems->pluck('state')->unique()->map(fn($s) => $stateShortMap[$s] ?? $s)->join(', ');
-                    @endphp
-
-                        <span class="tag grade-tag">{{ $allGrades }}</span>
-                        <span class="tag state-tag">{{ $allStates }}</span>
-
-                </div>
-
-                {{-- Actions --}}
-                <div class="program-actions">
-
-                    <a href="{{ route('program.detail', $firstProgram->slug) }}"
-                    class="btn btn-add-cart w-100">
-                     Learn More →
-                    </a>
-                </div>
-            </div>
-
+      <div class="lp-card lp-pillbox">
+        <div class="pill-row">
+          <span class="pill-label">YEAR</span>
+          <div class="pill-list">
+            <button type="button" class="pill year-pill active" data-filter-btn="year" data-value="">All</button>
+            @foreach($grades as $grade)
+            <button type="button" class="pill year-pill" data-filter-btn="year" data-value="{{ $grade->id }}"
+              data-slug="{{ $grade->slug }}">{{ $yearLabel($grade) }}</button>
+            @endforeach
+          </div>
         </div>
 
-    @endforeach
-
-</div>
-
-@endif
-@endforeach
-
-</div>
-
-  </div>
-  </div>
-</section>
-<!-- ================= END FILTER SECTION ================= -->
-<!-- ================= POPULAR PROGRAMS ================= -->
-<section class="popular-programs pb-5">
-  <div class="container">
-     <div class="popular-box">
-    <h2 class="section-title text-center mb-4">Popular <span class="section-heading">Programs</span></h2>
-    <div class="row">
-
-        @php
-            $popularPrograms = [
-            [
-                'title' => 'Master Number Sense',
-                'state' => 'NSW',
-                'image' => 'assets/images/maths-whiz-online.png',
-                'slug' => 'master-number-sense'
-            ],
-            [
-                'title' => 'Master Critical Reading',
-                'state' => 'VIC',
-                'image' => 'assets/images/creative-writing-workshop.png',
-                'slug' => 'master-critical-reading',
-            ],
-            [
-                'title' => 'Master Scientific Thinking',
-                'state' => 'NSW',
-                'image' => 'assets/images/maths-mastery-tutoring.png',
-                'slug' => 'master-scientific-thinking'
-            ],
-            [
-                'title' => 'Master Core Number Skills',
-                'state' => 'WA',
-                'image' => 'assets/images/advance-year5-maths.png',
-                'slug' => 'master-core-number-skills',
-            ],
-        ];
-        @endphp
-        @foreach($popularPrograms as $program)
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="program-card">
-
-            <div class="program-img">
-                <img src="{{ public_asset($program['image']) }}" alt="{{ $program['title'] }}">
-            </div>
-
-            <div class="program-content">
-                <h6>{{ $program['title'] }}</h6>
-                <p class="program-meta">⭐⭐⭐ {{ $program['state'] }}</p>
-
-                <div class="program-buttons">
-                     <a href="{{ route('program.detail', $program['slug']) }}" class="btn btn-add-cart">
-                                        Learn More
-                                </a>
-                </div>
-            </div>
+        <div class="pill-row">
+          <span class="pill-label">SUBJECT</span>
+          <div class="pill-list">
+            <button type="button" class="pill subject-pill active" data-filter-btn="subject" data-value="">All</button>
+            @foreach($subjectList as $branch)
+            <button type="button" class="pill subject-pill" data-filter-btn="subject" data-value="{{ $branch->id }}">
+              <i class="bi {{ $subjectIcons[$branch->branch_name] ?? 'bi-grid' }}"></i> {{ $branch->branch_name }}
+            </button>
+            @endforeach
+          </div>
         </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="pb-4">
+    <div class="container programs-wrap">
+      <div class="type-strip">
+        <div class="type-intro">
+          <h2>Our Learning<br class="mobile">Program Types</h2>
+          <p><i class="bi bi-info-circle"></i> Choose a program type that best fits your child's needs.</p>
+        </div>
+        @foreach($programTypes as $pt)
+        <div class="type-item">
+          <div class="type-top">
+            <span class="ptype {{ $pt['class'] }}">{{ $pt['code'] }}</span>
+            <i class="bi bi-info-circle type-info" title="{{ $pt['name'] }}"></i>
+          </div>
+          <h3>{{ $pt['name'] }}</h3>
+          <p>{{ $pt['desc'] }}</p>
         </div>
         @endforeach
+      </div>
     </div>
+  </section>
+
+  <section class="pb-4">
+    <div class="container programs-wrap">
+      <div class="row g-4 flex-lg-nowrap">
+
+        <div class="col-lg-auto">
+          <div class="fs-backdrop" id="fsBackdrop"></div>
+          <aside class="filters-sidebar" id="filtersSidebar">
+
+            <div class="fs-head">
+              <span class="fs-title">FILTERS</span>
+              <div class="fs-head-actions">
+              <button type="button" class="link-clear" data-clear-all>Clear all</button>
+              <button type="button" class="fs-close d-lg-none" id="closeFilters" aria-label="Close">&times;</button>
+           </div>
+            </div>
+
+            <div class="fs-group">
+              <button type="button" class="fs-toggle">Year <i class="bi bi-chevron-up"></i></button>
+              <div class="fs-body">
+                <label class="fs-check"><input type="checkbox" data-filter="year" value=""><span>All Years</span></label>
+                @foreach($grades as $grade)
+                <label class="fs-check"><input type="checkbox" data-filter="year" value="{{ $grade->id }}"><span>{{ $grade->grade_name }}</span></label>
+                @endforeach
+              </div>
+            </div>
+
+            <div class="fs-group">
+              <button type="button" class="fs-toggle">Subject <i class="bi bi-chevron-up"></i></button>
+              <div class="fs-body">
+                <label class="fs-check"><input type="checkbox" data-filter="subject" value=""><span>All Subjects</span></label>
+                @foreach($subjectList as $branch)
+                <label class="fs-check"><input type="checkbox" data-filter="subject" value="{{ $branch->id }}"><span>{{ $branch->branch_name }}</span></label>
+                @endforeach
+              </div>
+            </div>
+
+            <div class="fs-group">
+              <button type="button" class="fs-toggle">Program Type <i class="bi bi-chevron-up"></i></button>
+              <div class="fs-body">
+                @foreach($programTypes as $pt)
+                <label class="fs-check"><input type="checkbox" data-filter="program_type" value="{{ $pt['name'] }}"><span>{{ $pt['name'] }} ({{ $pt['code'] }})</span></label>
+                @endforeach
+              </div>
+            </div>
+
+            @if(!empty($learningFocuses))
+            <div class="fs-group collapsed">
+              <button type="button" class="fs-toggle">Learning Focus <i class="bi bi-chevron-up"></i></button>
+              <div class="fs-body">
+                @foreach($learningFocuses as $focus)
+                <label class="fs-check"><input type="checkbox" data-filter="focus" value="{{ $focus }}"><span>{{ $focus }}</span></label>
+                @endforeach
+              </div>
+            </div>
+            @endif
+
+            <div class="fs-group">
+              <button type="button" class="fs-toggle">Curriculum / State <i class="bi bi-chevron-up"></i></button>
+              <div class="fs-body">
+                <label class="fs-select-label" for="curriculum">Curriculum</label>
+                <select id="curriculum" class="form-select form-select-sm mb-2 w-100">
+                  <option value="">Any Curriculum</option>
+                  <option value="NESA Curriculum">NESA Curriculum</option>
+                  <option value="VCAA curriculum">VCAA curriculum</option>
+                  <option value="QCAA Curriculum">QCAA Curriculum</option>
+                  <option value="SACE Curriculum">SACE Curriculum</option>
+                  <option value="WACE Curriculum">WACE Curriculum</option>
+                  <option value="BSSS Curriculum">BSSS Curriculum</option>
+                  <option value="TASC Curriculum">TASC Curriculum</option>
+                  <option value="NTBS Curriculum">NTBS Curriculum</option>
+                </select>
+
+                <label class="fs-select-label" for="state">State</label>
+                <select id="state" class="form-select form-select-sm w-100">
+                  <option value="">Any State</option>
+                  <option value="New South Wales">New South Wales</option>
+                  <option value="Victoria">Victoria</option>
+                  <option value="Queensland">Queensland</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-outline-program w-100 mt-3" data-clear-all>
+              <i class="bi bi-arrow-repeat"></i> Clear Filters
+            </button>
+          </aside>
+        </div>
+
+        <div class="col results-col">
+
+          <button type="button" class="btn btn-outline-program d-lg-none mb-3" id="openFilters">
+            <i class="bi bi-funnel"></i> Filters
+          </button>
+
+          <div class="results-bar">
+            <h2 class="results-count" id="programCount">0 programs found</h2>
+
+            <div class="results-tools">
+              <label class="tool-label" for="sortBy">Sort by:</label>
+              <select id="sortBy" class="form-select form-select-sm sort-select">
+                <option value="relevance">Relevance</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="name">Name: A-Z</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="activeFilters" class="active-filters d-none"></div>
+
+          <div id="programResults" class="row g-3 program-grid d-none"></div>
+
+          <div id="prePopulatedData" class="row g-3 program-grid">
+
+            @foreach($order as $subjectName)
+            @if(isset($prePopulatedData[$subjectName]) && count($prePopulatedData[$subjectName]['programs']) > 0)
+            @php
+            $typeMap = [
+            'Micro Learning Program' => ['MLP', 'mlp'],
+            'Core Training Program' => ['CTP', 'ctp'],
+            'Intensive Crash Program' => ['ICP', 'icp'],
+            'Foundation Training Program' => ['FTP', 'ftp'],
+            ];
+            $stateShortMap = [
+            'New South Wales' => 'NSW', 'Victoria' => 'VIC', 'Queensland' => 'QLD',
+            'South Australia' => 'SA', 'Western Australia' => 'WA', 'Tasmania' => 'TAS',
+            'Australian Capital Territory' => 'ACT', 'Northern Territory' => 'NT',
+            ];
+            $subjectImages = [
+            'English' => 'assets/images/maths-programs.png',
+            'Maths' => 'assets/images/english-programs.png',
+            'Science' => 'assets/images/science-programs.png',
+            ];
+            @endphp
+
+            @foreach($prePopulatedData[$subjectName]['programs'] as $programName => $programItems)
+            @php
+            $first = $programItems->first();
+            $outcomes = $programItems
+            ->flatMap(fn($program) => $program->keyLearningPrograms->pluck('name'))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+            $programType = $first->program_type ?? '';
+            [$typeCode, $typeClass] = $typeMap[$programType] ?? [null, 'mlp'];
+
+            $allGrades = $programItems->pluck('grade.grade_name')->filter()->unique()->join(', ');
+            $allStates = $programItems->pluck('state')->filter()->unique()->map(fn($s) => $stateShortMap[$s] ?? $s)->join(', ');
+
+            $price = $programItems->min('price');
+            $imageName = trim($first->image ?? '', " \t\n\r\0\x0B\"'");
+
+            $img = !empty($imageName)
+            ? 'assets/images/learning_program_images/' . $imageName
+            : ($subjectImages[$subjectName] ?? 'assets/images/banner-default.jpg');
+
+            $searchBlob = strtolower($programName . ' ' . ($first->description ?? '') . ' ' . $subjectName . ' ' . $allGrades);
+
+            $dataYears = $programItems->map(fn($p) => $p->grade_id ?? optional($p->grade)->id)->filter()->unique()->join(',');
+            $dataStates = $programItems->pluck('state')->filter()->unique()->join('|');
+            $dataCurriculum = $programItems->pluck('curriculum')->filter()->unique()->join('|');
+
+            $variants = $programItems->map(fn($p) => [
+            'state' => $p->state,
+            'state_short' => $stateShortMap[$p->state] ?? $p->state,
+            'year' => (string) ($p->grade_id ?? optional($p->grade)->id),
+            'grade' => optional($p->grade)->grade_name,
+            'curriculum' => $p->curriculum,
+            'price' => $p->price,
+            'slug' => $p->slug,
+            ])->values();
+            @endphp
+
+            <div class="col-12 col-sm-6 col-xl-3 program-item"
+              data-years="{{ $dataYears }}"
+              data-subject="{{ $subjectName }}"
+              data-states="{{ $dataStates }}"
+              data-ptype="{{ $programType }}"
+              data-curriculum="{{ $dataCurriculum }}"
+              data-search="{{ $searchBlob }}"
+              data-name="{{ $programName }}"
+              data-price="{{ $price ?? '' }}"
+              data-sessions="{{ $first->number_of_sessions ?? '' }}"
+              data-url-template="{{ route('program.detail', '__SLUG__') }}"
+              data-variants="{{ $variants->toJson() }}">
+              <article class="pcard">
+                <div class="pcard-img">
+                  <img src="{{ public_asset($img) }}" alt="{{ $programName }}" loading="lazy">
+                </div>
+
+                <div class="pcard-body">
+                  @if($typeCode)
+                  <span class="ptype {{ $typeClass }}">{{ $typeCode }}</span>
+                  @endif
+
+                  <h3 class="pcard-title">{{ $programName }}</h3>
+                  <p class="pcard-desc">{{ \Illuminate\Support\Str::limit($first->description ?? '', 110) }}</p>
+
+                  @if(count($outcomes))
+                  <div class="pcard-outcomes">
+                    <div class="po-title">Key Learning Outcomes</div>
+                    <ul>
+                      @foreach($outcomes as $o)
+                      <li>
+                        <i class="bi bi-check2"></i>
+                        {{ $o }}
+                      </li>
+                      @endforeach
+                    </ul>
+                  </div>
+                  @endif
+
+                  <div class="pcard-tags">
+                    <span class="ptag grade {{ $allGrades ? '' : 'd-none' }}" data-role="grade">{{ $allGrades }}</span>
+                    <span class="ptag subject">{{ $subjectName }}</span>
+                    <span class="ptag state {{ $allStates ? '' : 'd-none' }}" data-role="state">{{ $allStates }}</span>
+                  </div>
+
+                  <div class="pcard-meta">
+                    <span class="sessions"><i class="bi bi-person"></i> {{ $first->number_of_sessions }} sessions</span>
+                    <span class="price {{ $price ? '' : 'd-none' }}" data-role="price">From <strong>${{ number_format((float) $price) }}</strong></span>
+                  </div>
+
+                  <a href="{{ route('program.detail', $first->slug) }}" class="btn btn-add-cart pcard-btn" data-role="link">
+                    View Program <i class="bi bi-arrow-right"></i>
+                  </a>
+                </div>
+              </article>
+            </div>
+            @endforeach
+            @endif
+            @endforeach
+          </div>
+
+          <div id="emptyState" class="empty-state d-none">
+            <i class="bi bi-search"></i>
+            <p>No programs match your filters. Try clearing some filters.</p>
+          </div>
+
+          <div class="text-center mt-4" id="loadMoreWrap">
+            <button type="button" id="loadMoreBtn" class="btn btn-outline-program load-more">
+              Load More Programs <i class="bi bi-chevron-down"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- CTA BANNER -->
+<section class="select-cta mt-5">
+  <div class="container programs-wrap">
+    <div class="cta-banner">
+
+      <div class="cta-icon">
+        <i class="bi bi-clipboard2-check"></i>
+      </div>
+
+      <div class="cta-text">
+        <h3>Not sure which program is right for your child?</h3>
+        <p>
+          Start with a free diagnostic assessment to better understand
+          your child's learning needs and explore suitable program recommendations.
+        </p>
+      </div>
+
+      <div class="assessment-actions">
+        <a href="#assessment"
+           class="btn btn-add-cart cta-btn cta-btn-lg assessment-btn"
+           data-type="me">
+          Find Your Child's Learning Path
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
     </div>
   </div>
 </section>
-<!-- ================= END POPULAR ================= -->
-<!-- <script>
-const programType = "{{ request()->route('type') }}";
-</script> -->
-<!-- ================= Learning Program Assessment Start ================= -->
-<section class="assesment-section">
-        @include('include.learning_program_section')
-        @include('include.learning_program_modal_only') 
+</div>
+
+<section class="assesment-section" id="assessment">
+  @include('include.learning_program_section')
+  @include('include.learning_program_modal_only')
 </section>
-
-
-<!-- ================= Learning Program Assessment End ================= -->
 @endsection
+
 @section('footer')
 @include('include.footer')
 @endsection
@@ -446,1247 +433,1615 @@ const programType = "{{ request()->route('type') }}";
 @include('include.script')
 
 <style>
-/* Title & Badge */
-.hero-compact-title {
-  font-size: 22px;
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: -0.3px;
-  line-height: 1.25;
+  .lp-page {
+    --red: #D7263D;
+    --red-dark: #b91c1c;
+    --ink: #0f172a;
+    --muted: #6b7280;
+    --cream: #FFF9EC;
+    --peach: #fdeee4;
+    --line: #eadfd3;
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  html,
+	body {
+		max-width: 100%;
+		overflow-x: hidden;
+	}
+
+  .programs-wrap {
+    max-width: 1280px;
+  }
+
+  .lp-hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lp-title {
+    font-size: clamp(32px, 4.6vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+    color: var(--ink);
+  }
+
+.lp-hero {
+    position: relative;
+    background-color: var(--cream);
+    background-image: url("{{ public_asset('assets/images/learning_program_images/find_tutor.png') }}");
+    background-repeat: no-repeat;
+    background-size: 60% 100%;
+    background-position: right center;
+    overflow: hidden;
+    min-height: 300px;
 }
 
-.badge-year {
-  background: #fff1f2;
-  color: #D7263D;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1px solid #fecdd3;
-  display: inline-block;
-  vertical-align: middle;
+.lp-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        var(--cream) 0%,
+        var(--cream) 25%,
+        rgba(255, 249, 236, 0.95) 45%,
+        rgba(255, 249, 236, 0.75) 55%,
+        rgba(255, 249, 236, 0.2) 75%,
+        transparent 100%
+    );
+
+    z-index: 1;
+    pointer-events: none;
 }
 
-/* Subtitle */
-.hero-compact-subtitle {
-  font-size: 14px;
-  color: #475569 !important;
-  max-width: 680px;
-  line-height: 1.45;
+.lp-hero .container {
+    position: relative;
+    z-index: 2;
 }
 
-/* ================= FILTER CARD ================= */
-.filter-card {
-  background:#FFF9EC;
-  border-radius:16px;
-  padding:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+.lp-title {
+    font-size: clamp(32px, 4.6vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+    color: var(--ink);
 }
 
-.subject-btn {
-  border:1px solid #ddd;
-  background:#f8f9fa;
-  padding:10px 25px;
-  margin:5px;
-  border-radius:8px;
-  font-weight:600;
-  cursor:pointer;
-}
-.subject-btn.active,
-.subject-btn:hover {
-  background:#D7263D;
-  color:#fff;
-  border-color:#D7263D;
+.lp-subtitle {
+    font-size: 17px;
+    line-height: 1.55;
+    color: #0b1f4d;
+    max-width: 430px;
+    margin: 0;
 }
 
-.filter-title {
-  font-weight:600;
-  margin-bottom:15px;
+@media (max-width: 991.98px) {
+    .lp-hero {
+        background-size: 65% 100%;
+        min-height: 280px;
+    }
 }
 
-.year-btn:hover {
-  background:#D7263D;
-  color:#fff;
-  border-color:#D7263D;
+.program-grid:not(.list-view) .program-item {
+    display: flex;
+    align-items: stretch;
 }
 
-/* ================= INFO BOX ================= */
-.info-box {
-  padding:40px 10px 10px;
-}
-
-.section-title {
-  font-weight:600;
-  line-height:1.4;
-}
-
-/* ================= PROGRAM CARDS ================= */
-.program-card {
-  background:#fff;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 8px 20px rgba(0,0,0,0.08);
-  transition:0.3s;
-}
-.program-card:hover {
-  transform:translateY(-5px);
-}
-
-.program-img img {
-  width:100%;
-  height:160px;
-  object-fit:cover;
-}
-
-.program-content {
-  padding:20px;
-}
-
-.program-content h6 {
-  font-weight:600;
-  margin-bottom:6px;
-}
-
-.program-meta {
-  font-size:14px;
-  color:#6b7280;
-}
-
-.program-buttons {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 15px;
-}
-
-.btn-outline-program {
-  border:1px solid #D7263D;
-  color:#D7263D;
-  border-radius:8px;
-  padding:6px 14px;
-}
-.btn-outline-program:hover {
-  background:#D7263D;
-  color:#fff;
-}
-
-.btn-add-cart {
-  background: #D7263D;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  padding:6px 14px;
-}
-.filter-main-btn {
-  background: #D7263D;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-}
-.btn-add-cart:hover {
-  background:#b91c1c;
-}
-.section-heading {
- color: #dc3545;
-}
-/* ================= INFO IMAGE ================= */
-.info-img {
-  max-width: 220px;
-  width: 100%;
-  float: right;
-
-  animation: attentionEntry 1s ease-in-out infinite alternate;
-}
-/* ================= INFO IMAGE ================= */
-.more-filters-panel .filter-item {
-    margin-bottom: 15px;
-}
-
-.more-filters-panel label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.more-filters-panel select,
-.more-filters-panel input[type=range] {
+.program-grid:not(.list-view) .pcard {
     width: 100%;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-}
-
-.filter-actions {
+    height: 100%;
     display: flex;
-    justify-content: flex-end;
-    gap: 8px;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.filter-actions-button {
-    padding: 4px 12px !important;
-    font-size: 12px !important;
-    border-radius: 6px;    
-}
+/* Image cover fix */
 
-@keyframes attentionEntry {
-  0% {
-    transform: translateY(0);
-  }
-  15% {
-    transform: translateY(-10px);
-  }
-  30% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-/* ================= POPULAR BOX ================= */
-.popular-box {
-  background: #FFF9EC;
-  padding: 50px 40px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-  margin-top: 60px !important;
-}
-/* ================= RESPONSIVE ================= */
-@media(max-width:768px){
-  .program-buttons {
-    flex-direction:column;
-    gap:8px;
-  }
-  .info-img {
-    float: left;
-  }
-}
-/* ================= YEAR HEADER ================= */
-.year-header {
-    position: relative;
+
+
+
+/* Card content */
+.program-grid:not(.list-view) .pcard-body {
     display: flex;
-    justify-content: center;   /* center the title */
-    align-items: center;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
 }
 
-.year-header h2 {
-    text-align: center;
+/* Remove unnecessary fixed gaps */
+.program-grid:not(.list-view) .pcard-title {
+    min-height: 0;
+    font-size: 15px;
+    line-height: 1.35;
+    margin-bottom: 7px;
 }
 
-/* Keep More Filters at right without disturbing title */
-.year-header .desktop-only {
-    position: absolute;
-    right: 0;
+.program-grid:not(.list-view) .pcard-desc {
+    min-height: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 10px;
 }
 
-/* ===== YEAR FILTER WRAPPER ===== */
-.year-filter-wrapper {
-    position: relative;
+/* Outcomes */
+.program-grid:not(.list-view) .pcard-outcomes {
+    margin-bottom: 10px;
+    padding: 9px;
 }
 
-/* Year Grid Desktop */
-.year-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 per row */
-    gap: 8px;
-    max-width: 500px;
-    margin: 0 auto; /* center grid */
+/* Tags */
+.program-grid:not(.list-view) .pcard-tags {
+    margin-top: auto;
+    margin-bottom: 10px;
 }
 
-/* Year Button */
-.year-btn {
-    height: 34px;        /* fixed compact height */
-    font-size: 13px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
+.program-grid:not(.list-view) .pcard-meta {
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 991.98px) {
+    .program-grid:not(.list-view) .pcard-img {
+        height: 145px;
+        flex-basis: 145px;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    .program-grid:not(.list-view) .program-item {
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-bottom: 10px;
+    }
+
+    .program-grid:not(.list-view) .pcard-img {
+        height: 125px;
+        flex-basis: 125px;
+    }
+
+    .program-grid:not(.list-view) .pcard-body {
+        padding: 9px;
+    }
+
+    .program-grid:not(.list-view) .pcard-title {
+        font-size: 13px;
+        line-height: 1.35;
+        min-height: 0;
+    }
+
+    .program-grid:not(.list-view) .pcard-desc {
+        font-size: 11px;
+        line-height: 1.4;
+        min-height: 0;
+    }
+
+    .program-grid:not(.list-view) .pcard-outcomes {
+        padding: 7px;
+    }
+
+    .program-grid:not(.list-view) .pcard-outcomes li {
+        font-size: 10px;
+    }
+
+    .program-grid:not(.list-view) .ptag {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+
+    .program-grid:not(.list-view) .pcard-meta {
+        font-size: 10px;
+    }
+
+    .program-grid:not(.list-view) .pcard-meta .price strong {
+        font-size: 12px;
+    }
+
+    .program-grid:not(.list-view) .btn.pcard-btn {
+        font-size: 10px !important;
+        padding: 5px 9px;
+    }
+}
+
+/* Very small mobile */
+@media (max-width: 380px) {
+    .program-grid:not(.list-view) .pcard-img {
+        height: 105px;
+        flex-basis: 105px;
+    }
+
+    .program-grid:not(.list-view) .pcard-body {
+        padding: 7px;
+    }
+
+    .program-grid:not(.list-view) .pcard-title {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .lp-hero {
+        background-size: auto 100%;
+        background-position: right center;
+        min-height: 260px;
+    }
+
+    .lp-hero::before {
+        background: linear-gradient(
+            90deg,
+            var(--cream) 0%,
+            rgba(255, 249, 236, 0.97) 40%,
+            rgba(255, 249, 236, 0.85) 65%,
+            rgba(255, 249, 236, 0.4) 100%
+        );
+    }
+
+    .lp-title {
+        font-size: 32px;
+    }
+
+    .lp-subtitle {
+        font-size: 15px;
+        max-width: 300px;
+    }
+}
+  .lp-card {
     background: #fff;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.2s ease;
-}
+    border-radius: 14px;
+    border: 1px solid #f3eadf;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .05);
+  }
 
-.year-btn:hover,
-.year-btn.active {
-    background: #D7263D;
-    color: #fff;
-    border-color: #D7263D;
-}
+  .lp-search {
+    display: flex;
+    align-items: center;
+    padding: 4px 16px;
+  }
 
-/* Hide mobile button on desktop */
-.mobile-only {
-    display: none;
-}
-/* ===== Close Button ===== */
-.close-filter-btn {
-    position: absolute;
-    top: 10px;
-    right: 12px;
+  .lp-search i {
+    color: #6b7280;
+    margin-right: 8px;
+  }
+
+  .lp-search .form-control {
+    border: 0;
+    box-shadow: none;
+    font-size: 13px;
+    padding: 10px 0;
     background: transparent;
-    border: none;
-    font-size: 20px;
+  }
+
+  .lp-pillbox {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .pill-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .pill-label {
+    width: 70px;
+    flex: 0 0 70px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .3px;
+  }
+
+  .pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pill {
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: var(--ink);
+    border-radius: 8px;
+    font-size: 13px;
     font-weight: 600;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
-    color: #999;
-    transition: 0.2s ease;
+    transition: .2s;
+  }
+
+  .year-pill {
+    min-width: 38px;
+    height: 34px;
+    justify-content: center;
+    padding: 0 12px;
+  }
+
+  .subject-pill {
+    height: 36px;
+    padding: 0 14px;
+  }
+
+  .subject-pill i {
+    color: #2f7df6;
+    font-size: 14px;
+  }
+
+  .pill:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .year-pill.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
+  .subject-pill.active {
+    background: #fff1f2;
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  #prePopulatedData {
+    --bs-gutter-x: 8px;
+    --bs-gutter-y: 10px;
+  }
+
+  #programResults {
+    --bs-gutter-x: 8px;
+    --bs-gutter-y: 10px;
+  }
+
+  .program-item {
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-bottom: 17px;
+  }
+
+  .pcard {
+    width: 100%;
+    height: 100%;
+  }
+
+  .pcard-body {
+    padding: 12px 10px;
+  }
+
+  .type-strip {
+    display: grid;
+    grid-template-columns: 1.1fr repeat(4, 1fr);
+    gap: 18px;
+    background: linear-gradient(90deg, #fdeee4, #fff4ec);
+    border: 1px solid #f6dfd0;
+    border-radius: 14px;
+    padding: 18px 22px;
+  }
+
+  .type-intro h2 {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 8px;
+  }
+
+  .type-intro p {
+    font-size: 12px;
+    color: #4b5563;
+    line-height: normal;
+    margin: 0;
+    display: flex;
+    gap: 6px;
+  }
+
+  .fs-head-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.fs-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+
+.fs-close {
+    flex-shrink: 0;
+    padding: 0;
     line-height: 1;
 }
 
-.close-filter-btn:hover {
-    color: #D7263D;
-}
+  .type-item {
+    border-left: 1px solid #f0d9c8;
+    padding-left: 18px;
+  }
 
-@media (min-width: 769px) {
-  .desktop-filter-wrapper {
-        position: relative;
-        display: inline-block;
-    }
+  .type-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
 
-    .card-popover {
-        position: absolute;
-        top: 60px;
-        right: 0;
-        width: 320px;
+  .type-info {
+    color: #6b7280;
+    font-size: 14px;
+    cursor: help;
+  }
 
-        background: #fff;
-        border-radius: 12px;
-        border: 1px solid #ddd;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        padding: 20px;
-        z-index: 999;
+  .type-item h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
 
-        display: none;
-        opacity: 0;
-        transition: opacity 0.25s ease;
-    }
+  .type-item p {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.4;
+  }
 
-    .card-popover.show {
-        display: block;
-        opacity: 1;
-    }
-
-    .card-popover::after {
-        content: "";
-        position: absolute;
-        top: -8px;
-        right: 25px;
-        border-width: 0 8px 8px 8px;
-        border-style: solid;
-        border-color: transparent transparent #fff transparent;
-    }
-}
-/* ================= WORLD CLASS PROGRAM CARD ================= */
-
-.program-pre-card{
-    background: linear-gradient(180deg,#ffffff 0%,#fafafa 100%);
-    border-radius:18px;
-    padding:24px;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    border:1px solid #f1f1f1;
-    position:relative;
-    overflow:hidden;
-
-    transition:all .35s ease;
-
-    box-shadow:
-        0 12px 30px rgba(0,0,0,0.06),
-        0 2px 8px rgba(0,0,0,0.04);
-}
-
-.program-pre-card:hover{
-    transform:translateY(-10px);
-    box-shadow:
-        0 30px 70px rgba(0,0,0,0.12),
-        0 12px 30px rgba(0,0,0,0.08);
-}
-/* TOP ACCENT LINE */
-
-.program-pre-card::before{
-    content:"";
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:4px;
-
-    background:linear-gradient(
-        90deg,
-        #ff4b2b,
-        #ff416c,
-        #ff7a18
-    );
-}
-
-/* HOVER EFFECT */
-
-.program-pre-card:hover{
-    transform:translateY(-10px);
-    box-shadow:
-        0 25px 60px rgba(0,0,0,0.12),
-        0 0 0 1px rgba(215,38,61,0.05);
-}
-
-/* TITLE */
-
-.program-title{
-     font-size:20px;
-    font-weight:700;
-    margin-bottom:1px;
-    line-height:1.35;
-
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-    min-height:44px;
-
-    background: linear-gradient(90deg,#111827,#374151);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-/* DESCRIPTION */
-
-.program-desc{
-    font-size:14px;
-    color:#6b7280;
-    line-height:1.6;
-    margin-top:1px;
-    margin-bottom:2px;
-
-    display:-webkit-box;
-    -webkit-line-clamp:3;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-    min-height:66px;
-}
-
-/* TAGS */
-
-.program-tags{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-}
-
-.tag{
-    font-size:11px;
-    padding:5px 12px;
-    border-radius:30px;
-    font-weight:600;
-}
-
-/* TAG COLORS */
-
-.grade-tag{
-    background:#fff3cd;
-    color:#856404;
-}
-
-.subject-tag{
-    background:#e8f1ff;
-    color:#1d4ed8;
-}
-
-.curriculum-tag{
-    background:#f3f4f6;
-    color:#4b5563;
-}
-
-/* PRICE SECTION */
-
-.program-price{
-    margin-top:auto;
-    margin-bottom:10px;
-}
-
-/* FINAL PRICE */
-
-.final-price{
-    font-size:30px;
-    font-weight:800;
-    color:#e63946;
-    letter-spacing:-1px;
-}
-
-/* REGULAR PRICE */
-
-.regular-price{
-    font-size:24px;
-}
-
-.regular-price .strike{
-    text-decoration:line-through;
-    color:#999;
-    margin-right:6px;
-}
-
-.regular-price .offer{
-    color:#16a34a;
-    font-weight:600;
-}
-
-/* GET NOW BUTTON */
-
-.program-pre-card .btn-outline-program{
-    border-radius:10px;
-    font-weight:600;
-    padding:9px;
-}
-
-/* BUTTON AREA */
-
-.program-actions{
-    display:flex;
-    gap:10px;
-    margin-top:14px;
-}
-
-.program-actions .btn{
-    flex:1;
-}
-
-/* ADD CART BUTTON */
-
-.btn-add-cart{
-    background:#D7263D;
-    border:none;
-    color:#fff;
-    font-weight:600;
-    border-radius:10px;
-}
-
-.btn-add-cart:hover{
-    background:#b91c1c;
-}
-
-/* PREMIUM HOVER BUTTON EFFECT */
-
-.program-pre-card:hover .btn-add-cart{
-    transform:scale(1.02);
-}
-.program-actions{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:14px;
-}
-
-/* text style actions */
-
-.program-link{
-    font-size:14px;
-    font-weight:600;
-    text-decoration:none;
-    border:none;
-    background:none;
-    cursor:pointer;
-    padding:0;
-}
-
-/* learn more */
-
-.learn-link{
-    color:#374151;
-}
-
-.learn-link:hover{
-    color:#111827;
-    text-decoration:underline;
-}
-
-/* add to cart */
-
-.cart-link{
-    color:#D7263D;
-}
-
-.cart-link:hover{
-    color:#b91c1c;
-}
-.btn-add-cart {
-    background: #D7263D;
+  .ptype {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
     color: #fff;
-    border: none;
-    border-radius: 10px;
-}
+    padding: 3px 10px;
+    border-radius: 5px;
+    letter-spacing: .3px;
+  }
 
-.btn-add-cart:hover {
-    background: #b91c1c;
-    color: #fff;
-}
-/*  Image Banner */
-.subject-banner{
-    position: relative;
+  .ptype.mlp {
+    background: #22a559;
+  }
+
+  .ptype.ctp {
+    background: #f59e0b;
+  }
+
+  .ptype.icp {
+    background: #2f7df6;
+  }
+
+  .ptype.ftp {
+    background: #8b5cf6;
+  }
+
+  .filters-sidebar {
+    width: 235px;
+    font-size: 13px;
+  }
+
+  .fs-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .fs-title {
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .link-clear {
+    background: none;
+    border: 0;
+    color: var(--red);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0;
+  }
+
+  .fs-group {
+    border-bottom: 1px solid var(--line);
+    padding: 10px 0;
+  }
+
+  .fs-toggle {
     width: 100%;
-    height: 140px;
-    overflow: hidden;
-    border-radius: 12px;
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: none;
+    border: 0;
+    padding: 2px 0 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+  }
 
-.subject-banner-img{
+  .fs-toggle i {
+    transition: transform .2s;
+    font-size: 12px;
+  }
+
+  .fs-group.collapsed .fs-toggle i {
+    transform: rotate(180deg);
+  }
+
+  .fs-group.collapsed .fs-body {
+    display: none;
+  }
+
+  .fs-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 1px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #374151;
+  }
+
+  .fs-check input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 3px;
+    background: #fff;
+    margin: 0;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .fs-check input:checked {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
+  .fs-check input:checked::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .fs-check.checked {
+    background: #fde7e7;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .fs-select-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    display: block;
+  }
+
+  .fs-backdrop {
+    display: none;
+  }
+
+  .fs-close {
+    background: none;
+    border: 0;
+    font-size: 26px;
+    line-height: 1;
+    color: #9ca3af;
+  }
+
+  .results-col {
+    min-width: 0;
+    border-left: 1px solid var(--line);
+    padding-left: 18px;
+  }
+
+  .results-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .results-count {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .results-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tool-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  .sort-select {
+    width: 170px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  .view-toggle {
+    display: inline-flex;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .view-toggle button {
+    width: 34px;
+    height: 32px;
+    border: 0;
+    background: #fff;
+    color: #6b7280;
+  }
+
+  .view-toggle button.active {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fde7e7;
+    color: var(--ink);
+    border: 1px solid #fbd0d0;
+    border-radius: 30px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .filter-chip button {
+    border: 0;
+    background: none;
+    color: var(--red);
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .program-grid.is-loading {
+    opacity: .5;
+    pointer-events: none;
+  }
+
+  .pcard {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #f0e6dc;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
+    transition: .25s;
+  }
+
+  .pcard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, .12);
+  }
+
+  .pcard-img {
+    height: 112px;
+    background: #f3f4f6;
+    flex: 0 0 auto;
+  }
+
+  .pcard-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
+    display: block;
+  }
 
-/* dark overlay to reduce brightness */
-.banner-overlay{
-    position: absolute;
-    inset: 0;
-    background: rgba(63, 63, 63, 0.45);
-}
+  .pcard-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
 
-/* centered title */
-.banner-title{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fff !important;
-    font-size: 46px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-/* Owl Carousel Prev/Next Buttons */
-.owl-prev, .owl-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 9999; /* increase */
-}
+  .pcard-body .ptype {
+    align-self: flex-start;
+    font-size: 10px;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+  }
 
+  .pcard-title {
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin: 0 0 6px;
+    min-height: 38px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 
-.owl-prev { left: -20px; }  
-.owl-next { right: -20px; } 
+  .pcard-desc {
+    font-size: 11.5px;
+    color: #6b7280;
+    line-height: 1.45;
+    margin: 0 0 8px;
+    min-height: 50px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 
-.owl-prev span, .owl-next span {
-  font-size: 22px;
-  color: #ffffff !important;              
-  background: #bd1922 !important;
-  padding: 6px 10px;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  display: inline-block;
-  transition: all 0.3s ease;
-}
+  .pcard-outcomes {
+    background: #fff1ee;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+  }
 
-.owl-prev span:hover, .owl-next span:hover {
-  /* background: #d85a56; */
-  color: #fff !important;
-  background: #bd1922 !important;          
-}
-.owl-nav.disabled, 
-.owl-dots.disabled {
-    display: block !important;
-}
-.filter-badge{
-    display:inline-flex;
-    align-items:center;
-    background:#f1f5f9;
-    border:1px solid #e2e8f0;
-    border-radius:30px;
-    padding:6px 12px;
-    margin:4px;
-    font-size:13px;
-    font-weight:500;
-}
+  .po-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
 
-.filter-label{
-    font-weight:600;
-    margin-right:6px;
-    color:#374151;
-}
-#activeFiltersWrapper{
-    display:flex;
-    flex-direction:column; 
-    align-items:flex-start;
-    gap:8px;
-}
+  .pcard-outcomes ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-.program-count{
-    font-weight:600;
-    color:#374151;
-    font-size:14px;
-    margin-left:4px;
-}
-#activeFilters{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-}
-.filter-error{
-    color:#dc3545;
-    font-size:13px;
-    margin-top:6px;
-    display:none;
-}
-/* STATE GRID */
-.state-grid {
+  .pcard-outcomes li {
+    font-size: 10.5px;
+    color: #374151;
+    display: flex;
+    gap: 4px;
+    line-height: 1.35;
+    margin-bottom: 2px;
+  }
+
+  .pcard-outcomes li i {
+    color: var(--red);
+  }
+
+  .pcard-tags {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    max-width: 500px;
-    margin: 0 auto;
-}
+    gap: 6px;
+    margin-top: auto;
+    margin-bottom: 10px;
+  }
 
-.state-btn {
-    height: 34px;
-    font-size: 13px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    background: #fff;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.2s ease;
-
-    padding: 4px 12px;   
-    min-width: auto;     
-    width: auto;        
-}
-
-.state-btn:hover,
-.state-btn.active {
-    background: #D7263D;
-    color: #fff;
-    border-color: #D7263D;
-}
-.state-tag{
-    background:#ecfdf5;
-    color:#047857;
-}
-.session-box{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    background:#fff5f5;
-    border:1px solid #ffe3e3;
-    border-radius:10px;
-    padding:8px 12px;
-    margin-bottom:14px;
-    width:fit-content;
-}
-
-.session-number{
-    font-size:18px;
-    font-weight:700;
-    color:#D7263D;
-}
-
-.session-label{
-    font-size:12px;
-    color:#6b7280;
-}
-.owl-carousel .item{
-    display:flex;
-    height:100%;
-}
-
-.program-pre-card{
-    display:flex;
-    flex-direction:column;
-    justify-content: space-between; /* ensures consistent bottom alignment */
-    min-height: 420px; 
-}
-.program-meta-top{
-    font-size:12px;
-    color:#9ca3af;
-    margin-bottom:6px;
-}
-.guarantee-text {
-    font-size: 13px;
-    color: #16a34a;
+  .ptag {
+    font-size: 10.5px;
     font-weight: 600;
-    margin-bottom: 6px;
+    padding: 3px 9px;
+    border-radius: 6px;
+  }
+
+  .ptag.grade {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .ptag.subject {
+    background: #e8f1ff;
+    color: #1d4ed8;
+  }
+
+  .ptag.state {
+    background: #ecfdf5;
+    color: #047857;
+  }
+
+  .pcard-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #374151;
+    margin-bottom: 10px;
+  }
+
+  .pcard-meta .price strong {
+    font-size: 14px;
+    color: var(--red);
+  }
+
+  .btn.pcard-btn {
+    align-self: center;
+    width: auto !important;
+    min-width: 0;
+    font-size: 11px !important;
+    font-weight: 600;
+    padding: 3px 12px;
+    line-height: 1.4;
+    border-radius: 5px;
+  }
+
+  .pcard-btn i {
+    font-size: 10px;
+  }
+
+  .row.program-grid {
+    --bs-gutter-x: .7rem;
+    --bs-gutter-y: .7rem;
+  }
+
+  .program-grid.list-view .program-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .program-grid.list-view .pcard {
+    flex-direction: row;
+  }
+
+  .program-grid.list-view .pcard-img {
+    width: 210px;
+    height: auto;
+    min-height: 100%;
+  }
+
+  .program-grid.list-view .pcard-title,
+  .program-grid.list-view .pcard-desc {
+    min-height: 0;
+  }
+
+  .btn-add-cart {
+    background: var(--red);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .btn-add-cart:hover {
+    background: var(--red-dark);
+    color: #fff;
+  }
+
+  .btn-outline-program {
+    border: 1px solid var(--red);
+    color: var(--red);
+    background: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 7px 16px;
+  }
+
+  .btn-outline-program:hover {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .load-more {
+    padding: 8px 26px;
+  }
+
+  .lp-page .btn {
+    text-transform: none;
+    font-size: 12px !important;
+    letter-spacing: normal;
+    width: 100% !important;
+    border-radius: 8px;
+  }
+
+  .lp-page .cta-btn.cta-btn-lg {
+    font-size: 15px !important;
+    border-radius: 10px !important;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 50px 10px;
+    color: #6b7280;
+  }
+
+  .empty-state i {
+    font-size: 34px;
+  }
+
+  .select-cta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    border-radius: 18px;
+  }
+
+  .cta-banner {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: linear-gradient(90deg, #fdeee4, #fff1e8);
+    border: 1px solid #f6dfd0;
+    border-radius: 14px;
+    padding: 22px 30px;
+  }
+.cta-text{
+  flex: 1;
 }
-/*  Responsive */
-@media (max-width: 768px) {
+  .cta-icon {
+  
+    border-radius: 50%;
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    padding-right: 24px;
+  }
 
-    .year-header {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 10px;
-    }
+  .cta-text h3 {
+    font-weight: 800;
+    margin: 0 0 10px;
+  }
 
-    .desktop-only {
-        display: none;
-    }
+  .cta-text p {
+    font-size: 15px;
+    color: #374151;
+    margin: 0;
+    line-height: 1.6;
+  }
 
-    .mobile-only {
-        display: block;
-    }
+  .cta-action {
+    flex: 0 0 auto;
+  }
 
-    .card-popover {
-        position: absolute;
-        top: calc(100% + 6px); 
-        right: -20px;
-        width: 320px;
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 22px;
+    padding: 7px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: .2s;
+  }
 
-        background: #fff;
-        border-radius: 12px;
-        border: 1px solid #ddd;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        padding: 20px;
-        z-index: 999;
+  .cta-btn-lg {
+    padding: 18px 40px;
+    font-size: 18px !important;
+    border-radius: 12px;
+    min-width: 340px;
+  }
 
-        display: none;
-        opacity: 0;
-        transition: opacity 0.25s ease;
-    }
-
-    .card-popover.show {
-        display: block;
-        opacity: 1;
-    }
-
-    .card-popover::after {
-        content: "";
-        position: absolute;
-        top: -8px;
-        right: 25px;
-        border-width: 0 8px 8px 8px;
-        border-style: solid;
-        border-color: transparent transparent #fff transparent;
-    }
-    .year-btn {
-        font-size: 12px;
-    }
-    .state-btn {
-        height: 30px;
-        font-size: 12px;
-        padding: 2px 8px;
-    }
-}
-@media (max-width: 390px) {
-     .year-btn {
-        font-size: 10px;
-    }
-    .state-btn {
-        height: 28px;
-        font-size: 10px;
-        padding: 2px 8px;
-    }
+  .cta-btn-lg i {
+    font-size: 20px;
+  }
+.program-grid.list-view .program-item {
+  flex: 0 0 100%;
+  max-width: 100%;
 }
 
+.program-grid.list-view .pcard {
+  flex-direction: row;
+}
+
+.program-grid.list-view .pcard-img {
+  position: relative;
+  width: 210px;
+  flex: 0 0 210px;
+  height: auto;
+  min-height: 0;
+}
+
+.program-grid.list-view .pcard-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.program-grid.list-view .pcard-body {
+  min-width: 0;
+}
+
+.program-grid.list-view .pcard-title,
+.program-grid.list-view .pcard-desc {
+  min-height: 0;
+}
+
+  @media (max-width: 768px) {
+    .cta-banner {
+      flex-direction: column;
+      text-align: center;
+      justify-content: center;
+      padding: 22px;
+    }
+
+  .program-grid.list-view .pcard-img {
+    width: 110px;
+    flex: 0 0 110px;
+    min-height: 150px;
+  }
+
+.program-grid.list-view .pcard-body {
+  padding: 10px;
+}
+
+.program-grid.list-view .pcard-title {
+  font-size: 14px;
+}
+
+.program-grid.list-view .pcard-tags {
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.program-grid.list-view .btn.pcard-btn {
+  align-self: flex-start;
+}
+    
+.mobile {
+  display: none;
+  }
+
+    .cta-text h2 {
+      font-size: 22px;
+    }
+
+    .cta-text p {
+      font-size: 15px;
+    }
+
+    .cta-action {
+      width: 100%;
+    }
+
+    .cta-btn {
+      width: 100%;
+      white-space: normal;
+    }
+
+    .lp-page .cta-btn.cta-btn-lg {
+      min-width: 0;
+      font-size: 15px !important;
+    }
+  }
+
+  @media (max-width:1199.98px) {
+    .type-strip {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .type-item {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+
+  @media (max-width:991.98px) {
+    .results-col {
+      border-left: 0;
+      padding-left: 12px;
+    }
+
+    .filters-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 290px;
+      background: #fff;
+      z-index: 1051;
+      transform: translateX(-100%);
+      transition: transform .3s;
+      overflow-y: auto;
+      padding: 18px;
+    }
+
+    .filters-sidebar.open {
+      transform: none;
+    }
+
+    .fs-backdrop.show {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 1050;
+    }
+  }
+
+  @media (max-width:767.98px) {
+    .pill-label {
+      flex: auto;
+    }
+
+    .pill-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .type-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .program-grid.list-view .pcard {
+      flex-direction: column;
+    }
+
+    .program-grid.list-view .pcard-img {
+      width: 100%;
+      height: 112px;
+    }
+
+    .cta-banner {
+      text-align: center;
+      justify-content: center;
+    }
+
+    .cta-btn {
+      width: 100%;
+    }
+  }
 </style>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  (function() {
+    const ROUTE = "{{ route('programs.filter') }}";
+    const CSRF = "{{ csrf_token() }}";
+    const PAGE_TYPE = "{{ request()->route('type') }}";
+    const PAGE_SIZE = 8;
 
-    const moreBtnDesktop = document.getElementById('moreFiltersBtn');
-    const moreBtnMobile = document.getElementById('moreFiltersBtnMobile');
-    const panel = document.getElementById('moreFiltersPanel');
-    const applyBtn = document.getElementById('applyFilters');
-    const clearBtn = document.getElementById('clearFilters');
-    const closeBtn = document.getElementById('closeFiltersPanel');
-    const resultContainer = document.getElementById('programResults');
-    document.getElementById('prePopulatedData').style.display = 'block';
+    const labels = {
+    year: @json($grades->pluck('grade_name', 'id')),
+    subject: @json($branches->pluck('branch_name', 'id')),
+};
+    const typeShort = {
+      'Micro Learning Program': 'MLP',
+      'Core Training Program': 'CTP',
+      'Intensive Crash Program': 'ICP',
+      'Foundation Training Program': 'FTP'
+    };
 
-    function togglePanel(e) {
-        e.preventDefault();
-        e.stopPropagation();
+    const qs = (s, c) => (c || document).querySelector(s);
+    const qsa = (s, c) => Array.from((c || document).querySelectorAll(s));
+    const esc = s => String(s).replace(/[&<>"']/g, m => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    } [m]));
+    const slugify = s => String(s || '').toLowerCase().trim().replace(/\s+/g, '-');
 
-        panel.classList.toggle('show');
-        document.body.classList.toggle('filter-open');
+    const F = {
+      year: '',
+      subject: '',
+      curriculum: '',
+      state: '',
+      program_type: '',
+      focus: '',
+      search: ''
+    };
+    const SERVER_KEYS = ['year', 'subject', 'curriculum', 'state', 'program_type', 'focus'];
+
+    const defaultEl = qs('#prePopulatedData');
+    const resultsEl = qs('#programResults');
+    const countEl = qs('#programCount');
+    const chipsEl = qs('#activeFilters');
+    const emptyEl = qs('#emptyState');
+    const moreWrap = qs('#loadMoreWrap');
+    const sortSel = qs('#sortBy');
+    const sidebar = qs('#filtersSidebar');
+    const backdrop = qs('#fsBackdrop');
+
+   
+    const USE_SERVER = false;
+
+    let limit = PAGE_SIZE,
+      reqId = 0,
+      serverCount = null,
+      mode = 'default';
+
+    function getVariants(el) {
+      if (el._variants !== undefined) return el._variants;
+      try {
+        el._variants = JSON.parse(el.dataset.variants || '[]');
+      } catch (e) {
+        el._variants = [];
+      }
+      return el._variants;
     }
 
-    if (moreBtnDesktop) {
-        moreBtnDesktop.addEventListener('click', togglePanel);
+    function matchingVariants(el) {
+      return getVariants(el).filter(v =>
+        (!F.year || String(v.year) === String(F.year)) &&
+        (!F.state || v.state === F.state) &&
+        (!F.curriculum || v.curriculum === F.curriculum)
+      );
     }
 
-    if (moreBtnMobile) {
-        moreBtnMobile.addEventListener('click', togglePanel);
+    function matchesFilters(el) {
+      const d = el.dataset;
+      if (F.subject && (d.subject || '') !== (labels.subject[F.subject] || '')) return false;
+      if (F.program_type && (d.ptype || '') !== F.program_type) return false;
+
+      const variants = getVariants(el);
+      if (variants.length) return matchingVariants(el).length > 0;
+
+      if (F.year && !(d.years || '').split(',').includes(String(F.year))) return false;
+      if (F.state && !(d.states || '').split('|').includes(F.state)) return false;
+      if (F.curriculum && !(d.curriculum || '').split('|').includes(F.curriculum)) return false;
+      return true;
     }
 
-    /*
-    ===============================
-    APPLY FILTERS (AJAX CALL)
-    ===============================
-    */
-    if (applyBtn) {
-        
-        applyBtn.addEventListener('click', function(){
+    function updateCard(el) {
+      const variants = getVariants(el);
+      if (!variants.length) return;
 
-        const errorBox = document.getElementById("filterError");
+      const list = matchingVariants(el);
+      const use = list.length ? list : variants;
+      const uniq = arr => arr.filter((v, i) => v && arr.indexOf(v) === i);
 
-        const programType = "{{ request()->route('type') }}";
+      const grades = uniq(use.map(v => v.grade)).join(', ');
+      const states = uniq(use.map(v => v.state_short)).join(', ');
+      const prices = use.map(v => parseFloat(v.price)).filter(p => !isNaN(p) && p > 0);
+      const price = prices.length ? Math.min.apply(null, prices) : null;
 
-        const filters = {
-           // type: programType,
-            subject: document.getElementById('subject').value,
-            year: document.getElementById('yearFilter').value,
-            curriculum: document.getElementById('curriculum').value,
-            state: document.getElementById('state').value,
-        };
+      const gradeEl = qs('[data-role="grade"]', el);
+      const stateEl = qs('[data-role="state"]', el);
+      const priceEl = qs('[data-role="price"]', el);
+      const linkEl = qs('[data-role="link"]', el);
 
-        const hasFilter = Object.values(filters).some(v => v !== "");
+      if (gradeEl) {
+        gradeEl.textContent = grades;
+        gradeEl.classList.toggle('d-none', !grades);
+      }
+      if (stateEl) {
+        stateEl.textContent = states;
+        stateEl.classList.toggle('d-none', !states);
+      }
+      if (priceEl) {
+        priceEl.innerHTML = price !== null ? 'From <strong>$' + Math.round(price).toLocaleString() + '</strong>' : '';
+        priceEl.classList.toggle('d-none', price === null);
+      }
+      el.dataset.price = price !== null ? price : '';
 
-        if(!hasFilter){
-            errorBox.innerHTML = "Please select at least one filter";
-            errorBox.style.display = "block";
-            return;
-        }
-        filters.type = programType;
-        errorBox.style.display = "none";
-        fetch("{{ route('programs.filter') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify(filters)
+      if (linkEl && el.dataset.urlTemplate) {
+        const v = use[0];
+        let href = el.dataset.urlTemplate.replace('__SLUG__', encodeURIComponent(v.slug));
+        const params = [];
+        if (F.year && v.year) params.push('year=' + encodeURIComponent(v.year));
+        if (F.state && v.state) params.push('state=' + encodeURIComponent(slugify(v.state)));
+        if (params.length) href += (href.indexOf('?') > -1 ? '&' : '?') + params.join('&');
+        linkEl.setAttribute('href', href);
+      }
+    }
+
+    function syncUI() {
+      qsa('[data-filter-btn]').forEach(b =>
+        b.classList.toggle('active', String(F[b.dataset.filterBtn]) === b.dataset.value));
+
+      qsa('input[data-filter]').forEach(i => {
+        i.checked = String(F[i.dataset.filter]) === i.value;
+        const lbl = i.closest('label');
+        if (lbl) lbl.classList.toggle('checked', i.checked && i.value !== '');
+      });
+
+      ['curriculum', 'state'].forEach(k => {
+        const el = qs('#' + k);
+        if (el) el.value = F[k];
+      });
+
+      const s = qs('#programSearch');
+      if (s && s.value !== F.search) s.value = F.search;
+    }
+
+    function renderChips() {
+      const names = {
+        year: 'Year',
+        subject: 'Subject',
+        curriculum: 'Curriculum',
+        state: 'State',
+        program_type: 'Type',
+        focus: 'Focus',
+        search: 'Search'
+      };
+      const val = k => {
+        if (k === 'year') return String(labels.year[F.year] || F.year).replace(/^Year\s*/i, '');
+        if (k === 'subject') return labels.subject[F.subject] || F.subject;
+        if (k === 'program_type') return typeShort[F.program_type] || F.program_type;
+        return F[k];
+      };
+      chipsEl.innerHTML = Object.keys(names).filter(k => F[k]).map(k =>
+        `<span class="filter-chip">${names[k]}: ${esc(val(k))}
+               <button type="button" data-remove="${k}" aria-label="Remove filter">&times;</button></span>`
+      ).join('');
+      chipsEl.classList.toggle('d-none', !chipsEl.innerHTML);
+    }
+
+    const num = el => (el.dataset.price === '' || el.dataset.price === undefined) ? Infinity : parseFloat(el.dataset.price);
+    const cmpN = (a, b) => a < b ? -1 : (a > b ? 1 : 0);
+
+    function sortItems(grid, items) {
+      const sorters = {
+        'relevance': (a, b) => cmpN(+a.dataset.idx, +b.dataset.idx),
+        'price-asc': (a, b) => cmpN(num(a), num(b)),
+        'price-desc': (a, b) => cmpN(num(b), num(a)),
+        'name': (a, b) => (a.dataset.name || '').localeCompare(b.dataset.name || '')
+      };
+      items.slice().sort(sorters[sortSel.value] || sorters.relevance).forEach(el => grid.appendChild(el));
+    }
+
+    function refresh() {
+      const grid = mode === 'results' ? resultsEl : defaultEl;
+      const items = qsa('.program-item', grid);
+      items.forEach((el, i) => {
+        if (el.dataset.idx === undefined) el.dataset.idx = i;
+      });
+
+      if (mode === 'default') items.forEach(updateCard);
+      sortItems(grid, items);
+
+      const q = F.search.trim().toLowerCase();
+      const matched = items.filter(el =>
+        (mode === 'results' || matchesFilters(el)) &&
+        (!q || (el.dataset.search || el.textContent).toLowerCase().includes(q)));
+      const visible = new Set(matched.slice(0, limit));
+      items.forEach(el => el.classList.toggle('d-none', !visible.has(el)));
+
+      const total = (mode === 'results' && serverCount !== null && !q) ? serverCount : matched.length;
+      countEl.textContent = total + ' program' + (total === 1 ? '' : 's') + ' found';
+
+      moreWrap.classList.toggle('d-none', matched.length <= limit);
+      emptyEl.classList.toggle('d-none',
+        !(grid.children.length === 0 || (items.length > 0 && matched.length === 0)));
+      renderChips();
+    }
+
+    function load() {
+      const my = ++reqId;
+
+      if (!USE_SERVER || !SERVER_KEYS.some(k => F[k])) {
+        mode = 'default';
+        serverCount = null;
+        resultsEl.classList.add('d-none');
+        resultsEl.innerHTML = '';
+        defaultEl.classList.remove('d-none');
+        refresh();
+        return;
+      }
+
+      const body = {
+        type: PAGE_TYPE
+      };
+      SERVER_KEYS.forEach(k => body[k] = F[k]);
+
+      resultsEl.classList.add('is-loading');
+      defaultEl.classList.add('is-loading');
+
+      fetch(ROUTE, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF,
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(body)
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
-
-            if(data.status){
-              resultContainer.innerHTML = data.html;
-              document.getElementById("infoBox").style.display = "none";
-              document.getElementById("prePopulatedData").style.display = "none"; 
-              resultContainer.style.display = "block";
-             // renderFilterBadges(filters);
-              renderFilterBadges(filters, data.count); 
-              syncYearGrid(filters.year);
-            }
-
+          if (my !== reqId) return;
+          if (data.status) {
+            mode = 'results';
+            resultsEl.innerHTML = data.html;
+            serverCount = (typeof data.count === 'number') ? data.count : null;
+            defaultEl.classList.add('d-none');
+            resultsEl.classList.remove('d-none');
+          }
+          refresh();
         })
-        .catch(error => {
-            console.error("Filter Error:", error);
-        });
-
-        panel.classList.remove('show');
-        document.body.classList.remove('filter-open');
-
-    });
-}
-
-    /*
-    ===============================
-    CLEAR FILTERS
-    ===============================
-    */
-    if (clearBtn) {
-        clearBtn.addEventListener('click', function(){
-
-            document.getElementById('subject').value = "";
-            document.getElementById('yearFilter').value = "";
-            document.getElementById('curriculum').value = "";
-            document.getElementById('state').value = "";
-            syncYearGrid("");
-
+        .catch(err => console.error('Filter Error:', err))
+        .finally(() => {
+          if (my === reqId) {
+            resultsEl.classList.remove('is-loading');
+            defaultEl.classList.remove('is-loading');
+          }
         });
     }
 
-    /*
-    ===============================
-    CLOSE FILTER PANEL
-    ===============================
-    */
-    if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-            panel.classList.remove('show');
-            document.body.classList.remove('filter-open');
+    function setFilter(key, value) {
+      F[key] = value;
+      limit = PAGE_SIZE;
+      syncUI();
+      key === 'search' ? refresh() : load();
+    }
+
+    function clearAll() {
+      Object.keys(F).forEach(k => F[k] = '');
+      limit = PAGE_SIZE;
+      syncUI();
+      load();
+    }
+
+    document.addEventListener('click', function(e) {
+      const pill = e.target.closest('[data-filter-btn]');
+      if (pill) {
+        setFilter(pill.dataset.filterBtn, pill.dataset.value);
+        return;
+      }
+
+      const rm = e.target.closest('[data-remove]');
+      if (rm) {
+        setFilter(rm.dataset.remove, '');
+        return;
+      }
+
+      if (e.target.closest('[data-clear-all]')) {
+        clearAll();
+        return;
+      }
+
+      const tg = e.target.closest('.fs-toggle');
+      if (tg) {
+        tg.parentElement.classList.toggle('collapsed');
+        return;
+      }
+
+      const view = e.target.closest('[data-view]');
+      if (view) {
+        qsa('[data-view]').forEach(b => b.classList.toggle('active', b === view));
+        [defaultEl, resultsEl].forEach(g => g.classList.toggle('list-view', view.dataset.view === 'list'));
+        return;
+      }
+
+      if (e.target.closest('#loadMoreBtn')) {
+        limit += PAGE_SIZE;
+        refresh();
+        return;
+      }
+
+      const cta = e.target.closest('a[href="#assessment"]');
+      if (cta) {
+        e.preventDefault();
+        qs('#assessment').scrollIntoView({
+          behavior: 'smooth'
         });
-    }
-
-    /*
-===============================
-YEAR GRID CLICK
-===============================
-*/
-
-const yearButtons = document.querySelectorAll('.year-btn');
-
-yearButtons.forEach(btn => {
-
-    btn.addEventListener('click', function(){
-
-        const yearId = this.dataset.id;
-
-        // remove active from all
-        yearButtons.forEach(b => b.classList.remove('active'));
-
-        // activate clicked
-        this.classList.add('active');
-
-        // sync dropdown
-        document.getElementById('yearFilter').value = yearId;
-
-        // call existing ajax
-        document.getElementById('applyFilters').click();
-
+      }
     });
 
-});
+    qsa('input[data-filter]').forEach(i =>
+      i.addEventListener('change', () => setFilter(i.dataset.filter, i.checked ? i.value : '')));
 
-});
-
-const stateButtons = document.querySelectorAll('.state-btn');
-
-stateButtons.forEach(btn => {
-
-    btn.addEventListener('click', function(){
-
-        const stateName = this.dataset.name;
-
-        // remove active from all
-        stateButtons.forEach(b => b.classList.remove('active'));
-
-        // activate clicked
-        this.classList.add('active');
-
-        // sync dropdown
-        document.getElementById('state').value = stateName;
-
-        // trigger filter
-        document.getElementById('applyFilters').click();
-
+    ['curriculum', 'state'].forEach(k => {
+      const el = qs('#' + k);
+      if (el) el.addEventListener('change', () => setFilter(k, el.value));
     });
 
-});
+    sortSel.addEventListener('change', refresh);
 
-$(document).ready(function () {
-
-$('.subject-carousel').each(function(){
-
-const $carousel = $(this);
-
-const itemCount = parseInt($carousel.data("count"),10) || 0;
-
-$carousel.owlCarousel({
-
-loop: itemCount > 3,
-autoplay: false,
-nav: itemCount > 3,
-dots: false,
-
-margin: 30,
-
-navText: [
-'<span class="owl-prev-btn">&#10094;</span>',
-'<span class="owl-next-btn">&#10095;</span>'
-],
-
-responsive:{
-0:{ items:1 },
-768:{ items:2 },
-992:{ items:3 }
-}
-
-});
-
-});
-
-});
-
-function renderFilterBadges(filters, count){
-
-    const badgeContainer = document.getElementById("activeFilters");
-    const wrapper = document.getElementById("activeFiltersWrapper");
-    const countBox = document.getElementById("programCount");
-
-    badgeContainer.innerHTML = "";
-
-    Object.keys(filters).forEach(key => {
-
-        if(key === 'type') return; // hide program type
-
-        if(filters[key]){
-
-            const labelMap = {
-                subject : document.querySelector(`#subject option[value="${filters[key]}"]`)?.textContent,
-                year : document.querySelector(`#yearFilter option[value="${filters[key]}"]`)?.textContent,
-                curriculum : filters[key],
-                state : filters[key]
-            };
-
-            const badge = document.createElement("div");
-
-            badge.className = "filter-badge";
-
-            badge.innerHTML = `${labelMap[key] || filters[key]}`;
-
-            badgeContainer.appendChild(badge);
-        }
-
+    let searchTimer;
+    qs('#programSearch').addEventListener('input', function() {
+      clearTimeout(searchTimer);
+      const v = this.value;
+      searchTimer = setTimeout(() => setFilter('search', v), 200);
     });
 
-    if(badgeContainer.innerHTML !== ""){
-        wrapper.style.display = "flex";
-        countBox.innerHTML = `${count} Program${count > 1 ? 's' : ''} Found`;
-    }else{
-        wrapper.style.display = "none";
-    }
+    const openDrawer = () => {
+      sidebar.classList.add('open');
+      backdrop.classList.add('show');
+    };
+    const closeDrawer = () => {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('show');
+    };
+    qs('#openFilters').addEventListener('click', openDrawer);
+    qs('#closeFilters').addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
 
-}
-function syncYearGrid(yearId){
+    syncUI();
+    refresh();
+  })();
 
-    const yearButtons = document.querySelectorAll('.year-btn');
-
-    yearButtons.forEach(btn => {
-
-        if(btn.dataset.id == yearId){
-            btn.classList.add('active');
-        }else{
-            btn.classList.remove('active');
-        }
-
-    });
-
-}
-function syncStateGrid(stateName){
-
-    const stateButtons = document.querySelectorAll('.state-btn');
-
-    stateButtons.forEach(btn => {
-
-        if(btn.dataset.name === stateName){
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-
-    });
-
-}
-$(document).on('click', '.add-to-cart-text', function () {
-
+  $(document).on('click', '.add-to-cart-text', function() {
     const cartText = $(this);
     const programId = cartText.data('id');
-
     const buyBtn = $('.buy-now-btn[data-id="' + programId + '"]');
 
     fetch("{{ route('cart.toggle') }}", {
         method: "POST",
         headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            "Content-Type": "application/json"
+          "X-CSRF-TOKEN": "{{ csrf_token() }}",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({ program_id: programId })
-    })
-    .then(res => res.json())
-    .then(data => {
-
+        body: JSON.stringify({
+          program_id: programId
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
         if (data.in_cart) {
-            cartText.text('Remove');
-            buyBtn.text('Proceed to Buy');
+          cartText.text('Remove');
+          buyBtn.text('Proceed to Buy');
         } else {
-            cartText.text('Add to Cart');
-            buyBtn.text('Get Now');
+          cartText.text('Add to Cart');
+          buyBtn.text('Get Now');
         }
+      });
+  });
 
-    });
-
-});
-
-document.addEventListener('click', function(e){
-
+  document.addEventListener('click', function(e) {
     const btn = e.target.closest('.program-detail-btn');
-    if(!btn) return;
-
+    if (!btn) return;
     e.preventDefault();
 
-    console.log('BUTTON CLICKED');
-
     const slug = btn.dataset.slug;
-
-    let grades = {};
-    let states = [];
+    let grades = {},
+      states = [];
 
     try {
-
-        //RAW DATA LOG
-        const gradesStr = (btn.dataset.grades || '{}').trim();
-        const statesStr = (btn.dataset.states || '[]').trim();
-
-        console.log('RAW DATA:', gradesStr, statesStr);
-
-        // PARSE
-        grades = JSON.parse(gradesStr);
-        states = JSON.parse(statesStr);
-
-        console.log('PARSED GRADES:', grades);
-        console.log('PARSED STATES:', states);
-
+      grades = JSON.parse((btn.dataset.grades || '{}').trim());
+      states = JSON.parse((btn.dataset.states || '[]').trim());
     } catch (err) {
-        console.error('JSON PARSE ERROR', err);
-        return;
+      console.error('JSON PARSE ERROR', err);
+      return;
     }
 
     const single = btn.dataset.single == '1';
-
-    console.log('IS SINGLE PROGRAM:', single);
-
     const gradeIds = Object.keys(grades);
-    const statesFormatted = states.map(s =>
-        s.toLowerCase().replace(/ /g,'-')
-    );
+    const statesFormatted = states.map(s => s.toLowerCase().replace(/ /g, '-'));
 
-    console.log('GRADE COUNT:', gradeIds.length);
-    console.log('STATE COUNT:', states.length);
-
-    /* SINGLE PROGRAM */
-    if(single && states.length > 0){
-
-        const year = gradeIds[0];
-        const state = statesFormatted[0];
-
-        console.log('REDIRECT (SINGLE):', {
-            slug,
-            year,
-            state
-        });
-
-        window.location.href = `/program/${slug}?year=${year}&state=${state}`;
-        return;
+    if (single && states.length > 0) {
+      window.location.href = `/program/${slug}?year=${gradeIds[0]}&state=${statesFormatted[0]}`;
+      return;
     }
-
-    /* 1 YEAR + 1 STATE */
-    if(gradeIds.length === 1 && states.length === 1){
-
-        const year = gradeIds[0];
-        const state = statesFormatted[0];
-
-        console.log('REDIRECT (DIRECT):', {
-            slug,
-            year,
-            state
-        });
-
-        window.location.href = `/program/${slug}?year=${year}&state=${state}`;
-        return;
+    if (gradeIds.length === 1 && states.length === 1) {
+      window.location.href = `/program/${slug}?year=${gradeIds[0]}&state=${statesFormatted[0]}`;
+      return;
     }
-
-    /* 1 YEAR + MULTIPLE STATES → SKIP YEAR → SHOW STATE*/
-    if(gradeIds.length === 1 && states.length > 1){
-
-        const year = gradeIds[0];
-        const statesParam = statesFormatted.join(',');
-
-        console.log('REDIRECT (SKIP YEAR → STATE):', {
-            slug,
-            year,
-            states: statesParam
-        });
-
-        window.location.href = `/program/${slug}?year=${year}&states=${statesParam}`;
-        return;
+    if (gradeIds.length === 1 && states.length > 1) {
+      window.location.href = `/program/${slug}?year=${gradeIds[0]}&states=${statesFormatted.join(',')}`;
+      return;
     }
-
-    /* MULTIPLE YEARS → SHOW YEAR STEP FIRST*/
-    if(gradeIds.length > 1){
-
-        const statesParam = statesFormatted.join(',');
-
-        console.log('REDIRECT (SHOW YEAR STEP):', {
-            slug,
-            states: statesParam
-        });
-
-        window.location.href = `/program/${slug}?states=${statesParam}`;
-        return;
+    if (gradeIds.length > 1) {
+      window.location.href = `/program/${slug}?states=${statesFormatted.join(',')}`;
+      return;
     }
-
-});
+  });
 </script>
 @endsection

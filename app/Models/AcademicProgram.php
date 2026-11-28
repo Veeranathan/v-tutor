@@ -45,6 +45,7 @@ class AcademicProgram extends Model
         'outcome',
         'parent_session_plan',
         'tutor_session_plan',
+        'image'
     ];
 
     protected $casts = [
@@ -76,7 +77,14 @@ class AcademicProgram extends Model
         return $this->belongsTo(
             AcademicProgram::class,
             'academic_program_id'
-        );
-    }
+    );
+}
 
+   public function keyLearningPrograms()
+    {
+    return $this->hasMany(AcademicKeyLearningProgram::class,
+        'learning_program_id',
+        'id'
+    );
+}
 }

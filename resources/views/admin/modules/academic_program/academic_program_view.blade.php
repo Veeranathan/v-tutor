@@ -399,9 +399,42 @@ label.error,
                     <div class="form-group col-md-6">
                         <label>Program Tutor *</label>
                         <input type="text"  name="program_tutor"    class="form-control"    value="{{ $program->program_tutor }}">
-                    </div>
+                            </div>
 
-                <!-- SUBMIT -->
+                <div class="form-group col-md-12">
+                    <label>Key Learning Outcomes </label>
+                <textarea name="key_learning_outcomes"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Enter each outcome in a new line">{{ old('key_learning_outcomes', $keyLearningOutcomes) }}</textarea>
+                </div>
+                <div class="form-group col-md-12">
+                    <label>Learning Program Image</label>
+                    <input type="file"
+                        name="learning_program_images"
+                        id="learning_program_images"
+                        class="form-control"
+                        accept=".png,.jpg,.jpeg,image/png,image/jpeg">
+                    <small class="text-muted">
+                        Allowed formats: PNG, JPG, JPEG (Max 5 MB)
+                    </small>
+                    <div id="learning_images_preview" class="program-doc-preview"></div>
+                @php
+                    $imageName = trim($program->image ?? '', '"');
+
+                    $imagePath = public_path('assets/images/learning_program_images/' . $imageName);
+                @endphp
+
+                @if(!empty($imageName) && file_exists($imagePath))
+                    <div class="mt-3" id="existing_learning_image">
+                        <img src="{{ asset('assets/images/learning_program_images/' . $imageName) }}"
+                            alt="{{ $program->name }}"
+                            loading="lazy"
+                            style="width:150px;height:120px;object-fit:cover;">
+                    </div>
+                @endif
+            </div>
+        <!-- SUBMIT -->
                 <div class="row">
                     <div class="col-md-12 faqbtn rm05">
                         <button type="button" class="btn btn-primary w-md" id="submitBtn">
@@ -559,7 +592,43 @@ $(document).ready(function () {
         });
     });
 });
+$('#learning_program_images').on('change', function () {
 
+    $('#learning_images_preview').html('');
+
+    let file = this.files[0];
+
+    if (!file) {
+        return;
+    }
+    let allowedTypes = ['image/png', 'image/jpeg'];
+
+    if (!allowedTypes.includes(file.type)) {
+        alert('Only PNG, JPG and JPEG images are allowed.');
+        this.value = '';
+        return;
+    }
+    if (file.size > 5242880) {
+        alert('Image size must not exceed 5 MB.');
+        this.value = '';
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function (e) {
+
+        $('#learning_images_preview').html(`
+            <p>New Image Preview:</p>
+            <img src="${e.target.result}"
+                 style="width:150px;height:120px;object-fit:cover;">
+        `);
+
+    };
+
+    reader.readAsDataURL(file);
+
+});
 /* DOCUMENT PREVIEW */
 function previewSessionPlan(input, type) {
 

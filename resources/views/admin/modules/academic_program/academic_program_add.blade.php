@@ -366,12 +366,32 @@ label.error,
                         <label>Program Tutor</label>
                         <input type="text" name="program_tutor" class="form-control"    placeholder="To be assigned at the start of the program">
                     </div> 
-
-                <!-- SUBMIT -->
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Key Learning Outcomes</label>
+                            <textarea name="key_learning_outcomes"
+                                    id="key_learning_outcomes"
+                                    class="form-control"
+                                    rows="4"
+                                    placeholder="Enter each outcome in a new line"></textarea>
+                              </div>
+                         </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Learning Program Image</label>
+                            <input type="file"
+                                name="learning_program_images"
+                                id="learning_program_images"
+                                class="form-control"
+                                accept="image/jpeg,image/png,image/jpg">
+                            <div id="learning_images_preview" class="program-doc-preview"></div>
+                        </div>
+                    </div>
+<!-- SUBMIT -->
                 <div class="row">
                     <div class="col-md-12 faqbtn rm05">
                         <button type="button" class="btn btn-primary w-md" id="submitBtn">
-                            Add Academic Program
+                            Add Academic Program 
                         </button>
                     </div>
                 </div>
@@ -409,6 +429,58 @@ $.validator.addMethod(
     "File size must not exceed 5 MB"
 );
 
+$('#learning_program_images').on('change', function () {
+
+    let file = this.files[0];
+    let preview = $('#learning_images_preview');
+
+    preview.empty().hide();
+
+    if (!file) {
+        return;
+    }
+
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+        alert('Only JPG, JPEG and PNG images are allowed');
+        this.value = '';
+        return;
+    }
+
+    if (file.size > 5242880) {
+        alert('Image size must not exceed 5 MB');
+        this.value = '';
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function (e) {
+        preview.html(`
+            <div style="margin-top:10px;">
+                <img src="${e.target.result}"
+                     style="width:150px;height:120px;object-fit:cover;border:1px solid #ddd;border-radius:5px;">
+                <br>
+                <small class="text-muted">${file.name}</small>
+                <br>
+                <button type="button"
+                        class="btn btn-danger btn-sm"
+                        id="remove_learning_image"
+                        style="margin-top:5px;">
+                    Remove Image
+                </button>
+            </div>
+        `).show();
+    };
+
+    reader.readAsDataURL(file);
+});
+
+$(document).on('click', '#remove_learning_image', function () {
+
+    $('#learning_program_images').val('');
+    $('#learning_images_preview').empty().hide();
+
+});
 $(document).ready(function () {
 
     $('#frm').validate({

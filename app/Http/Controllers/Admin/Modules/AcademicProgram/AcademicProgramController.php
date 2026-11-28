@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Modules\AcademicProgram;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicKeyLearningProgram;
 use Illuminate\Http\Request;
 use App\Models\AcademicProgram; 
 use App\Models\Branch;
@@ -165,6 +166,8 @@ class AcademicProgramController extends Controller
                 'assessments'         => 'required|array|min:1',
                 'parent_session_plan' => 'nullable|file|mimes:pdf|max:5120',
                 'tutor_session_plan'  => 'nullable|file|mimes:pdf|max:5120',
+                'key_learning_outcomes'=> 'nullable|string',
+               'learning_program_images'=> 'nullable|image|mimes:jpg,jpeg,png',
             ],
             [
                 'code.unique' => 'The program code is already in use',
@@ -207,10 +210,22 @@ class AcademicProgramController extends Controller
                 $tutorSessionPlanName
             );
         }
-        
+
+        $learningImage = null;
+        if ($request->hasFile('learning_program_images')) {
+            $image = $request->file('learning_program_images');
+            $uploadPath = public_path('assets/images/learning_program_images');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $imageName = time() . '-' . uniqid() . '.' .
+                        $image->getClientOriginalExtension();
+            $image->move($uploadPath, $imageName);
+            $learningImage = $imageName;
+        }        
         $slug = Str::slug($request->name);
 
-        AcademicProgram::create([
+     AcademicProgram::create([
             'name'                  => $request->name,
             'slug'                  => $slug,
             'code'                  => $request->code,
@@ -239,7 +254,20 @@ class AcademicProgramController extends Controller
             'assessments'           => $request->assessments,
             'parent_session_plan'   => $parentSessionPlanName,
             'tutor_session_plan'    => $tutorSessionPlanName,
-        ]);
+             'image' => $learningImage,
+            ]);
+
+        $programId = AcademicProgram::latest('id')->value('id');
+        $keyOutcomes = preg_split('/\r\n|\r|\n/', $request->key_learning_outcomes ?? '');
+
+        foreach ($keyOutcomes as $outcome) {
+            if (trim($outcome) != '') {
+                AcademicKeyLearningProgram::create([
+                    'learning_program_id' => $programId,
+                    'name' => trim($outcome),
+                ]);
+            }
+        }
 
         return response()->json([
             'success' => true,
@@ -296,10 +324,13 @@ class AcademicProgramController extends Controller
         $program  = AcademicProgram::findOrFail($id);
         $grades   = Grade::where('status','A')->get();
         $branches = Branch::where('status','A')->get();
+        $keyLearningOutcomes = AcademicKeyLearningProgram::where('learning_program_id', $program->id)
+        ->pluck('name')
+        ->implode("\n");
 
         return view(
             'admin.modules.academic_program.academic_program_view',
-            compact('program','grades','branches')
+            compact('program','grades','branches','keyLearningOutcomes')
         );
     }
 
@@ -333,6 +364,8 @@ class AcademicProgramController extends Controller
         'assessments'         => 'required|array|min:1',
         'parent_session_plan' => 'nullable|file|mimes:pdf|max:5120',
         'tutor_session_plan'  => 'nullable|file|mimes:pdf|max:5120',
+        'key_learning_outcomes'=> 'nullable|string',
+        'learning_program_images' => 'nullable|image|mimes:jpg,jpeg,png',
         ], [
         'parent_session_plan.mimes' => 'Only PDF files are allowed',
         'parent_session_plan.max'   => 'PDF file size must not exceed 5 MB',
@@ -356,7 +389,54 @@ class AcademicProgramController extends Controller
                 'errors' => ['program_id' => ['Academic Program not found']]
             ], 404);
         }
+      
+        $learningImage = $program->image;
+        if ($request->hasFile('learning_program_images')) {
+            if ($learningImage) {
+                $oldImagePath = public_path(
+                    'assets/images/learning_program_images/' . $learningImage
+                );
 
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            $image = $request->file('learning_program_images');
+
+            $uploadPath = public_path('assets/images/learning_program_images');
+
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $imageName = time() . '-' . uniqid() . '.' .
+                        $image->getClientOriginalExtension();
+            $image->move($uploadPath, $imageName);
+            $learningImage = $imageName;
+        }
+        AcademicKeyLearningProgram::where(
+            'learning_program_id',
+            $program->id
+        )->delete();
+
+        $keyOutcomes = $request->input('key_learning_outcomes');
+
+        if (is_string($keyOutcomes)) {
+            $keyOutcomes = preg_split('/\r\n|\r|\n/', $keyOutcomes);
+        }
+
+        $keyOutcomes = is_array($keyOutcomes) ? $keyOutcomes : [];
+
+        foreach ($keyOutcomes as $outcome) {
+
+            if (trim($outcome) != '') {
+
+                AcademicKeyLearningProgram::create([
+                    'learning_program_id' => $program->id,
+                    'name' => trim($outcome),
+                ]);
+            }
+        }
         $parentSessionPlanName = $program->parent_session_plan;
 
         if ($request->remove_parent_session_plan == '1') {
@@ -456,6 +536,7 @@ class AcademicProgramController extends Controller
             'program_detail'     => $request->program_detail,
             'parent_session_plan'   => $parentSessionPlanName,
             'tutor_session_plan'    => $tutorSessionPlanName,
+            'image' => $learningImage,
         ]);
 
         return response()->json([

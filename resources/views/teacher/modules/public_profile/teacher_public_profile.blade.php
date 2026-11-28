@@ -1789,16 +1789,8 @@
         font-size: 26px;
     }
 
-    @media (max-width: 991px) {
-        .vt-page {
-            padding: 50px 16px 30px;
-        }
-    }
 
     @media (max-width: 575px) {
-        .vt-page {
-            padding: 90px 12px 24px;
-        }
 
         .vt-info h1 {
             font-size: 26px;

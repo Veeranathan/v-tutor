@@ -1679,6 +1679,9 @@ public function viewTutorLearningPrograms($id)
         ->whereNotIn('id', $learning_programs->pluck('id'))
         ->orderBy('name')
         ->get();
+        $availability = $user->getMyAvailability()
+        ->where('status', 'A')
+        ->exists() ? 'Yes' : 'No';
 
     $tutor_subjects = $branchIds->map(function ($branchId) use ($branchNames) {
         return (object) [
@@ -1691,7 +1694,8 @@ public function viewTutorLearningPrograms($id)
         'learning_programs',
         'available_programs',
         'tutor_subjects',
-        'tutorshipPlans'
+        'tutorshipPlans',
+        'availability'
     ));
 }
 public function manageTutorShipPlans($id,Request $request){

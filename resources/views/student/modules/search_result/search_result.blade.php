@@ -85,7 +85,7 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
         <div class="vt-strip">
             <div class="row  g-0 align-items-center">
                 <div class="col-lg-3 vt-strip-lead">
-                    <h3>Aligned to<br class="mobile">Managed<br class="mobile">Learning Programs</h3>
+                    <h3>Aligned to <br class="mobile">Managed <br class="mobile"> Learning Programs</h3>
                 </div>
                 <div class="col-lg-3 col-md-4 vt-strip-item">
                     <span class="vt-strip-ico"><i class="fas fa-bullseye"></i></span>
@@ -1116,6 +1116,9 @@ $hasAdvanced = !empty(request('availability')) || request()->filled('review')
         font-size: 15px;
         max-width: 600px;
     }
+    .vt-pagination p{
+      margin-right: 7px;
+    }
 
     @media (max-width: 991px) {
         .vt-hero-title {
@@ -1514,23 +1517,28 @@ $(function () {
 
     }
 
-    function loadTutorResults(url = null) {
+    function loadTutorResults(url = null, pushUrl = false) {
 
         if (ajaxRequest) {
             ajaxRequest.abort();
         }
 
+        var requestUrl  = url || $form.attr("action");
+        var requestData = url ? {} : $form.serialize();
+
         ajaxRequest = $.ajax({
 
-            url: url || $form.attr("action"),
+            url: requestUrl,
 
             type: "GET",
 
-            data: $form.serialize(),
+            data: requestData,
 
             dataType: "json",
 
             cache: false,
+
+            headers: { "X-Requested-With": "XMLHttpRequest" },
 
             beforeSend: function () {
 
@@ -1562,6 +1570,16 @@ $(function () {
                     total + " Learning " +
                     (total === 1 ? "Specialist" : "Specialists")
                 );
+
+                if (pushUrl && url) {
+                    window.history.pushState({ vtAjax: true }, "", url);
+                }
+
+                if (pushUrl) {
+                    $("html, body").animate({
+                        scrollTop: $(".vt-result-head").offset().top - 100
+                    }, 300);
+                }
 
             },
 
@@ -1616,24 +1634,32 @@ $(function () {
 
     });
 
+    $form.on("submit", function (e) {
+        e.preventDefault();
+        loadTutorResults();
+    });
+
     $(document).on(
         "click",
-        "#tutorResults .pagination a",
+        ".vt-pagination a",
         function (e) {
 
             e.preventDefault();
 
             var url = $(this).attr("href");
 
-            if (url) {
-
-                clearTimeout(filterTimer);
-                loadTutorResults(url);
-
+            if (!url || url === "#" || url.indexOf("javascript") === 0) {
+                return;
             }
+
+            clearTimeout(filterTimer);
+            loadTutorResults(url, true);
 
         }
     );
+    window.addEventListener("popstate", function () {
+        loadTutorResults(window.location.href);
+    });
 
     $(document).on(
         "click",

@@ -516,6 +516,9 @@ class SearchResultController extends Controller
                     return $gradeNames[$id] ?? '';
                 })
                 ->filter()
+                ->sort(function ($a, $b) {
+                    return strnatcmp($a, $b);
+                })
                 ->values()
                 ->implode(', ');
 

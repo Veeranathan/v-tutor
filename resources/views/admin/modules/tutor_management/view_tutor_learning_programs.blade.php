@@ -581,12 +581,8 @@ $programTypes = $programs->pluck('type')->filter()->unique()->values();
         {{-- Page header --}}
         <div class="tw-head">
             <div>
-                <div class="tw-breadcrumb">
-                    <a href="javascript:void(0);">Tutor Management</a><span>/</span>
-                    <a href="{{ \Illuminate\Support\Facades\Route::has('manage.tutors') ? route('manage.tutors') : 'javascript:void(0);' }}">Tutor Directory</a><span>/</span>
-                    Tutor Workspace
-                </div>
                 <h1>Tutor Workspace</h1>
+            <p class="small_tag">You can find information or view tutor profile in this section</p>
             </div>
             <div class="tw-actions">
                 <a class="btn" href="{{ route('tutor.public.profile', $user->slug) }}">
@@ -628,7 +624,7 @@ $programTypes = $programs->pluck('type')->filter()->unique()->values();
                     </div>
                     <div class="tw-meta-item">
                         <span>Availability</span>
-                        <strong>{{ $availabilityText }}</strong>
+                        <strong>{{ $availability }}</strong>
                     </div>
                 </div>
             </div>
